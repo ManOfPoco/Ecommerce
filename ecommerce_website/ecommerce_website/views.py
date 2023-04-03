@@ -1,14 +1,12 @@
 from django.shortcuts import render
 
-from django.db.models import OuterRef, Subquery, Prefetch, Q, DecimalField
+from django.db.models import OuterRef, Subquery, Prefetch, Q
 from products.models import (
     Product,
     ProductDiscount,
     ProductImages,
     Category
 )
-
-from decimal import Decimal
 
 
 def home(request):
