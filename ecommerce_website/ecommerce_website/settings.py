@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'wishlist.apps.WishlistConfig',
     'orders.apps.OrdersConfig',
+    'sells.apps.SellsConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
