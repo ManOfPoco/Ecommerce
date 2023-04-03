@@ -24,3 +24,10 @@ class CartItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product.product_name}"
+
+
+class SaveForLater(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='save_for_later')
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name='save_for_later')
