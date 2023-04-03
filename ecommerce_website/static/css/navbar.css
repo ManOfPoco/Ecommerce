@@ -1,0 +1,80 @@
+.container-fluid {
+    background-color: #6b21be;
+    height: 36px;
+}
+
+.wrapper p {
+    font-size: 13px;
+    font-weight: 700;
+    padding-top: 8px;
+    height: 36px;
+}
+
+.wrapper a {
+    text-decoration: underline;
+}
+
+.banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: -2;
+    transition: 1.3s all ease;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.banner a {
+    font-size: 12px;
+}
+
+.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.more-deals {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.more-deals img {
+    vertical-align: middle;
+}
+
+.nav-bar {
+    background-color: white;
+    z-index: 333;
+    max-width: 960px;
+    margin: 0 auto;
+    top: 36px;
+}
+
+.order {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ff5a00;
+}
+
+.swiper-slide img {
+    max-width: 300px;
+    height: 300px;
+}
+
+.dealsWrapper {
+    margin-bottom: 25px;
+}
+
+.hidden {
+    transform: translateY(-200%);
+    transition: transform 0.5s ease-in-out;
+    z-index: 3;
+}
+
+.showed {
+    transform: translateY(5%);
+    transition: transform 0.5s ease-in-out;
+}

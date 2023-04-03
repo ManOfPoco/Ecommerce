@@ -1,0 +1,120 @@
+body {
+    font-family: "Azo Sans", "OpenSans", sans-serif;
+    font-weight: 400;
+}
+
+body a {
+    text-decoration: none;
+    color: inherit !important;
+}
+
+body img {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    padding: 0 !important;
+}
+
+.container {
+    max-width: 960px;
+}
+
+.azo-suns-bold {
+    font-weight: 700;
+}
+
+.azo-suns-medium {
+    font-weight: 500;
+}
+
+.card-styles,
+.card-styles div {
+    border: 0;
+}
+
+.card-categories:hover {
+    color: #773dbd;
+}
+
+.card-price {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.card-promotion {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.card-title-promotion {
+    color: #ff5a00;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.card-discount {
+    color: #ff5a00;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.card-body-brand {
+    margin-bottom: 0px;
+    color: rgba(33, 37, 41, 0.75);
+    font-size: 12px;
+}
+
+.card-body-productName {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.preview-title {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.preview-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.title-item-primary {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.title-item-secondary {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+@media (min-width: 1320px) {
+
+    #brandAccessories img,
+    #customersPrefer img {
+        max-height: 150px;
+    }
+}
+
+.swiper-slide {
+    height: auto;
+}
+
+.text-muted {
+    color: #767676;
+}
+
+.add-to-cart-button {
+    background-color: #ff5a00;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}

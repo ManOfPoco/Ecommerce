@@ -1,0 +1,22 @@
+.seo-copy a {
+    color: #ff5a00 !important;
+    text-decoration: underline;
+    font-weight: 800;
+}
+
+.seo-copy p {
+    line-height: 2 !important;
+}
+
+.seo-copy h4,
+h5 {
+    font-weight: 700;
+}
+
+.seo-copy a:hover {
+    color: #f88343!important;
+}
+
+strong {
+    font-weight: bold;
+}

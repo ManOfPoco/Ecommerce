@@ -145,4 +145,4 @@ class ProductImages(models.Model):
         verbose_name_plural = 'Images'
 
     def __str__(self) -> str:
-        return f"{self.url}"
+        return f"Image for {self.product}"

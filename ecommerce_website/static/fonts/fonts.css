@@ -1,0 +1,77 @@
+@font-face {
+    font-family: 'Azo Sans';
+    src: local('Azo Sans Regular'), local('Azo-Sans-Regular'),
+        url('AzoSans/AzoSans-Regular.woff2') format('woff2'),
+        url('AzoSans/AzoSans-Regular.woff') format('woff'),
+        url('AzoSans/AzoSans-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Azo Sans';
+    src: local('Azo Sans Medium'), local('Azo-Sans-Medium'),
+        url('AzoSans/AzoSans-Medium.woff2') format('woff2'),
+        url('AzoSans/AzoSans-Medium.woff') format('woff'),
+        url('AzoSans/AzoSans-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Azo Sans';
+    src: local('Azo Sans Bold'), local('Azo-Sans-Bold'),
+        url('AzoSans/AzoSans-Bold.woff2') format('woff2'),
+        url('AzoSans/AzoSans-Bold.woff') format('woff'),
+        url('AzoSans/AzoSans-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: bold;
+}
+
+@font-face {
+    font-family: 'Futura PT';
+    src: local('FuturaPt/Futura PT Medium'), local('Futura-PT-Medium'),
+        url('FuturaPt/FuturaPT-Medium.woff2') format('woff2'),
+        url('FuturaPt/FuturaPT-Medium.woff') format('woff'),
+        url('FuturaPt/FuturaPT-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Futura PT';
+    src: local('FuturaPt/Futura PT Heavy'), local('Futura-PT-Heavy'),
+        url('FuturaPt/FuturaPT-Heavy.woff2') format('woff2'),
+        url('FuturaPt/FuturaPT-Heavy.woff') format('woff'),
+        url('FuturaPt/FuturaPT-Heavy.ttf') format('truetype');
+    font-weight: 700;
+    font-style: bold;
+}
+
+.fs-1 {
+    font-size: 22px !important;
+}
+
+.fs-2 {
+    font-size: 20px !important;
+}
+
+.fs-3 {
+    font-size: 18px !important;
+}
+
+.fs-4 {
+    font-size: 16px !important;
+}
+
+.fs-5 {
+    font-size: 14px !important;
+}
+
+.fs-6 {
+    font-size: 12px !important;
+}
+
+.fs-7 {
+    font-size: 10px !important;
+}

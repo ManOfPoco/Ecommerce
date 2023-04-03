@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+
+{% endblock head %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'img/home/HeroBanner.webp' %}" alt="">
+        </a>
+    </div>
+    <div class="row mt-4">
+        <a href="#">
+            <img src="{% static 'img/home/HeroBannerToday.webp' %}" alt="">
+        </a>
+    </div>
+
+    <div class="container mt-5 text-center">
+        <div class="row mb-4">
+            <a href="#">
+                <img src="{% static 'img/home/thisWeekDealsBanner.webp' %}" alt="ThisWeekDeals">
+            </a>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <a href="#">
+                    <img src="{% static 'img/home/EdNavMattresses.webp' %}" alt="Mattresses">
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="#">
+                    <img src="{% static 'img/home/EdNavSectionals.webp' %}" alt="Sectionals">
+                </a>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-6">
+                <span class="title-item-primary">Save up to $300</span><br>
+                <span class="title-item-secondary">Save up to $300</span>
+            </div>
+            <div class="col-6">
+                <span class="title-item-primary">Save up to $300</span><br>
+                <span class="title-item-secondary">Save up to $300</span>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <a href="#">
+                <img src="{% static 'img/home/BannerFINAL.webp' %}" alt="ThisWeekDeals">
+            </a>
+        </div>
+    </div>
+
+    {% include './snippets/cards-preview.html' with title='Popular Products' %}
+    {% include './snippets/swiper-products.html' with products=products %}
+
+    <div class="row mb-4">
+        <a href="#">
+            <img src="{% static 'img/home/site-salehub-banner-dt-essentials.webp' %}" alt="">
+        </a>
+    </div>
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'img/home/LEGACYHTMLBANNERewards.webp' %}" alt="">
+        </a>
+    </div>
+
+    {% include './snippets/cards-preview.html' with title='Shop By Category' %}
+    {% include './snippets/card-categories.html' with categories=categories %}
+
+</div>
+<!-- Content -->
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    createSwiper('brandAccessories');
+</script>
+{% endblock script %}
