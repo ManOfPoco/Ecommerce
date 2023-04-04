@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('ecommerce/', include('ecommerce.urls'))
+    path('category/', include('products.urls'))
 ]
 
 handler404 = 'ecommerce_website.views.my_custom_page_not_found_view'

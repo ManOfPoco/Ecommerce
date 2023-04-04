@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Furniture' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='FURNITURE' subtitle='New Furniture Faves to Fill Your Home!' %}
+    <div class="row mb-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/newFurnitureFaves.webp' %}" alt="newFurnitureFaves">
+        </a>
+        <a href="#">
+            <img src="{% static 'img/furniture/shopAllLivingRoom.webp' %}" alt="shopAllLivingRoom">
+        </a>
+    </div>
+    <!-- Preview -->
+
+    <!-- FurnitureDeals -->
+
+    {% include 'snippets/card-categories.html' with categories=categories.0.children.all %}
+
+    <div class="row mt-4 mb-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/shopAllStorage&Entryway.webp' %}" alt="storage&entry">
+        </a>
+    </div>
+
+    {% include 'snippets/card-categories.html' with categories=categories.1.children.all %}
+
+    <div class="row mt-4 mb-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/shopAllBedroom.webp' %}" alt="bedroom">
+        </a>
+    </div>
+
+    {% include 'snippets/card-categories.html' with categories=categories.2.children.all %}
+
+    <div class="row mt-4 mb-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/shopAllDiningRoom.webp' %}" alt="diningRoom">
+        </a>
+    </div>
+
+    {% include 'snippets/card-categories.html' with categories=categories.3.children.all %}
+
+    <div class="row mt-4 mb-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/shopAllHomeOffice.webp' %}" alt="homeOffice">
+        </a>
+    </div>
+
+    {% include 'snippets/card-categories.html' with categories=categories.4.children.all %}
+
+    <div class="row mt-4">
+        <a href="#">
+            <img src="{% static 'img/furniture/furnitureUnder500.webp' %}" alt="furnitureUnder500$">
+        </a>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col px-0">
+            <a href="#">
+                <img src="{% static 'img/furniture/newArrivals.webp' %}" alt="newArrivals">
+            </a>
+        </div>
+        <div class="col px-0">
+            <a href="#">
+                <img src="{% static 'img/furniture/buyouts.webp' %}" alt="buyouts">
+            </a>
+        </div>
+    </div>
+
+</div>
+<!-- Content -->
+{% endblock content %}
+
+{% block seo-copy %}
+<!-- SeoCopy -->
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <p><strong>Furniture</strong><br />
+            <h4 class="mb-3">Shop Big Lots for Furniture for Your Home</h4>
+            <p>Whether your home style is classic or contemporary, refresh your home on a budget with the Big Lots
+                furniture department! Blend furniture styles to create a unique look with a mix of modern furniture
+                and traditional pieces for all rooms of your home.</p>
+
+            <p>Browse <a href="">living room furniture</a> from couches, loveseats, and sectionals to <a href="">TV
+                    stands</a> and fireplaces.
+                You’ll find great deals on accent pieces like side tables and ottomans to complete your living or
+                family room.</p>
+
+            <p>Need a dining room refresh? Update your <a href="">dining room furniture</a> with a new pub set or
+                dining room table
+                and matching chairs. We also carry kitchen carts to bring extra countertop space and storage to your
+                kitchen and dining areas.</p>
+
+            <p>Don’t let an old bed or mattress get in your way of a good night’s sleep. At Big Lots, you can
+                refresh your <a href="">bedroom furniture</a> with a mattress and accompanying headboard or bedroom
+                set to match.
+                We carry exclusive mattress sets from Serta, Sealy, and Zeopedic in twin, full, queen, and king
+                sizes. Browse a variety of traditional and modern bedroom styles from a standard metal bedframe to a
+                wooden bedroom set complete with a headboard, footboard, and matching dressers. Don’t stop at your
+                bedroom – we have fun playful pieces in home furniture for the kids’ room, too!</p>
+
+            <p>Complete your home with additional <a href="">storage furniture</a> from bookcases and storage
+                cubbies to accent
+                tables, desks, recliners, and chairs. No matter what room you’re working on, find beautiful
+                budget-friendly home furniture options at Big Lots! You can take it home today or take advantage of
+                our furniture delivery options – available in most stores. Just ask an associate for details.</p>
+
+        </div>
+    </div>
+</div>
+<!-- SeoCopy -->
+{% endblock seo-copy %}
+
+{% block script %}
+
+{% endblock script %}
+</body>
+
+</html>

@@ -8,7 +8,7 @@ from products.models import (
 
 def home(request):
     products = Product.objects.get_popular_products()
-    categories = Category.objects.all()
+    categories = Category.objects.filter(mptt_level=0, is_active=True)
 
     context = {
         'products': products,
