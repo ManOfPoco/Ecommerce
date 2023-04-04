@@ -16,3 +16,8 @@ def calculate_discount_saving(regular_price: Decimal, discount_price: Decimal):
 @register.filter
 def if_string(value):
     return isinstance(value, SafeString)
+
+
+@register.filter
+def get_dict_value(dictionary, key):
+    return dictionary.get(key)

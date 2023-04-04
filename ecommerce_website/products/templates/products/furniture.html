@@ -11,65 +11,65 @@
     {% include 'snippets/page-preview.html' with title='FURNITURE' subtitle='New Furniture Faves to Fill Your Home!' %}
     <div class="row mb-4">
         <a href="#">
-            <img src="{% static 'img/furniture/newFurnitureFaves.webp' %}" alt="newFurnitureFaves">
+            <img src="{% static 'products/img/furniture/newFurnitureFaves.webp' %}" alt="newFurnitureFaves">
         </a>
         <a href="#">
-            <img src="{% static 'img/furniture/shopAllLivingRoom.webp' %}" alt="shopAllLivingRoom">
+            <img src="{% static 'products/img/furniture/shopAllLivingRoom.webp' %}" alt="shopAllLivingRoom">
         </a>
     </div>
     <!-- Preview -->
 
     <!-- FurnitureDeals -->
 
-    {% include 'snippets/card-categories.html' with categories=categories.0.children.all %}
+    {% include 'snippets/card-categories.html' with categories=all_bedroom %}
 
     <div class="row mt-4 mb-4">
         <a href="#">
-            <img src="{% static 'img/furniture/shopAllStorage&Entryway.webp' %}" alt="storage&entry">
+            <img src="{% static 'products/img/furniture/shopAllStorage&Entryway.webp' %}" alt="storage&entry">
         </a>
     </div>
 
-    {% include 'snippets/card-categories.html' with categories=categories.1.children.all %}
+    {% include 'snippets/card-categories.html' with categories=all_dining_room %}
 
     <div class="row mt-4 mb-4">
         <a href="#">
-            <img src="{% static 'img/furniture/shopAllBedroom.webp' %}" alt="bedroom">
+            <img src="{% static 'products/img/furniture/shopAllBedroom.webp' %}" alt="bedroom">
         </a>
     </div>
 
-    {% include 'snippets/card-categories.html' with categories=categories.2.children.all %}
+    {% include 'snippets/card-categories.html' with categories=all_home_office %}
 
     <div class="row mt-4 mb-4">
         <a href="#">
-            <img src="{% static 'img/furniture/shopAllDiningRoom.webp' %}" alt="diningRoom">
+            <img src="{% static 'products/img/furniture/shopAllDiningRoom.webp' %}" alt="diningRoom">
         </a>
     </div>
 
-    {% include 'snippets/card-categories.html' with categories=categories.3.children.all %}
+    {% include 'snippets/card-categories.html' with categories=all_living_room %}
 
     <div class="row mt-4 mb-4">
         <a href="#">
-            <img src="{% static 'img/furniture/shopAllHomeOffice.webp' %}" alt="homeOffice">
+            <img src="{% static 'products/img/furniture/shopAllHomeOffice.webp' %}" alt="homeOffice">
         </a>
     </div>
 
-    {% include 'snippets/card-categories.html' with categories=categories.4.children.all %}
+    {% include 'snippets/card-categories.html' with categories=entryways %}
 
     <div class="row mt-4">
         <a href="#">
-            <img src="{% static 'img/furniture/furnitureUnder500.webp' %}" alt="furnitureUnder500$">
+            <img src="{% static 'products/img/furniture/furnitureUnder500.webp' %}" alt="furnitureUnder500$">
         </a>
     </div>
 
     <div class="row mt-4">
         <div class="col px-0">
             <a href="#">
-                <img src="{% static 'img/furniture/newArrivals.webp' %}" alt="newArrivals">
+                <img src="{% static 'products/img/furniture/newArrivals.webp' %}" alt="newArrivals">
             </a>
         </div>
         <div class="col px-0">
             <a href="#">
-                <img src="{% static 'img/furniture/buyouts.webp' %}" alt="buyouts">
+                <img src="{% static 'products/img/furniture/buyouts.webp' %}" alt="buyouts">
             </a>
         </div>
     </div>
@@ -120,8 +120,4 @@
 {% endblock seo-copy %}
 
 {% block script %}
-
 {% endblock script %}
-</body>
-
-</html>

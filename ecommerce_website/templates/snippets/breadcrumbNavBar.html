@@ -4,7 +4,7 @@
     <div class="col px-1 mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mt-2 mb-1 fs-6">
-                <li class="breadcrumb-item text-muted"><a class="text-reset" href="#">Home</a></li>
+                <li class="breadcrumb-item text-muted"><a class="text-reset" href="{% url 'home' %}">Home</a></li>
                 {% if data|if_string %}
                     <li class="breadcrumb-item" aria-current="page">{{data}}</li>
                 {% else %}

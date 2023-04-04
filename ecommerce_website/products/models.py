@@ -8,6 +8,8 @@ from django.core.validators import MinValueValidator
 
 from django.utils.translation import gettext_lazy as _
 
+from django.core.cache import cache
+
 
 class ProductManager(models.Manager):
     def get_popular_products(self):
@@ -20,6 +22,15 @@ class ProductManager(models.Manager):
         ).filter(is_active=True).prefetch_related(
             Prefetch('images',
                      queryset=ProductImages.objects.filter(is_default=True)))[:10]
+
+    def unique_brands_in_category(self, category):
+        brands = cache.get('CACHED_BRANDS')
+        if brands is None:
+            brands = Product.objects.select_related('brand').filter(
+                category=category).distinct()
+            cache.set('CACHED_BRANDS', brands, 60*60)
+
+        return brands
 
 
 class Product(models.Model):
@@ -81,6 +92,7 @@ class Category(MPTTModel):
 class Brand(models.Model):
     brand_name = models.CharField(_("Brand Name"), max_length=255)
     slug = models.SlugField(blank=True, max_length=255)
+    image = models.ImageField(upload_to='brands', null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.brand_name}"

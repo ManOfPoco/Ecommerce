@@ -87,7 +87,7 @@ class CategoryAdmin(MPTTModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    fields = [('brand_name', 'slug')]
+    fields = [('brand_name', 'slug'), 'image']
 
     prepopulated_fields = {'slug': ('brand_name',)}
 

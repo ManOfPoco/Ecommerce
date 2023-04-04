@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load product_tags %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Mattresses' %}
+
+    {% include 'snippets/page-preview.html' with title='MATTRESSES' subtitle='Make Sweet Dreams Your Reality' %}
+
+    <div class='row'>
+        <div class='col'>
+            <a href="#">
+                <img src="{% static 'products/img/mattresses/Serta_Perfect_Sleeper_Manor.webp' %}"
+                    alt="Serta_Perfect_Sleeper_Manor">
+            </a>
+        </div>
+    </div>
+
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Size' text_center=True %}
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center text-center card-styles">
+        {% for category in all_size %}
+            <div class="col">
+                <a href="#">
+                    <div class="card card-categories">
+                        <div class="col">
+                            <img src="{{ category.image.url }}" class="card-img-top"
+                                alt="{{category.category_name}}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fs-4 fw-normal">{{size|get_dict_value:category.category_name}}</h5>
+                            <h5 class="card-title fw-bold" style="font-weight:700;">{{category.category_name}}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Type' text_center=True %}
+    <div class="row row-cols-2 row-cols-lg-4 g-4 justify-content-center text-center card-styles">
+        {% for type in all_type %}
+            <div class="col">
+                <a href="#">
+                    <div class="card card-categories">
+                        <div class="col">
+                            <img src="{{ type.image.url }}"
+                                class="card-img-top" alt="MattressesDept-Twin-XL"
+                                style="max-width: 150px;max-height: 150px;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Memory Foam</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Brand' text_center=True %}
+
+    {% include './snippets/card-brands.html' with categories=brands %}
+
+</div>
+{% endblock content %}
+
+{% block seo-copy %}
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <h4 class="mb-3" style="font-weight:500">Big Lots has Mattresses for Sale</h4>
+            <p>There's nothing better than a good night's sleep, but you need the right mattress for a great night's
+                sleep! Big Lots carries mattresses that are designed for the ultimate comfort and support to keep
+                you sleeping soundly. Our mattresses are brand new, trusted brands you know and love, plus we now
+                have mattress reviews to help you shop! So, stop tossing and turning, and let Big Lots help you find
+                the mattress that's right for you – at prices that won't keep you awake at night!</p>
+
+            <p>Sink into a super-soft plush or pillowtop mattress, the best memory foam mattress that conforms to
+                you, or find something firmer in a mattress if you prefer. Find great temperature control options,
+                from built-in memory foam and cooling fabrics to new <a href="#">mattress toppers</a> & pads. Make
+                it a set with a
+                supportive box spring and <a href="#">bed frame.</a> Whether you choose a pillowtop mattress, a foam
+                mattress or a
+                traditional <a href="#">inner spring mattress</a>, get more restful sleep than ever before knowing
+                you have a
+                mattress to keep you comfortable and sleeping easy for years to come.</p>
+
+            <p>Already bought a mattress from Big Lots? Share your mattress reviews today - we want to know how much
+                you love it! Find great values in <a href="#">bedding</a> and pillows to complete your new bedroom!
+                Save big on
+                bedroom furniture and mattresses from Big Lots today. Want to take your bedroom furniture home
+                today? You can buy it in store today, or order Serta mattresses online anytime.</p>
+
+            <p>Looking for great mattress delivery options? Order your new <a href="#">mattress in a box</a> today
+                to roll your
+                mattress wherever it needs to go, un-pack, and watch your new <a href="#">memory foam mattress</a>
+                come to life!
+                Order Serta mattresses online for white glove delivery, or buy and take home today in stores!</p>
+
+            <h5 class="mb-3" style="font-weight:700">Big Lots Mattresses & Mattress Sets</h5>
+            <p>Big Lots is known for our deals on everyday items you need, at prices that fit your budget. In
+                addition to our full line of bedding, blankets and more, we also carry the mattresses and box
+                springs you are looking for. We carry every size (<a href="#">Twin</a>, <a href="#">Twin XL</a>, <a
+                    href="#">Full</a>, <a href="#">Queen</a>, <a href="#">King</a>, & <a href="#">California
+                    King</a>) and material type (<a href="#">Memory Foam</a>, <a href="#">Inner Spring</a>, <a
+                    href="#">Hybrid</a> & <a href="#">Mattress in a box</a> ), all made by the
+                trusted brand names of <a href="#">Sealy and <a href="#">Serta.</a> </p>
+            <p>We also carry a selection of <a href="#">mattress toppers</a>, <a href="#">pads & covers</a> to
+                complete your sleep experience. We
+                also offer financing options with our <a href="#">Easy Leasing program</a> or our <a href="#">Big
+                    Lots credit card</a>. Shop Big
+                Lots for all of your <a href="#">mattress and bedding needs.</a></p>
+
+        </div>
+    </div>
+</div>
+{% endblock seo-copy %}
+
+{% block script %}
+
+{% endblock script %}
