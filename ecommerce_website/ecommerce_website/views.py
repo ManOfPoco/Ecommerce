@@ -1,35 +1,26 @@
 from django.shortcuts import render
 
-from django.db.models import OuterRef, Subquery, Prefetch, Q
 from products.models import (
     Product,
-    ProductDiscount,
-    ProductImages,
     Category
 )
 
 
 def home(request):
-
-    discount_price_subquery = ProductDiscount.objects.filter(
-        product=OuterRef('pk'), discount_unit=1
-    ).order_by('discount_price').values('discount_price')[:1]
-
-    default_image_subquery = ProductImages.objects.filter(
-        product=OuterRef('pk'), is_default=True
-    ).values('id')[:1]
-
-    products = Product.objects.annotate(
-        discount=Subquery(discount_price_subquery)
-    ).filter(is_active=True).prefetch_related(
-        Prefetch('images',
-                 queryset=ProductImages.objects.filter(
-                     Q(pk__in=Subquery(default_image_subquery)))))[:10]
-
+    products = Product.objects.get_popular_products()
     categories = Category.objects.all()
 
-    categories = context = {
+    context = {
         'products': products,
         'categories': categories
     }
+
     return render(request, 'home.html', context)
+
+
+def my_custom_page_not_found_view(request, exception):
+    products = Product.objects.get_popular_products()
+    context = {
+        'products': products
+    }
+    return render(request, '404.html', status=404, context=context)

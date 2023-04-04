@@ -26,6 +26,8 @@ urlpatterns = [
     path('ecommerce/', include('ecommerce.urls'))
 ]
 
+handler404 = 'ecommerce_website.views.my_custom_page_not_found_view'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

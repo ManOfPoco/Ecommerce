@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Prefetch, Subquery, OuterRef
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -6,6 +7,19 @@ from shippings.models import ShippingType
 from django.core.validators import MinValueValidator
 
 from django.utils.translation import gettext_lazy as _
+
+
+class ProductManager(models.Manager):
+    def get_popular_products(self):
+        discount_price_subquery = ProductDiscount.objects.filter(
+            product=OuterRef('pk'), discount_unit=1
+        ).order_by('discount_price').values('discount_price')[:1]
+
+        return self.annotate(
+            discount=Subquery(discount_price_subquery)
+        ).filter(is_active=True).prefetch_related(
+            Prefetch('images',
+                     queryset=ProductImages.objects.filter(is_default=True)))[:10]
 
 
 class Product(models.Model):
@@ -32,6 +46,8 @@ class Product(models.Model):
     quantity = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ProductManager()
 
     def __str__(self) -> str:
         return f"{self.product_name}"

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+
+<div class="container">
+    {% include './snippets/breadcrumbNavBar.html' with data='404' %}
+
+    <div class="row" style="margin-top: 100px;margin-bottom: 75px;">
+        <div class="col">
+            <div class="row 404-header justify-content-center" style="line-height: 80px;">
+                <div class="error-404 fw-bold text-center" style="font-size:140px">
+                    404
+                </div>
+                <div class="fw-bold text-center" style="font-size:30px">
+                    ERROR
+                </div>
+            </div>
+            <div class="row mt-2">
+                <p class="fs-3 fw-normal">The page you want can’t be found. It may have been removed,had its name changed,or is temporarily
+                    unavailable.</p>
+            </div>
+            <div class="row">
+                <p class="fs-3 fw-bold">Try checking the spelling of the URL</p>
+            </div>
+        </div>
+        <div class="col">
+            <img src="{% static 'img/error_404.png' %}" alt="404">
+        </div>
+    </div>
+
+    {% include './snippets/card-swiper-preview.html' with title='New & Trending' %}
+    {% include './snippets/swiper-products.html' with categories=products %}
+</div>
+<!-- Content -->
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    createSwiper('brandAccessories');
+</script>
+{% endblock script %}

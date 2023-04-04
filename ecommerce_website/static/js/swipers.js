@@ -23,5 +23,4 @@ function createSwiper(swiperIdName) {
     });
 }
 
-createSwiper('brandAccessories');
 createSwiper('customersPrefer');
