@@ -8,19 +8,19 @@
 <div class="container">
     {% include 'snippets/breadcrumbNavBar.html' with data='Mattresses' %}
 
+    <!-- Preview -->
     {% include 'snippets/page-preview.html' with title='MATTRESSES' subtitle='Make Sweet Dreams Your Reality' %}
-
     <div class='row'>
-        <div class='col'>
-            <a href="#">
-                <img src="{% static 'products/img/mattresses/Serta_Perfect_Sleeper_Manor.webp' %}"
-                    alt="Serta_Perfect_Sleeper_Manor">
-            </a>
-        </div>
+        <a href="#">
+            <img src="{% static 'products/img/mattresses/Serta_Perfect_Sleeper_Manor.webp' %}"
+                alt="Serta_Perfect_Sleeper_Manor">
+        </a>
     </div>
+    <!-- End Preview -->
 
+    <!-- Size Mattresses -->
     {% include 'snippets/card-swiper-preview.html' with title='Shop By Size' text_center=True %}
-
+    
     <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center text-center card-styles">
         {% for category in all_size %}
             <div class="col">
@@ -39,7 +39,9 @@
             </div>
         {% endfor %}
     </div>
+    <!-- End Size Mattresses -->
 
+    <!-- Type Mattresses -->
     {% include 'snippets/card-swiper-preview.html' with title='Shop By Type' text_center=True %}
     <div class="row row-cols-2 row-cols-lg-4 g-4 justify-content-center text-center card-styles">
         {% for type in all_type %}
@@ -59,10 +61,12 @@
             </div>
         {% endfor %}
     </div>
+    <!-- End Type Mattresses -->
 
+    <!-- Mattresses Brands -->
     {% include 'snippets/card-swiper-preview.html' with title='Shop By Brand' text_center=True %}
-
     {% include './snippets/card-brands.html' with categories=brands %}
+    <!-- End Mattresses Brands -->
 
 </div>
 {% endblock content %}
@@ -119,6 +123,4 @@
 </div>
 {% endblock seo-copy %}
 
-{% block script %}
-
-{% endblock script %}
+{% block script %}{% endblock script %}

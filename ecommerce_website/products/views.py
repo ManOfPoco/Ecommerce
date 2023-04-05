@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
 from . import services
 
@@ -11,7 +11,8 @@ class CategoryView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         slug = kwargs.get('slug')
-        category = Category.objects.get(slug=slug)
+        category = get_object_or_404(Category, slug=slug, mptt_level=0)
+
         category_params = services.CATEGORY_PARAMS.get(slug, {})
         category_children = category.get_children()
 

@@ -1,5 +1,8 @@
-<div class="row mb-3">
-    <div class="col mt-5 px-4 pb-3 {% if text_center %}text-center{% endif %}">
+<div class="row mt-4 mb-3">
+    <div class="col {% if text_center %}text-center{% endif %}">
         <h3 class="azo-suns-bold title-item-primary">{{title}}</h3>
+        {% if subtitle %}
+            <h4 class="fs-5 fw-normal">{{subtitle}}</h4>
+        {% endif %}
     </div>
 </div>

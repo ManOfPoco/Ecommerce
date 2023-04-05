@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Home Decor' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='HOME DECOR' subtitle='Everything you need for your home refresh' %}
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'products/img/homedecor/homeDecor.webp' %}" alt="grocery" style="min-height: 285px;">
+        </a>
+    </div>
+    <!-- End Preview -->
+
+    <!-- Categories -->
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Category' subtitle='A fresh selection of favorites' %}
+    {% include 'snippets/card-categories.html' with categories=categories %}
+    <!-- End Categories -->
+
+    <div class="row mt-4">
+        <div class="col px-0">
+            <a href="#">
+                <img src="{% static 'products/img/newArrivals.webp' %}" alt="newArrivals">
+            </a>
+        </div>
+        <div class="col px-0">
+            <a href="#">
+                <img src="{% static 'products/img/buyouts.webp' %}" alt="buyouts">
+            </a>
+        </div>
+    </div>
+
+</div>
+    <!-- Content -->
+{% endblock content %}
+{% block seo-copy %}
+<!-- SeoCopy -->
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <p><strong>Home Décor</strong><br />
+
+            <p>Need some decorating ideas? Check out our <a href="">guide to decorating on a budget</a> and learn
+                how you can give
+                your home a fresh new look for less.</p>
+
+            <p><strong>Stylish Home Décor for Less</strong><br />
+
+            <p>Whether you’re going for classic or chic, make it happen with home accents and decor from Big Lots.
+                Start with stunning window treatments - <a href="">curtains</a>, window hardware, blinds and shades.
+                Then cozy up
+                the floors with <a href="">accent rugs</a>, area rugs, and floor mats to keep everyone comfortable.
+                Find the home
+                accents that will make your décor stand out - framed mirrors in all shapes and sizes, statement wall
+                art, picture frames and <a href="">decorative pillows</a>. Sweeten things up with our amazing
+                assortment of scented
+                <a href="">candles</a>, candle holders, wax burners and LED candles.
+            </p>
+
+            <p>Personalize your space with quality home décor from Big Lots, at prices you’ll love!</p>
+
+        </div>
+    </div>
+</div>
+<!-- SeoCopy -->
+{% endblock seo-copy %}
+
+{% block script %}{% endblock script %}

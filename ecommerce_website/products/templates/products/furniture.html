@@ -17,43 +17,47 @@
             <img src="{% static 'products/img/furniture/shopAllLivingRoom.webp' %}" alt="shopAllLivingRoom">
         </a>
     </div>
-    <!-- Preview -->
+    <!-- End Preview -->
 
-    <!-- FurnitureDeals -->
-
+    <!-- All Bedroom Categories -->
     {% include 'snippets/card-categories.html' with categories=all_bedroom %}
+    <!-- End Bedroom Categories -->
 
+    <!-- All Dining Room Categories -->
     <div class="row mt-4 mb-4">
         <a href="#">
             <img src="{% static 'products/img/furniture/shopAllStorage&Entryway.webp' %}" alt="storage&entry">
         </a>
     </div>
-
     {% include 'snippets/card-categories.html' with categories=all_dining_room %}
+    <!-- End All Dining Room Categories -->
 
+    <!-- All Home Ofiice Categories -->
     <div class="row mt-4 mb-4">
         <a href="#">
             <img src="{% static 'products/img/furniture/shopAllBedroom.webp' %}" alt="bedroom">
         </a>
     </div>
-
     {% include 'snippets/card-categories.html' with categories=all_home_office %}
+    <!-- End All Home Ofiice Categories -->
 
+    <!-- All Living Room Categories -->
     <div class="row mt-4 mb-4">
         <a href="#">
             <img src="{% static 'products/img/furniture/shopAllDiningRoom.webp' %}" alt="diningRoom">
         </a>
     </div>
-
     {% include 'snippets/card-categories.html' with categories=all_living_room %}
+    <!-- End All Living Room Categories -->
 
+    <!-- Entryway Categories -->
     <div class="row mt-4 mb-4">
         <a href="#">
             <img src="{% static 'products/img/furniture/shopAllHomeOffice.webp' %}" alt="homeOffice">
         </a>
     </div>
-
     {% include 'snippets/card-categories.html' with categories=entryways %}
+    <!-- End Entryway Categories -->
 
     <div class="row mt-4">
         <a href="#">
@@ -64,12 +68,12 @@
     <div class="row mt-4">
         <div class="col px-0">
             <a href="#">
-                <img src="{% static 'products/img/furniture/newArrivals.webp' %}" alt="newArrivals">
+                <img src="{% static 'products/img/newArrivals.webp' %}" alt="newArrivals">
             </a>
         </div>
         <div class="col px-0">
             <a href="#">
-                <img src="{% static 'products/img/furniture/buyouts.webp' %}" alt="buyouts">
+                <img src="{% static 'products/img/buyouts.webp' %}" alt="buyouts">
             </a>
         </div>
     </div>
@@ -119,5 +123,4 @@
 <!-- SeoCopy -->
 {% endblock seo-copy %}
 
-{% block script %}
-{% endblock script %}
+{% block script %}{% endblock script %}

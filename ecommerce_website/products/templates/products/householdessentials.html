@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Household Essentials' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='HOUSEHOLD ESSENTIALS' subtitle='BIG Savings on the Brands You Love!' %}
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'products/img/householdessentials/HouseHoldEssentialsBanner.webp' %}" alt="grocery" style="min-height: 285px;">
+        </a>
+    </div>
+    <!-- End Preview -->
+
+    <!-- Categories -->
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Category' subtitle='Everything You Need for Your Home' %}
+    {% include 'snippets/card-categories.html' with categories=categories %}
+    <!-- End Categories -->
+
+    <!-- Top Trending Products -->
+    {% include 'snippets/card-swiper-preview.html' with title='Top Trending Products' %}
+    {% include 'snippets/swiper-products.html' with products=products %}
+    <!-- End Top Trending Products -->
+
+</div>
+<!-- Content -->
+{% endblock content %}
+
+{% block seo-copy %}
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <p><strong>Household Essentials</strong><br />
+                
+                <p>Find the home essentials you always need at great low prices at Big Lots, and a newly expanded
+                    assortment online! Find everything from cleaning supplies to paper plates and food storage. We make
+                    it easy to stock up and save big on household essentials in one quick and convenient trip!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock seo-copy %}
+        
+
+{% block script %}{% endblock script %}

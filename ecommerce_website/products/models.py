@@ -29,11 +29,13 @@ class ProductManager(models.Manager):
         return queryset[:10]
 
     def unique_brands_in_category(self, category):
-        brands = cache.get('CACHED_BRANDS')
+        brands = cache.get(
+            f'CACHED_BRANDS_FOR_{category.category_name.upper()}')
         if brands is None:
             brands = Product.objects.select_related('brand').filter(
                 category=category).distinct()
-            cache.set('CACHED_BRANDS', brands, 60*60)
+            cache.set(
+                f'CACHED_BRANDS_FOR_{category.category_name.upper()}', brands, 60*60)
 
         return brands
 
