@@ -72,9 +72,21 @@ class AttributeAdmin(admin.ModelAdmin):
     inlines = [AttributeValueInline, ]
 
 
+class CategoryInline(admin.StackedInline):
+    model = Category
+    extra = 2
+
+    fields = [('category_name', 'slug'), 'image', 'is_active']
+    prepopulated_fields = {'slug': ('category_name',)}
+
+    verbose_name = 'Child Category'
+    verbose_name_plural = 'Child Categories'
+
+
 @admin.register(Category)
 class CategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {'slug': ('category_name',)}
+    fields = [('category_name', 'slug'), 'image', 'is_active']
 
     list_display = [
         'category_name',
@@ -83,6 +95,8 @@ class CategoryAdmin(MPTTModelAdmin):
     ]
 
     mptt_level_indent = 20
+
+    inlines = [CategoryInline]
 
 
 @admin.register(Brand)

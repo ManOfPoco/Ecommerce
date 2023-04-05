@@ -8,7 +8,7 @@ register = template.Library()
 @register.simple_tag
 def calculate_discount_saving(regular_price: Decimal, discount_price: Decimal):
     discount_sum = round(regular_price, 2) - round(discount_price, 2)
-    discount_percent = round(discount_sum / 100 * 100)
+    discount_percent = round(discount_sum / regular_price * 100)
 
     return f"${discount_sum} ({discount_percent}%)"
 

@@ -1,13 +1,16 @@
 CATEGORY_PARAMS = {
     'furniture': {
+        'categories': 'subcategories',
         'products': False,
         'brands': False,
     },
     'grocery': {
+        'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
     'matteresses': {
+        'categories': 'subcategories',
         'products': False,
         'brands': True,
         'size': {
@@ -20,22 +23,27 @@ CATEGORY_PARAMS = {
         }
     },
     'beautypersonalcare': {
+        'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
     'bedbath': {
+        'categories': 'all_categories',
         'products': True,
         'brands': True,
     },
     'homedecor': {
+        'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
     'householdessentials': {
+        'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
     'patiogarden': {
+        'categories': 'all_categories',
         'products': True,
         'brands': False,
     },

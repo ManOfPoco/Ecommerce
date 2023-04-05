@@ -12,21 +12,27 @@ class CategoryView(TemplateView):
 
         slug = kwargs.get('slug')
         category = Category.objects.get(slug=slug)
-
-        children = category.get_children(
-        ).prefetch_related('children__children')
-        for child in children:
-            key = child.slug.replace('-', '_')
-            context[key] = child.children.all()
-
         category_params = services.CATEGORY_PARAMS.get(slug, {})
+        category_children = category.get_children()
+
+        if category_params['categories'] == 'subcategories':
+            category_children = category_children.prefetch_related(
+                'children__children')
+
+            for child in category_children:
+                key = child.slug.replace('-', '_')
+                context[key] = child.children.all()
+        else:
+            context['categories'] = category_children
+
         for key, value in category_params.items():
             if value:
                 if key == 'brands':
                     context[key] = Product.objects.unique_brands_in_category(
                         category)
                 elif key == 'products':
-                    context[key] = Product.objects.get_popular_products()
+                    context[key] = Product.objects.get_popular_products(
+                        category=category)
                 elif key == 'size':
                     context[key] = value
 

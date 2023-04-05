@@ -12,16 +12,21 @@ from django.core.cache import cache
 
 
 class ProductManager(models.Manager):
-    def get_popular_products(self):
+    def get_popular_products(self, category=None):
         discount_price_subquery = ProductDiscount.objects.filter(
             product=OuterRef('pk'), discount_unit=1
         ).order_by('discount_price').values('discount_price')[:1]
 
-        return self.annotate(
+        queryset = self.annotate(
             discount=Subquery(discount_price_subquery)
-        ).filter(is_active=True).prefetch_related(
+        ).select_related('brand').filter(is_active=True).prefetch_related(
             Prefetch('images',
-                     queryset=ProductImages.objects.filter(is_default=True)))[:10]
+                     queryset=ProductImages.objects.filter(is_default=True)))
+
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset[:10]
 
     def unique_brands_in_category(self, category):
         brands = cache.get('CACHED_BRANDS')
@@ -51,7 +56,7 @@ class Product(models.Model):
     attribute = models.ManyToManyField('Attribute', blank=True)
     available_shipping_types = models.ManyToManyField(
         ShippingType, blank=True)
-    sku = models.IntegerField()
+    sku = models.IntegerField(unique=True)
     slug = models.SlugField(blank=True, max_length=255)
     is_active = models.BooleanField(default=True)
     quantity = models.IntegerField(default=0)

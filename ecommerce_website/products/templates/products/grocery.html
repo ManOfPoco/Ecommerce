@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Grocery' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='GROCERY' subtitle='Delicious DEALS on the Brands You Love!' %}
+    <div class="row mb-4">
+        <a href="#">
+            <img src="{% static 'products/img/grocery/site-grocery-hero-dt-1920x940.webp' %}" alt="grocery">
+        </a>
+    </div>
+    <!-- End Preview -->
+
+    <!-- Categories -->
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Category' %}
+    {% include 'snippets/card-categories.html' with categories=categories %}
+    <!-- Categories -->
+
+    <!-- Popular Products -->
+    {% include 'snippets/card-swiper-preview.html' with title='Popular Products' %}
+    {% include 'snippets/swiper-products.html' with products=products %}
+    <!-- End Popular Products -->
+
+    <div class="row mb-4">
+        <a href="#">
+            <img src="{% static 'products/img/grocery/LegacyBanner-960x200.jpg' %}" alt="grocery">
+        </a>
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block seo-copy %}
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <p><strong>Grocery</strong><br />
+            <p>Big Lots offers a wide selection of groceries at affordable prices. Whether you&rsquo;re
+                providing
+                for
+                your loved ones or hosting a party with friends, shop Big Lots for amazing grocery deals
+                on
+                food,
+                drinks, snacks and more.</p>
+
+            <p><strong>Name brands at a price you&rsquo;ll love</strong><br />
+                Enjoy the brands your family loves at a price that works for you from our grocery
+                department!
+                From
+                hydrating Gatorade sport drinks to tasty Doritos flavored tortilla chips, getting
+                groceries
+                at
+                Big
+                Lots
+                allows you to stock your pantry with tasty goodies.</p>
+
+            <p><strong>Affordable Fresh Finds foods &amp; more</strong><br />
+                Fresh Finds grocery products bring classic flavors and tastes to your culinary creations
+                and
+                masterpieces at a fantastic price. Get condiments, spices, spreads and more with this
+                amazing
+                grocery
+                collection &ndash; only at Big Lots!</p>
+
+            <p><strong>Coffee brew at a great deal</strong><br />
+                Needing your daily cup of Joe? We feature delicious Victor Allen, Indulgio and other <a
+                    href="#">branded
+                    coffee</a>
+                in grounds or coffee pods. Perfect for your mug at home, on-the-go or at the office,
+                pair
+                these
+                flavorings with delicious creamers and sugars.</p>
+
+            <p>Shop at your local Big Lots for all your groceries from breakfast to dinner time!</p>
+        </div>
+    </div>
+</div>
+{% endblock seo-copy %}
+
+{% block script %}{% endblock script %}

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Bed & Bath' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='BED & BATH' subtitle='Your home refresh starts here!' %}
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'products/img/bedbath/Bad&BathBanner.webp' %}" alt="grocery" style="min-height: 285px;">
+        </a>
+    </div>
+    <!-- End Preview -->
+
+    <!-- Categories -->
+    <div class="row">
+        <div class="col ps-2 pb-4">
+            <h4 class="mt-3 mb-1 azo-suns-bold">Shop by category</h4>
+            <h6 class="title-item-secondary">New looks for LESS!</h6>
+        </div>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center text-center card-styles">
+        <div class="col">
+            <a href="#">
+                <div class="card card-categories">
+                    <div class="col">
+                        <img src="img/easymeals.webp" class="card-img-top" alt="coffee">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Coffee</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- continue cards -->
+    </div>
+    <!-- Categories -->
+
+    <!-- ShopByBrand -->
+    <div class="row">
+        <div class="col ps-2 pb-4 text-center">
+            <h4 class="mt-3 mb-1 azo-suns-bold">Shop by Brand</h4>
+        </div>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center text-center card-styles">
+        <div class="col">
+            <a href="#">
+                <div class="card card-categories">
+                    <div class="col">
+                        <img src="img/easymeals.webp" class="card-img-top" alt="coffee">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Coffee</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- continue cards -->
+    </div>
+    <!-- ShopByBrand -->
+
+    <div class="row mb-2">
+        <div class="col ps-2 text-center">
+            <h4 class="mt-3 azo-suns-bold">New, Now, Wow!</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col ps-0">
+            <a href="#">
+                <img src="img/shopByCategory-Bed&Bath/NewArrivalsBad&Bath.webp" alt="NewArrivals">
+            </a>
+        </div>
+        <div class="col pe-0">
+            <a href="#">
+                <img src="img/shopByCategory-Bed&Bath/BestSellersBed&Sellers.webp" alt="NewArrivals">
+            </a>
+        </div>
+    </div>
+
+    <!-- Popular Products -->
+    <div class="row">
+        <div class="col mt-5 ps-2 pb-3">
+            <h3 class="azo-suns-bold title-item-primary">Top Trending Products</h3>
+        </div>
+    </div>
+
+    <!-- Swiper -->
+    <div class="swiper" id="brandAccessories">
+        <div class="swiper-wrapper card-styles">
+            <div class="swiper-slide">
+                <a href="#">
+                    <div class="card">
+                        <img src="img/810390393.webp" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h4 class="card-title mb-0 azo-suns-bold" style="font-size: 20px;">$2.29</h4>
+                            <div class="row" style="font-size:10px">
+                                <div class="col-auto card-title text-decoration-line-through text-muted pe-0">
+                                    $3.33
+                                </div>
+                                <div class="col-auto ps-1 card-title-promotion">
+                                    Save $1.04 (20%)
+                                </div>
+                            </div>
+                            <p class="card-text card-body-brand">Broyhill</p>
+                            <p class="card-text card-body-productName">Gold Bears Gummi Candy, 5 Oz.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Continue -->
+        </div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+    <!-- Swiper -->
+    <!-- Popular Products -->
+</div>
+<!-- Content -->
+
+{% block seo-copy %}
+<!-- SeoCopy -->
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <p><strong>Bed & Bath</strong><br />
+            <h4 class="mb-1">Save on Bed & Bath Essentials</h4>
+            <p>Big Lots has a great variety of home goods at low prices, including bed & bath essentials. Updating
+                your bed sheets or your comforter set has never been easier or more affordable! Create a brand new
+                look for your bedroom with stylish bedding, window treatments, and décor.</p>
+
+            <p>Bathroom essentials like bath towels, bathroom storage, and décor can all be found at Big Lots as
+                well. You can count on finding incredible value on all types of bath essentials on line and at your
+                local Big Lots store. Don’t forget to check out our personal care items for savings on things like
+                soap, body wash, shampoo, and other bathroom needs.</p>
+        </div>
+    </div>
+</div>
+<!-- SeoCopy -->
+{% endblock seo-copy %}
+
+{% block script %}{% endblock script %}

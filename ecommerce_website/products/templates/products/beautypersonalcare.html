@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Beauty & Personal Care' %}
+
+    <!-- Preview -->
+    {% include 'snippets/page-preview.html' with title='BEAUTY & PERSONAL CARE' subtitle='Take self-care to the next level.' %}
+    <div class="row">
+        <a href="#">
+            <img src="{% static 'products/img/beautypersonalcare/BeautyPersonalCareBanner.webp' %}"
+            alt="HouseHoldEssentials">
+        </a>
+    </div>
+
+    <!-- Categories -->
+    {% include 'snippets/card-swiper-preview.html' with title='Shop By Category' %}
+    {% include 'snippets/card-categories.html' with categories=categories %}
+    
+
+    {% include 'snippets/card-swiper-preview.html' with title='Top Trending Products' %}
+    {% include 'snippets/swiper-products.html' with products=products %}
+</div>
+{% endblock content %}
+
+{% block seo-copy %}
+<div class="container seo-copy">
+    <div class="row mt-5" style="color:#7e7e7e; font-size: .75rem;">
+        <div class="col-8">
+            <h4 class="mb-3">Save on Personal Care Products at Big Lots</h4>
+
+            <h5 class="mb-3">Personal Care Products for Your Morning Routine</h5>
+
+            <p>Step up your morning routine with these amazing personal hygiene products from Big Lots! We feature
+                great deals on trusted personal care products <a href="#">like bath & body products</a>, <a href="#">skin care products</a> such as
+                lotions and creams and <a href="#">oral care products</a> like toothpaste, mouth washes and more.</p>
+
+            <h5 class="mb-3">Hair Care & Styling</h5>
+
+            <p>Step up your morning routine with these amazing personal hygiene products from Big Lots! We feature
+                great deals on trusted personal care products like bath & body products, skin care products such as
+                lotions and creams and oral care products like toothpaste, mouth washes and more.</p>
+
+            <h5 class="mb-3">Personal Grooming</h5>
+
+            <p>Step up your morning routine with these amazing personal hygiene products from Big Lots! We feature
+                great deals on trusted personal care products like bath & body products, skin care products such as
+                lotions and creams and oral care products like toothpaste, mouth washes and more.</p>
+
+            <h5 class="mb-3">Health & First Aid </h5>
+
+            <p>Our selection of health and first aid products are great to have on hand when your kids come home
+                from school with a bug. Find low prices on cold and flu medications, bandages, creams, lotions, pain
+                relievers & more. </p><br>
+
+            <p>Visit your local Big Lots or shop online for the greatest prices on name brands in personal care!</p>
+        </div>
+    </div>
+</div>
+{% endblock seo-copy %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <script src="js/nav-barDeals.js"></script>
+    <script src="js/swipers.js"></script>
+</body>
+
+</html>
