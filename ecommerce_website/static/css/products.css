@@ -1,0 +1,54 @@
+.category-title {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.product-title {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+svg#arrow {
+    width: 20px;
+    height: 20px;
+}
+
+svg#filter-arrow {
+    width: 25px;
+    height: 25px;
+}
+
+.sale-badge {
+    background-color: #22A6FF;
+    color: white;
+    font-size: 10px;
+    display: flex;
+    height: 26px;
+}
+
+.bi-heart:hover {
+    fill: red;
+}
+
+.bi-heart-fill:hover {
+    fill: rgb(180, 0, 0);
+}
+
+.stars {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.delivery-links {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.add-to-cart-button {
+    background-color: #ff5a00;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}

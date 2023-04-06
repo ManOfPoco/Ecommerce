@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Subquery, OuterRef
+from django.db.models import Prefetch, Avg
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -10,34 +10,68 @@ from django.utils.translation import gettext_lazy as _
 
 from django.core.cache import cache
 
+from django.template.defaultfilters import slugify
+
+from collections import defaultdict
+
 
 class ProductManager(models.Manager):
-    def get_popular_products(self, category=None):
-        discount_price_subquery = ProductDiscount.objects.filter(
-            product=OuterRef('pk'), discount_unit=1
-        ).order_by('discount_price').values('discount_price')[:1]
 
-        queryset = self.annotate(
-            discount=Subquery(discount_price_subquery)
-        ).select_related('brand').filter(is_active=True).prefetch_related(
-            Prefetch('images',
-                     queryset=ProductImages.objects.filter(is_default=True)))
+    def get_popular_products(self, category=None):
+        queryset = self.filter(is_active=True).select_related('brand').prefetch_related(
+            Prefetch('images', queryset=ProductImages.objects.filter(is_default=True)))
+
+        queryset = queryset.prefetch_related(Prefetch(
+            'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))
 
         if category:
-            queryset = queryset.filter(category=category)
+            categories = category.get_descendants(include_self=True)
+            queryset = queryset.filter(category__in=categories)
 
         return queryset[:10]
 
     def unique_brands_in_category(self, category):
         brands = cache.get(
-            f'CACHED_BRANDS_FOR_{category.category_name.upper()}')
+            f'CACHED_BRANDS_FOR_{slugify(category.category_name)}'
+        )
         if brands is None:
             brands = Product.objects.select_related('brand').filter(
                 category=category).distinct()
             cache.set(
-                f'CACHED_BRANDS_FOR_{category.category_name.upper()}', brands, 60*60)
+                f'CACHED_BRANDS_FOR_{slugify(category.category_name)}', brands, 60*60)
 
         return brands
+
+    def get_filters(self, category):
+        filters = cache.get(
+            f'CACHED_FILTERS_FOR_{slugify(category.category_name)}'
+        )
+        if filters is None:
+            products = Product.objects.filter(category=category
+                                              ).prefetch_related('attribute')
+            filters = defaultdict(list)
+
+            for product in products:
+                for product_filter in product.attribute.all():
+                    filter_name = product_filter.attribute_name
+                    filters[filter_name].append(
+                        product_filter.attribute_value)
+            filters.default_factory = None
+            cache.set(
+                f'CACHED_FILTERS_FOR_{slugify(category.category_name)}', filters, 60*60
+            )
+        return filters
+
+    def get_products(self, category):
+        category_descendants = category.get_descendants(include_self=True)
+        queryset = self.select_related('brand').prefetch_related('available_shipping_types').filter(
+            category__in=category_descendants, is_active=True).order_by(
+                'updated_at', 'created_at').annotate(rating=Avg('reviews__product_rating'))
+
+        queryset = queryset.prefetch_related(Prefetch(
+            'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))
+
+        return queryset
 
 
 class Product(models.Model):
@@ -107,24 +141,13 @@ class Brand(models.Model):
 
 class Attribute(models.Model):
     attribute_name = models.CharField(_('Attribute Name'), max_length=255)
+    attribute_value = models.CharField(max_length=255)
 
     class Meta:
         verbose_name_plural = 'Attributes'
 
     def __str__(self) -> str:
-        return f"{self.attribute_name}"
-
-
-class AttributeValue(models.Model):
-    attribute = models.ForeignKey(
-        Attribute, on_delete=models.CASCADE, related_name='attribute_value')
-    attribute_value = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name_plural = 'Attribute Values'
-
-    def __str__(self) -> str:
-        return f"{self.attribute_value}"
+        return f"{self.attribute_name}: {self.attribute_value}"
 
 
 class Features(models.Model):
@@ -156,6 +179,7 @@ class Coupon(models.Model):
 class ProductDiscount(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='discounts')
+    discount_description = models.TextField(_('Discount Description'))
     discount_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_unit = models.IntegerField()
     start_date = models.DateTimeField(blank=True, null=True)

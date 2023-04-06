@@ -10,7 +10,6 @@ from .models import (
     Coupon,
 
     Attribute,
-    AttributeValue,
     ProductImages,
     ProductDiscount,
     ShippingType,
@@ -62,16 +61,6 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
 
-class AttributeValueInline(admin.StackedInline):
-    model = AttributeValue
-    extra = 2
-
-
-@admin.register(Attribute)
-class AttributeAdmin(admin.ModelAdmin):
-    inlines = [AttributeValueInline, ]
-
-
 class CategoryInline(admin.StackedInline):
     model = Category
     extra = 2
@@ -110,3 +99,4 @@ admin.site.register(Features)
 admin.site.register(Coupon)
 admin.site.register(ProductDiscount)
 admin.site.register(ProductImages)
+admin.site.register(Attribute)
