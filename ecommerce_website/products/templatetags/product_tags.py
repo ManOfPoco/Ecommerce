@@ -13,8 +13,16 @@ def calculate_discount_saving(regular_price: Decimal, discount_price: Decimal):
     return f"${discount_sum} ({discount_percent}%)"
 
 
+@register.simple_tag
+def build_url_path(category):
+    category_ancestors = category.get_ancestors(include_self=True)
+    path = '/'.join([category.slug for category in category_ancestors])
+
+    return path
+
+
 @register.filter
-def if_string(value):
+def is_string(value):
     return isinstance(value, SafeString)
 
 

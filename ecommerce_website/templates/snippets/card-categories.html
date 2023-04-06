@@ -1,7 +1,14 @@
+{% load product_tags %}
 <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center text-center card-styles">
     {% for category in categories %}
         <div class="col">
-            <a href="{% url 'products:category' category.slug %}">
+            <a href="
+            {% if category.mptt_level == 0 %}
+                {% url 'products:category' category.slug %}
+            {% else %}
+                {% build_url_path category as path %}
+                {% url 'products:products' path %}
+            {% endif %}">
                 <div class="card">
                     <div class="col">
                         <img src="{{category.image.url}}" class="card-img-top" alt="{{category.category_name}}">

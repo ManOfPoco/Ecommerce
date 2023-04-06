@@ -4,96 +4,95 @@
 <div class="col mt-4 mb-4">
     <div class="row row-cols-2 row-cols-lg-3 g-4 card-styles">
         {% for product in products %}
-            {% if forloop.counter|divisibleby:4 %}</div><div class="row row-cols-2 row-cols-lg-3 g-4 card-styles mt-2">{% endif %}
-                <div class="col">
-                    <div class="card">
+            <div class="col">
+                <div class="card">
 
-                        <div class="row ps-3 mb-4">
-                            {% if product.discounts %}
-                                <div class="col-auto sale-badge px-3 align-items-center">
-                                    SALE
-                                </div>
-                            {% endif %}
-                            <div class="col text-end">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" fill="grey"
-                                    class="bi bi-heart" viewBox="0 0 16 16">
-                                    <path
-                                        d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                </svg>
+                    <div class="row ps-3 mb-4">
+                        {% if product.discounts %}
+                            <div class="col-auto sale-badge px-3 align-items-center">
+                                SALE
                             </div>
+                        {% endif %}
+                        <div class="col text-end">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" fill="grey"
+                                class="bi bi-heart" viewBox="0 0 16 16">
+                                <path
+                                    d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                            </svg>
                         </div>
+                    </div>
 
-                        <a href="#">
-                            <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="...">
+                    <a href="#">
+                        <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="...">
 
-                            {% with product.discounts as discounts %}
-                                <div class="card-body px-0 py-1">
-                                    {% with discounts.first as unit_discount %}
-                                        <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
-                                        <div class="row" style=height:16.5px>
-                                            {% if discounts.first %}
-                                                <div
-                                                    class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
-                                                    ${{product.regular_price|floatformat:'2'}}
-                                                </div>
-                                                {% calculate_discount_saving product.regular_price unit_discount.discount_price as saving %}
-                                                <div class="col-auto ps-1 card-discount">
-                                                    Save {{saving}}
-                                                </div>
-                                            {% else %}
-                                                <br>
-                                            {% endif %}
-                                        </div>
-                                    {% endwith %}
-                                    
-                                    {% if product.brand.brand_name %}
-                                        <p class="card-text card-body-brand mt-3">{{product.brand.brand_name}}</p>
-                                    {% else %}<br>{% endif %}
-                                    <p class="card-text card-body-productName pe-3">{{product.product_name}}</p>
-
-                                    <div class="row">
-                                        {% if product.rating %}
-                                            <div class="col-auto pe-0 align-items-center stars">
-                                                <img src="{% static 'icons/star-fill.svg' %}" alt="stars">
+                        {% with product.discounts as discounts %}
+                            <div class="card-body px-0 py-1">
+                                {% with discounts.first as unit_discount %}
+                                    <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
+                                    <div class="row" style=height:16.5px>
+                                        {% if discounts.first %}
+                                            <div
+                                                class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
+                                                ${{product.regular_price|floatformat:'2'}}
                                             </div>
-                                            <div class="col ps-1 align-items-center stars">
-                                                {{product.rating}}
+                                            {% calculate_discount_saving product.regular_price unit_discount.discount_price as saving %}
+                                            <div class="col-auto ps-1 card-discount">
+                                                Save {{saving}}
                                             </div>
                                         {% else %}
                                             <br>
                                         {% endif %}
                                     </div>
-                                    
-                                    <div class="row">
-                                        {% with discounts.last as grand_discount %}
-                                            {% if grand_discount.discount_unit >= 2 %}
-                                                <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
-                                                    <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{grand_discount.discount_description}}
-                                                </div>
-                                            {% else %}
-                                                <br>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                </div>
-                            {% endwith %}
-                        </a>
+                                {% endwith %}
+                                
+                                {% if product.brand.brand_name %}
+                                    <p class="card-text card-body-brand mt-3">{{product.brand.brand_name}}</p>
+                                {% else %}<br>{% endif %}
+                                <p class="card-text card-body-productName pe-3">{{product.product_name}}</p>
 
-                        <div class="card-bottom pb-3 pt-4">
-                            <div class="row delivery-links">
-                                {% for delivery_type in product.available_shipping_types.all %}
-                                    <div class="col-4 text-center">{{delivery_type.type_name}}</div>
-                                {% endfor %}
+                                <div class="row">
+                                    {% if product.rating %}
+                                        <div class="col-auto pe-0 align-items-center stars">
+                                            <img src="{% static 'icons/star-fill.svg' %}" alt="stars">
+                                        </div>
+                                        <div class="col ps-1 align-items-center stars">
+                                            {{product.rating}}
+                                        </div>
+                                    {% else %}
+                                        <br>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    {% with discounts.last as grand_discount %}
+                                        {% if grand_discount.discount_unit >= 2 %}
+                                            <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
+                                                <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{grand_discount.discount_description}}
+                                            </div>
+                                        {% else %}
+                                            <br>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
                             </div>
+                        {% endwith %}
+                    </a>
 
-                            <div class="row mt-4">
-                                <div class="col text-center">
-                                    <button class="btn add-to-cart-button px-5">Add to Cart</button>
-                                </div>
+                    <div class="card-bottom pb-3 pt-4">
+                        <div class="row delivery-links">
+                            {% for delivery_type in product.available_shipping_types.all %}
+                                <div class="col-4 text-center">{{delivery_type.type_name}}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col text-center">
+                                <button class="btn add-to-cart-button px-5">Add to Cart</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         {% endfor %}
     </div>
 </div>

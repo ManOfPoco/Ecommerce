@@ -9,5 +9,5 @@ app_name = 'products'
 urlpatterns = [
     path('', RedirectView.as_view(url='/')),
     path('<slug:category_slug>/', CategoryView.as_view(), name='category'),
-    path('<slug:category_slug>/<path:category_path>', category_products, name='products'),
+    path('<path:category_path>/', category_products, name='products'),
 ]

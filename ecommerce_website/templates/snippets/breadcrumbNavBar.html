@@ -5,11 +5,22 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mt-2 mb-1 fs-6">
                 <li class="breadcrumb-item text-muted"><a class="text-reset" href="{% url 'home' %}">Home</a></li>
-                {% if data|if_string %}
+                {% if data|is_string %}
                     <li class="breadcrumb-item" aria-current="page">{{data}}</li>
                 {% else %}
                     {% for path in data %}
-                        <li class="breadcrumb-item" aria-current="page">{{path}}</li>
+                        <li class="breadcrumb-item" aria-current="page">
+                            {% if data|length != forloop.counter %}
+                                <a href="
+                                {% if path.mptt_level == 0 %}
+                                    {% url 'products:category' path.slug %}
+                                {% else %}
+                                    {% build_url_path path as breadcrumb_path %}
+                                    {% url 'products:products' breadcrumb_path %}
+                                {% endif %}
+                                ">
+                            {% endif %}
+                        {{path}}</a></li>
                     {% endfor %}
                 {% endif %}
             </ol>
