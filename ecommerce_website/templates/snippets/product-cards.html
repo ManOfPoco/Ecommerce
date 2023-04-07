@@ -2,7 +2,7 @@
 {% load product_tags %}
 
 <div class="col mt-4 mb-4">
-    <div class="row row-cols-2 row-cols-lg-3 g-4 card-styles">
+    <div class="row row-cols-1 row-cols-lg-3 g-4 card-styles">
         {% for product in products %}
             <div class="col">
                 <div class="card">
@@ -29,7 +29,7 @@
                             <div class="card-body px-0 py-1">
                                 {% with discounts.first as unit_discount %}
                                     <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
-                                    <div class="row" style=height:16.5px>
+                                    <div class="row" style='height:16.5px'>
                                         {% if discounts.first %}
                                             <div
                                                 class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
@@ -77,12 +77,16 @@
                             </div>
                         {% endwith %}
                     </a>
-
-                    <div class="card-bottom pb-3 pt-4">
+                    
+                    <div class="card-bottom pb-3 pt-4 align-items-center">
                         <div class="row delivery-links">
-                            {% for delivery_type in product.available_shipping_types.all %}
-                                <div class="col-4 text-center">{{delivery_type.type_name}}</div>
-                            {% endfor %}
+                            {% if product.available_shipping_types.all %}
+                                {% for delivery_type in product.available_shipping_types.all %}
+                                    <div class="col-4 text-center">{{delivery_type.type_name}}</div>
+                                {% endfor %}
+                            {% else %}
+                                <br>
+                            {% endif %}
                         </div>
 
                         <div class="row mt-4">

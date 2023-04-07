@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Avg
+from django.db.models import Prefetch, Avg, Count, Max, Q
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -30,33 +30,76 @@ class ProductManager(models.Manager):
 
         return queryset[:10]
 
-    def unique_brands_in_category(self, category):
+    def get_unique_product_brands(self, category, include_count=False):
         brands = cache.get(
             f'CACHED_BRANDS_FOR_{slugify(category.category_name)}'
         )
+
         if brands is None:
-            brands = Product.objects.select_related('brand').filter(
-                category=category).distinct()
+            brands = Brand.objects.filter(
+                product__category=category).distinct()
+
+            if include_count:
+                brands = brands.annotate(count=Count(
+                    'product', filter=Q(product__category=category)))
+
             cache.set(
                 f'CACHED_BRANDS_FOR_{slugify(category.category_name)}', brands, 60*60)
 
         return brands
+
+    def get_default_filters(self, category, products):
+        default_filters = defaultdict(list)
+
+        brands = self.get_unique_product_brands(
+            category, include_count=True)
+
+        default_filters['Brand'].extend([brand for brand in brands])
+        default_filters['Price'] = products.aggregate(
+            max_price=Max('regular_price'))['max_price']
+        default_filters['Customer Reviews'] = products.aggregate(
+            five_stars=Count('reviews__product_rating',
+                             filter=Q(reviews__product_rating=5)),
+            four_stars=Count('reviews__product_rating',
+                             filter=Q(reviews__product_rating=4)),
+            three_stars=Count('reviews__product_rating',
+                              filter=Q(reviews__product_rating=3)),
+            two_stars=Count('reviews__product_rating',
+                            filter=Q(reviews__product_rating=2)),
+            one_star=Count('reviews__product_rating',
+                           filter=Q(reviews__product_rating=1)),
+        )
+
+        default_filters.default_factory = None
+        return default_filters
+
+    def get_specific_filters(self, products):
+        specific_filters = defaultdict(list)
+
+        for product in products:
+            for product_filter in product.attribute.all():
+                filter_name = product_filter.attribute_name.title()
+                if product_filter.attribute_value and \
+                        product_filter.attribute_value not in specific_filters[filter_name]:
+                    specific_filters[filter_name].append(
+                        product_filter.attribute_value)
+
+        specific_filters.default_factory = None
+        return specific_filters
 
     def get_filters(self, category):
         filters = cache.get(
             f'CACHED_FILTERS_FOR_{slugify(category.category_name)}'
         )
         if filters is None:
-            products = Product.objects.filter(category=category
-                                              ).prefetch_related('attribute')
-            filters = defaultdict(list)
+            filters = defaultdict(dict)
+            products = self.filter(category=category
+                                   ).prefetch_related('attribute')
 
-            for product in products:
-                for product_filter in product.attribute.all():
-                    filter_name = product_filter.attribute_name
-                    filters[filter_name].append(
-                        product_filter.attribute_value)
-            filters.default_factory = None
+            default_filters, specific_filters = self.get_default_filters(
+                category, products), self.get_specific_filters(products)
+
+            filters['default_filters'], filters['specific_filters'] = default_filters, specific_filters
             cache.set(
                 f'CACHED_FILTERS_FOR_{slugify(category.category_name)}', filters, 60*60
             )
@@ -66,7 +109,7 @@ class ProductManager(models.Manager):
         category_descendants = category.get_descendants(include_self=True)
         queryset = self.select_related('brand').prefetch_related('available_shipping_types').filter(
             category__in=category_descendants, is_active=True).order_by(
-                'updated_at', 'created_at').annotate(rating=Avg('reviews__product_rating'))
+                '-updated_at', '-created_at').annotate(rating=Avg('reviews__product_rating'))
 
         queryset = queryset.prefetch_related(Prefetch(
             'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))
@@ -106,8 +149,9 @@ class Product(models.Model):
 
 
 class Category(MPTTModel):
-    category_name = models.CharField(_('Category Name'), max_length=255)
-    slug = models.SlugField(max_length=255)
+    category_name = models.CharField(
+        _('Category Name'), max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
     image = models.ImageField(upload_to='categories', max_length=255)
     is_active = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -131,8 +175,8 @@ class Category(MPTTModel):
 
 
 class Brand(models.Model):
-    brand_name = models.CharField(_("Brand Name"), max_length=255)
-    slug = models.SlugField(blank=True, max_length=255)
+    brand_name = models.CharField(_("Brand Name"), max_length=255, unique=True)
+    slug = models.SlugField(blank=True, max_length=255, unique=True)
     image = models.ImageField(upload_to='brands', null=True, blank=True)
 
     def __str__(self) -> str:

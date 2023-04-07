@@ -29,7 +29,7 @@ class CategoryView(TemplateView):
         for key, value in category_params.items():
             if value:
                 if key == 'brands':
-                    context[key] = Product.objects.unique_brands_in_category(
+                    context[key] = Product.objects.get_unique_product_brands(
                         category)
                 elif key == 'products':
                     context[key] = Product.objects.get_popular_products(
@@ -50,7 +50,7 @@ def category_products(request, **kwargs):
     category_ancestors = category.get_ancestors(include_self=True)
 
     products = Product.objects.get_products(category)
-    products_filters = Product.objects.get_filters(category)
+    filters = Product.objects.get_filters(category)
     popular_products = Product.objects.get_popular_products()
 
     context = {
@@ -59,7 +59,8 @@ def category_products(request, **kwargs):
         'subcategories': category_children,
         'popular_products': popular_products,
         'products': products,
-        'products_filters': products_filters
+        'default_filters': filters['default_filters'],
+        'specific_filters': filters['specific_filters'],
     }
 
     return render(request, 'products/products.html', context)
