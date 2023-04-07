@@ -1,0 +1,58 @@
+{% load static %}
+<!-- Filter Types -->
+{% for filter, values in filters.items %}
+    <div class="row">
+        <div class="col px-4 py-3 fs-4 fw-bold">
+            <a class="" data-bs-toggle="collapse" href="#{{filter|slugify}}" role="button" aria-expanded="false"
+                aria-controls="collapseExample">
+                <div class="row">
+                    <div class="col text-start">
+                        {{filter}}
+                    </div>
+                    <div class="col-auto text-end">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="filter-arrow" x="0" y="0" version="1.1"
+                            viewBox="0 0 29 29" xml:space="preserve">
+                            <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-miterlimit="10" stroke-width="2" d="m20.5 11.5-6 6-6-6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Filters Data -->
+        <div class="collapse" id="{{filter|slugify}}">
+            <div class="row px-4">
+                {% if filter == 'Price' %}
+                    From $
+                    <input type="number" id="minPrice" class="form-control border border-dark-subtle" aria-labelledby="passwordHelpInline">
+                    to $
+                    <input type="number" id="maxPrice" class="form-control border border-dark-subtle" aria-labelledby="passwordHelpInline">
+                {% elif filter == 'Customer Reviews' %}
+                    {% for rating, value in values.items %}
+                        {% if value != 0 %}
+                            <div class="form-check py-2">
+                                <input class="form-check-input border-dark" type="checkbox" value="" id="flexCheck{{value}}">
+                                <label class="form-check-label my-auto" for="flexCheck{{value}}">
+                                    <div id="{{rating}}"></div>
+                                    ({{values.five_stars}})
+                                </label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                {% else %}
+                    {% for value in values %}
+                        <div class="form-check py-2">
+                            <input class="form-check-input border-dark" type="checkbox" value="" id="flexCheck{{value}}">
+                            <label class="form-check-label my-auto" for="flexCheck{{value}}">
+                                {{value}} {% if value.count %}({{value.count}}){% endif %}
+                            </label>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- End FiltersData -->
+    </div>
+{% endfor %}
+<!-- End Filter Types -->

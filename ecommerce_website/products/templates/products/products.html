@@ -3,6 +3,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/products.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
 {% endblock head %}
 
 {% block content %}
@@ -13,12 +14,12 @@
 
     <!-- Shop By Category -->
     {% if subcategories %}
-        <div class="row mt-2">
-            <div class="col ps-2 pb-4 text-center">
-                <h4 class="mt-3 mb-1 category-title">Shop By Category</h4>
-            </div>
+    <div class="row mt-2">
+        <div class="col ps-2 pb-4 text-center">
+            <h4 class="mt-3 mb-1 category-title">Shop By Category</h4>
         </div>
-        {% include 'snippets/card-categories.html' with categories=subcategories %}
+    </div>
+    {% include 'snippets/card-categories.html' with categories=subcategories %}
     {% endif %}
     <!-- End Shop By Category -->
 
@@ -54,7 +55,7 @@
             </a>
         </div>
 
-        <div class="col-2 pe-0">
+        <div class="col-auto pe-0">
             <select class="form-select" aria-label="Default select example">
                 <option selected>Featured</option>
                 <option value="1">One</option>
@@ -66,50 +67,14 @@
 
     <div class="row">
         <div class="col-3 collapse" id="filterCollapse">
-            <!-- Filter Types -->
-            {% for filter, values in products_filters.items %}
-                <div class="row">
-                    <div class="col px-4 py-3 fs-4 fw-bold">
-                        <a class="" data-bs-toggle="collapse" href="#{{filter}}" role="button"
-                            aria-expanded="false" aria-controls="collapseExample">
-                            <div class="row">
-                                <div class="col text-start">
-                                    {{filter}}
-                                </div>
-                                <div class="col-auto text-end">
-                                    <svg xmlns="http://www.w3.org/2000/svg" id="filter-arrow" x="0" y="0" version="1.1"
-                                        viewBox="0 0 29 29" xml:space="preserve">
-                                        <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-miterlimit="10" stroke-width="2" d="m20.5 11.5-6 6-6-6"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Filters Data -->
-                    <div class="collapse" id="{{filter}}">
-                        <div class="row px-4">
-                            {% for value in values %}
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input border-dark" type="checkbox" value=""
-                                        id="flexCheck{{value}}">
-                                    <label class="form-check-label" for="flexCheck{{value}}">
-                                        {{value}}
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <!-- End FiltersData -->
-                </div>
-            {% endfor %}
+            {% include 'snippets/product-filters.html' with filters=default_filters %}
+            {% include 'snippets/product-filters.html' with filters=specific_filters %}
         </div>
 
         <!-- Products -->
         {% include 'snippets/product-cards.html' with products=products %}
         <!-- End Products -->
     </div>
-
 
     <!-- Popular Products -->
     {% include 'snippets/card-swiper-preview.html' with title='Popular Products' %}
@@ -121,7 +86,13 @@
 
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+<script src="{% static 'products/js/products.js' %}"></script>
 <script>
     createSwiper('brandAccessories');
+    {% for items in default_filters.values %}{% for rating, value in items.items %}
+    {% if value != 0 %}ratingCreation('{{rating}}', {{value}}){% endif %}
+    {% endfor %}{% endfor %}
 </script>
 {% endblock script %}
