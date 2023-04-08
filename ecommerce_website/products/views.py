@@ -53,10 +53,9 @@ def category_products(request, **kwargs):
     if request.method == 'GET':
         selected_filters = {key: request.GET.getlist(key)[0] if len(request.GET.getlist(
             key)) == 1 else request.GET.getlist(key) for key in request.GET}
-        print(selected_filters)
 
         products = Product.objects.get_products(
-            category, filters=selected_filters)
+            category, filter_params=selected_filters)
         product_filters = filters.get_filters(category)
         popular_products = Product.objects.get_popular_products()
 

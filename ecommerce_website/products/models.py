@@ -32,67 +32,70 @@ class ProductManager(models.Manager):
 
         return queryset[:10]
 
-    def get_unique_product_brands(self, category, include_count=False):
+    def get_unique_product_brands(self, selected_category, include_count=False):
         brands = cache.get(
-            f'CACHED_BRANDS_FOR_{slugify(category.category_name)}'
+            f'CACHED_BRANDS_FOR_{slugify(selected_category.category_name)}'
         )
 
         if brands is None:
             brands = Brand.objects.filter(
-                product__category=category).distinct()
+                product__category=selected_category).distinct()
 
             if include_count:
                 brands = brands.annotate(count=Count(
-                    'product', filter=Q(product__category=category)))
+                    'product', filter=Q(product__category=selected_category)))
 
             cache.set(
-                f'CACHED_BRANDS_FOR_{slugify(category.category_name)}', brands, 60*60)
+                f'CACHED_BRANDS_FOR_{slugify(selected_category.category_name)}', brands, 60*60)
 
         return brands
 
-    def get_products(self, category, filters=None):
-        category_descendants = category.get_descendants(include_self=True)
+    def get_products(self, selected_category, filter_params=None):
+        category_descendants = selected_category.get_descendants(
+            include_self=True)
         queryset = self.filter(
             category__in=category_descendants, is_active=True)
 
-        if filters:
-            if filters.get('price_from') and filters.get('price_to'):
+        if filter_params:
+            price_from, price_to = filter_params.pop(
+                'price_from', None), filter_params.pop('price_to', None)
+            if price_from and price_to:
                 try:
                     price_from, price_to = Decimal(
-                        filters['price_from']), Decimal(filters['price_to'])
+                        price_from), Decimal(price_to)
                 except ValueError:
                     raise Http404
 
                 queryset = queryset.filter(
                     regular_price__range=(price_from, price_to))
 
-                filters.pop('price_from')
-                filters.pop('price_to')
-
-            if filters.get('reviews'):
-                rating = min(filters.get('reviews'))
-
+            reviews = filter_params.pop('reviews', None)
+            if reviews and isinstance(reviews, (list, int)):
+                rating = min(reviews) if isinstance(reviews, list) else reviews
                 queryset = queryset.filter(
                     reviews__product_rating__gte=rating)
-                filters.pop('reviews')
 
-            if filters.get('brand'):
-                brands = filters.get('brand')
+            brand = filter_params.pop('brand', None)
+            if brand:
                 lookup = 'brand__brand_name' if isinstance(
-                    brands, str) else 'brand__brand_name__in'
+                    brand, str) else 'brand__brand_name__in'
                 queryset = queryset.filter(
-                    Q(**{lookup: brands})
+                    Q(**{lookup: brand})
                 )
 
-            qs_filters = []
-            for key, value in filters.items():
-                attr_name, attr_values = {}, {}
-                attr_name['attribute__attribute_name'] = key
-                attr_values['attribute__attribute_value' if isinstance(
-                    value, str) else 'attribute__attribute_value__in'] = value
-                qs_filters.append(Q(**attr_name, **attr_values))
+            attribute_filters = []
+            for key, value in filter_params.items():
+                if isinstance(value, str):
+                    attr_filter = Q(attribute__attribute_name=key,
+                                    attribute__attribute_value=value)
+                elif isinstance(value, list):
+                    attr_filter = Q(attribute__attribute_name=key,
+                                    attribute__attribute_value__in=value)
+                else:
+                    raise Http404
+                attribute_filters.append(attr_filter)
 
-            queryset = queryset.filter(*qs_filters)
+            queryset = queryset.filter(*attribute_filters)
 
         queryset = queryset.annotate(rating=Avg(
             'reviews__product_rating')).select_related('brand').prefetch_related('available_shipping_types').order_by(

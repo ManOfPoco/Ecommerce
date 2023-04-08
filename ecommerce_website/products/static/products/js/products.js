@@ -1,18 +1,28 @@
-function ratingCreation(id, rating) {
+function ratingCreation(id, rating, starWidth=20) {
     $(function () {
         $('#' + id).rateYo({
             rating: rating,
             readOnly: true,
-            starWidth: "20px"
+            starWidth: `${starWidth}px`
         });
     });
 }
 
-word_rating = ['one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars']
-for (let i = 4; i >= 0; i--) {
-    ratingCreation(word_rating[i], i + 1)
+// filter rating
+let wordRating = ['one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars']
+let ratingCheckboxes = document.getElementsByName('reviews')
+for (let i = 0; i < 5; i++) {
+    let checkbox = ratingCheckboxes[i];
+    ratingCreation(wordRating[checkbox.value - 1], i + 1)
 }
 
+// product cards rating
+let productsRating = document.getElementsByName('product_rating')
+productsRating.forEach(element => {
+    let elemId = element.getAttribute('id')
+    let elemValue = element.getAttribute('data-value')
+    ratingCreation(elemId, elemValue, 15);
+});
 
 const checkboxes = document.querySelectorAll('input[type=checkbox]');
 const urlParams = new URLSearchParams(window.location.search);

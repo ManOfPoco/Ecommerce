@@ -29,7 +29,7 @@
                                 From $
                             </div>
                             <div class="col px-0">
-                                <input type="number" id="minPrice" class="form-control border border-dark-subtle" name='price_from'>
+                                <input type="number" id="minPrice" class="form-control border border-dark-subtle" name='price_from' min='0' max='{{values|floatformat:2}}' step='0.01'>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -37,7 +37,7 @@
                                 To $
                             </div>
                             <div class="col px-0">
-                                <input type="number" id="maxPrice" class="form-control border border-dark-subtle" name='price_to' value="{{values|floatformat:2}}">
+                                <input type="number" id="maxPrice" class="form-control border border-dark-subtle" min='0' max='{{values|floatformat:2}}' step='0.01' name='price_to' value="{{values|floatformat:2}}">
                             </div>
                         </div>
                     </div>
