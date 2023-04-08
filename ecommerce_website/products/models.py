@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Avg, Count, Max, Q
+from django.db.models import Prefetch, Avg, Count, Q
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -9,9 +9,11 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from django.core.cache import cache
+from django.http import Http404
 
 from django.template.defaultfilters import slugify
 
+from decimal import Decimal
 from collections import defaultdict
 
 
@@ -48,68 +50,53 @@ class ProductManager(models.Manager):
 
         return brands
 
-    def get_default_filters(self, category, products):
-        default_filters = defaultdict(list)
-
-        brands = self.get_unique_product_brands(
-            category, include_count=True)
-
-        default_filters['Brand'].extend([brand for brand in brands])
-        default_filters['Price'] = products.aggregate(
-            max_price=Max('regular_price'))['max_price']
-        default_filters['Customer Reviews'] = products.aggregate(
-            five_stars=Count('reviews__product_rating',
-                             filter=Q(reviews__product_rating=5)),
-            four_stars=Count('reviews__product_rating',
-                             filter=Q(reviews__product_rating=4)),
-            three_stars=Count('reviews__product_rating',
-                              filter=Q(reviews__product_rating=3)),
-            two_stars=Count('reviews__product_rating',
-                            filter=Q(reviews__product_rating=2)),
-            one_star=Count('reviews__product_rating',
-                           filter=Q(reviews__product_rating=1)),
-        )
-
-        default_filters.default_factory = None
-        return default_filters
-
-    def get_specific_filters(self, products):
-        specific_filters = defaultdict(list)
-
-        for product in products:
-            for product_filter in product.attribute.all():
-                filter_name = product_filter.attribute_name.title()
-                if product_filter.attribute_value and \
-                        product_filter.attribute_value not in specific_filters[filter_name]:
-                    specific_filters[filter_name].append(
-                        product_filter.attribute_value)
-
-        specific_filters.default_factory = None
-        return specific_filters
-
-    def get_filters(self, category):
-        filters = cache.get(
-            f'CACHED_FILTERS_FOR_{slugify(category.category_name)}'
-        )
-        if filters is None:
-            filters = defaultdict(dict)
-            products = self.filter(category=category
-                                   ).prefetch_related('attribute')
-
-            default_filters, specific_filters = self.get_default_filters(
-                category, products), self.get_specific_filters(products)
-
-            filters['default_filters'], filters['specific_filters'] = default_filters, specific_filters
-            cache.set(
-                f'CACHED_FILTERS_FOR_{slugify(category.category_name)}', filters, 60*60
-            )
-        return filters
-
-    def get_products(self, category):
+    def get_products(self, category, filters=None):
         category_descendants = category.get_descendants(include_self=True)
-        queryset = self.select_related('brand').prefetch_related('available_shipping_types').filter(
-            category__in=category_descendants, is_active=True).order_by(
-                '-updated_at', '-created_at').annotate(rating=Avg('reviews__product_rating'))
+        queryset = self.filter(
+            category__in=category_descendants, is_active=True)
+
+        if filters:
+            if filters.get('price_from') and filters.get('price_to'):
+                try:
+                    price_from, price_to = Decimal(
+                        filters['price_from']), Decimal(filters['price_to'])
+                except ValueError:
+                    raise Http404
+
+                queryset = queryset.filter(
+                    regular_price__range=(price_from, price_to))
+
+                filters.pop('price_from')
+                filters.pop('price_to')
+
+            if filters.get('reviews'):
+                rating = min(filters.get('reviews'))
+
+                queryset = queryset.filter(
+                    reviews__product_rating__gte=rating)
+                filters.pop('reviews')
+
+            if filters.get('brand'):
+                brands = filters.get('brand')
+                lookup = 'brand__brand_name' if isinstance(
+                    brands, str) else 'brand__brand_name__in'
+                queryset = queryset.filter(
+                    Q(**{lookup: brands})
+                )
+
+            qs_filters = []
+            for key, value in filters.items():
+                attr_name, attr_values = {}, {}
+                attr_name['attribute__attribute_name'] = key
+                attr_values['attribute__attribute_value' if isinstance(
+                    value, str) else 'attribute__attribute_value__in'] = value
+                qs_filters.append(Q(**attr_name, **attr_values))
+
+            queryset = queryset.filter(*qs_filters)
+
+        queryset = queryset.annotate(rating=Avg(
+            'reviews__product_rating')).select_related('brand').prefetch_related('available_shipping_types').order_by(
+            '-updated_at', '-created_at')
 
         queryset = queryset.prefetch_related(Prefetch(
             'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))

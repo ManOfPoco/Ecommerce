@@ -3,7 +3,7 @@
 {% for filter, values in filters.items %}
     <div class="row">
         <div class="col px-4 py-3 fs-4 fw-bold">
-            <a class="" data-bs-toggle="collapse" href="#{{filter|slugify}}" role="button" aria-expanded="false"
+            <a class="" data-bs-toggle="collapse" href="#{{filter|cut:' '}}" role="button" aria-expanded="false"
                 aria-controls="collapseExample">
                 <div class="row">
                     <div class="col text-start">
@@ -20,30 +20,48 @@
             </a>
         </div>
         <!-- Filters Data -->
-        <div class="collapse" id="{{filter|slugify}}">
+        <div class="collapse" id="{{filter|cut:' '}}">
             <div class="row px-4">
                 {% if filter == 'Price' %}
-                    From $
-                    <input type="number" id="minPrice" class="form-control border border-dark-subtle" aria-labelledby="passwordHelpInline">
-                    to $
-                    <input type="number" id="maxPrice" class="form-control border border-dark-subtle" aria-labelledby="passwordHelpInline">
+                    <div class="col px-0">
+                        <div class="row">
+                            <div class="col-5 pe-1 align-self-center">
+                                From $
+                            </div>
+                            <div class="col px-0">
+                                <input type="number" id="minPrice" class="form-control border border-dark-subtle" name='price_from'>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-5 pe-1 align-self-center">
+                                To $
+                            </div>
+                            <div class="col px-0">
+                                <input type="number" id="maxPrice" class="form-control border border-dark-subtle" name='price_to' value="{{values|floatformat:2}}">
+                            </div>
+                        </div>
+                    </div>
                 {% elif filter == 'Customer Reviews' %}
                     {% for rating, value in values.items %}
-                        {% if value != 0 %}
-                            <div class="form-check py-2">
-                                <input class="form-check-input border-dark" type="checkbox" value="" id="flexCheck{{value}}">
-                                <label class="form-check-label my-auto" for="flexCheck{{value}}">
+                        <div class="form-check py-2">
+                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='reviews' value='{{forloop.counter}}'>
+                            <div class='row'>
+                                <div class='col'>
                                     <div id="{{rating}}"></div>
-                                    ({{values.five_stars}})
-                                </label>
+                                </div>
+                                <div class='col px-0'>
+                                    <label class="form-check-label my-auto" for="flexCheck{{value}}">
+                                        ({{value}})
+                                    </label>
+                                </div>
                             </div>
-                        {% endif %}
+                        </div>
                     {% endfor %}
                     
                 {% else %}
                     {% for value in values %}
                         <div class="form-check py-2">
-                            <input class="form-check-input border-dark" type="checkbox" value="" id="flexCheck{{value}}">
+                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='{{filter|lower}}' value='{{value}}'>
                             <label class="form-check-label my-auto" for="flexCheck{{value}}">
                                 {{value}} {% if value.count %}({{value.count}}){% endif %}
                             </label>

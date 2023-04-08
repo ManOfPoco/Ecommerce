@@ -66,10 +66,15 @@
     </div>
 
     <div class="row">
+        <!-- Product filters -->
         <div class="col-3 collapse" id="filterCollapse">
-            {% include 'snippets/product-filters.html' with filters=default_filters %}
-            {% include 'snippets/product-filters.html' with filters=specific_filters %}
+            <form method='GET' id='filter-form'>
+                {% include 'snippets/product-filters.html' with filters=default_filters %}
+                {% include 'snippets/product-filters.html' with filters=specific_filters %}
+                <button type="submit" class="btn btn-primary d-flex m-0">Apply</button>
+            </form>
         </div>
+        <!-- End Product filters -->
 
         <!-- Products -->
         {% include 'snippets/product-cards.html' with products=products %}
@@ -91,8 +96,5 @@
 <script src="{% static 'products/js/products.js' %}"></script>
 <script>
     createSwiper('brandAccessories');
-    {% for items in default_filters.values %}{% for rating, value in items.items %}
-    {% if value != 0 %}ratingCreation('{{rating}}', {{value}}){% endif %}
-    {% endfor %}{% endfor %}
 </script>
 {% endblock script %}

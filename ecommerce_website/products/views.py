@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
 from . import services
+from . import filters
 
 from .models import Category, Product
 
@@ -49,18 +50,24 @@ def category_products(request, **kwargs):
     category_children = category.get_children()
     category_ancestors = category.get_ancestors(include_self=True)
 
-    products = Product.objects.get_products(category)
-    filters = Product.objects.get_filters(category)
-    popular_products = Product.objects.get_popular_products()
+    if request.method == 'GET':
+        selected_filters = {key: request.GET.getlist(key)[0] if len(request.GET.getlist(
+            key)) == 1 else request.GET.getlist(key) for key in request.GET}
+        print(selected_filters)
 
-    context = {
-        'category': category,
-        'ancestors': category_ancestors,
-        'subcategories': category_children,
-        'popular_products': popular_products,
-        'products': products,
-        'default_filters': filters['default_filters'],
-        'specific_filters': filters['specific_filters'],
-    }
+        products = Product.objects.get_products(
+            category, filters=selected_filters)
+        product_filters = filters.get_filters(category)
+        popular_products = Product.objects.get_popular_products()
 
-    return render(request, 'products/products.html', context)
+        context = {
+            'category': category,
+            'ancestors': category_ancestors,
+            'subcategories': category_children,
+            'popular_products': popular_products,
+            'products': products,
+            'default_filters': product_filters['default_filters'],
+            'specific_filters': product_filters['specific_filters'],
+        }
+
+        return render(request, 'products/products.html', context)
