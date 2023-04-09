@@ -13,7 +13,7 @@ from django.http import Http404
 
 from django.template.defaultfilters import slugify
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from collections import defaultdict
 
 
@@ -32,50 +32,53 @@ class ProductManager(models.Manager):
 
         return queryset[:10]
 
-    def get_unique_product_brands(self, selected_category, include_count=False):
+    def get_unique_product_brands(self, categories, include_count=False):
         brands = cache.get(
-            f'CACHED_BRANDS_FOR_{slugify(selected_category.category_name)}'
+            f'CACHED_BRANDS_FOR_{slugify(categories.first().category_name)}'
         )
 
         if brands is None:
             brands = Brand.objects.filter(
-                product__category=selected_category).distinct()
+                product__category__in=categories).distinct()
 
             if include_count:
                 brands = brands.annotate(count=Count(
-                    'product', filter=Q(product__category=selected_category)))
+                    'product', filter=Q(product__category__in=categories)))
 
             cache.set(
-                f'CACHED_BRANDS_FOR_{slugify(selected_category.category_name)}', brands, 60*60)
+                f'CACHED_BRANDS_FOR_{slugify(categories.first().category_name)}', brands, 60*60)
 
         return brands
 
-    def get_products(self, selected_category, filter_params=None):
-        category_descendants = selected_category.get_descendants(
-            include_self=True)
+    def get_products(self, categories, filter_params=None):
         queryset = self.filter(
-            category__in=category_descendants, is_active=True)
+            category__in=categories, is_active=True)
 
         if filter_params:
-            price_from, price_to = filter_params.pop(
-                'price_from', None), filter_params.pop('price_to', None)
-            if price_from and price_to:
+            min_price, max_price = filter_params.pop(
+                'min_price', None), filter_params.pop('max_price', None)
+            if min_price and max_price:
                 try:
-                    price_from, price_to = Decimal(
-                        price_from), Decimal(price_to)
+                    min_price, max_price = Decimal(
+                        min_price), Decimal(max_price)
+                except InvalidOperation:
+                    raise Http404
+
+                queryset = queryset.filter(
+                    regular_price__range=(min_price, max_price))
+
+            reviews = filter_params.pop('reviews', None)
+            if reviews and isinstance(reviews, (list, str)):
+                try:
+                    rating = min(reviews) if isinstance(
+                        reviews, list) else int(reviews)
                 except ValueError:
                     raise Http404
 
                 queryset = queryset.filter(
-                    regular_price__range=(price_from, price_to))
-
-            reviews = filter_params.pop('reviews', None)
-            if reviews and isinstance(reviews, (list, int)):
-                rating = min(reviews) if isinstance(reviews, list) else reviews
-                queryset = queryset.filter(
                     reviews__product_rating__gte=rating)
 
-            brand = filter_params.pop('brand', None)
+            brand = filter_params.pop('Brand', None)
             if brand:
                 lookup = 'brand__brand_name' if isinstance(
                     brand, str) else 'brand__brand_name__in'
@@ -98,11 +101,14 @@ class ProductManager(models.Manager):
             queryset = queryset.filter(*attribute_filters)
 
         queryset = queryset.annotate(rating=Avg(
-            'reviews__product_rating')).select_related('brand').prefetch_related('available_shipping_types').order_by(
-            '-updated_at', '-created_at')
-
-        queryset = queryset.prefetch_related(Prefetch(
-            'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))
+            'reviews__product_rating'), reviews_count=Count('reviews__product_rating')
+        ).select_related('brand').prefetch_related(
+            'available_shipping_types',
+            Prefetch('images', queryset=ProductImages.objects.filter(
+                is_default=True)),
+            Prefetch(
+                'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
+        ).order_by('-updated_at', '-created_at')
 
         return queryset
 

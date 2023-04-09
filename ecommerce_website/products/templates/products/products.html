@@ -26,7 +26,7 @@
 
     <div class="row pb-1">
         <div class="col px-0">
-            <h4 class="mb-1 product-title">{{category.category_name}}</h4>
+            <h4 class="mb-1 product-title">{{category.category_name|title}}</h4>
         </div>
     </div>
 
@@ -71,7 +71,11 @@
             <form method='GET' id='filter-form'>
                 {% include 'snippets/product-filters.html' with filters=default_filters %}
                 {% include 'snippets/product-filters.html' with filters=specific_filters %}
-                <button type="submit" class="btn btn-primary d-flex m-0">Apply</button>
+                <div class="row">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-primary" >Apply</button>
+                    </div>
+                </div>
             </form>
         </div>
         <!-- End Product filters -->

@@ -1,4 +1,4 @@
-function ratingCreation(id, rating, starWidth=20) {
+function ratingCreation(id, rating, starWidth = 20) {
     $(function () {
         $('#' + id).rateYo({
             rating: rating,
@@ -11,10 +11,10 @@ function ratingCreation(id, rating, starWidth=20) {
 // filter rating
 let wordRating = ['one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars']
 let ratingCheckboxes = document.getElementsByName('reviews')
-for (let i = 0; i < 5; i++) {
-    let checkbox = ratingCheckboxes[i];
-    ratingCreation(wordRating[checkbox.value - 1], i + 1)
-}
+Array.from(ratingCheckboxes).reverse().forEach((checkbox, i) => {
+    checkbox.setAttribute('value', i + 1)
+    ratingCreation(wordRating[i], i + 1)
+});
 
 // product cards rating
 let productsRating = document.getElementsByName('product_rating')
@@ -24,6 +24,7 @@ productsRating.forEach(element => {
     ratingCreation(elemId, elemValue, 15);
 });
 
+// check checkboxes
 const checkboxes = document.querySelectorAll('input[type=checkbox]');
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -33,6 +34,7 @@ checkboxes.forEach(checkbox => {
     }
 });
 
+// check if filter price is not equals 0. Set to 0 if it.
 const minPriceCheckbox = document.querySelector('#minPrice')
 const maxPriceCheckbox = document.querySelector('#maxPrice')
 
@@ -43,10 +45,25 @@ if (maxPriceCheckbox.value === '') {
     maxPriceCheckbox.value = 0;
 }
 
-if (urlParams.get('price_from') !== 0 && urlParams.get('price_from')) {
-    minPriceCheckbox.value = urlParams.get('price_from');
+if (urlParams.get('min_price') !== 0 && urlParams.get('min_price')) {
+    minPriceCheckbox.value = urlParams.get('min_price');
 }
 
-if (urlParams.get('price_to') !== 0 && urlParams.get('price_from')) {
-    maxPriceCheckbox.value = urlParams.get('price_to');
+if (urlParams.get('max_price') !== 0 && urlParams.get('max_price')) {
+    maxPriceCheckbox.value = urlParams.get('max_price');
 }
+
+form = document.getElementById('filter-form')
+
+form.addEventListener('submit', function (event) {
+    if ((minPriceCheckbox.checked && parseInt(minPriceInput.value) <= 0) ||
+        (maxPriceCheckbox.checked && parseInt(maxPriceInput.value) <= 0)) {
+        event.preventDefault();
+        alert('Minimum and maximum prices cannot be negative or zero.');
+    }
+
+    if (parseInt(minPriceInput.value) > parseInt(maxPriceInput.value)) {
+        event.preventDefault();
+        alert('Minimum price cannot be greater than maximum price.');
+    }
+});

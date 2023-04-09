@@ -2,9 +2,9 @@
 {% load product_tags %}
 
 <div class="col mt-4 mb-4">
-    <div class="row row-cols-1 row-cols-lg-3 g-4 card-styles">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 card-styles">
         {% for product in products %}
-            <div class="col">
+            <div class="col d-flex align-items-stretch">
                 <div class="card">
 
                     <div class="row ps-3 mb-4">
@@ -13,7 +13,7 @@
                                 SALE
                             </div>
                         {% endif %}
-                        <div class="col text-end">
+                        <div class="col text-end pe-1">
                             <button class='border border-0 wishlist' type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" fill="grey"
                                     class="bi bi-heart" viewBox="0 0 16 16">
@@ -25,10 +25,10 @@
                     </div>
 
                     <a href="#">
-                        <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="...">
+                        <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="{{ product.images.first.alternative_text }}">
 
                         {% with product.discounts as discounts %}
-                            <div class="card-body px-0 py-1">
+                            <div class="card-body px-0 py-1 d-flex flex-column">
                                 {% with discounts.first as unit_discount %}
                                     <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
                                     <div class="row" style='height:16.5px'>
@@ -47,15 +47,24 @@
                                     </div>
                                 {% endwith %}
                                 
-                                {% if product.brand.brand_name %}
-                                    <p class="card-text card-body-brand mt-3">{{product.brand.brand_name}}</p>
-                                {% else %}<br>{% endif %}
+                                <div class="row card-text card-body-brand mt-3">
+                                    <div class="col">
+                                        {% if product.brand.brand_name %}
+                                            {{product.brand.brand_name}}
+                                        {% else %}
+                                            <br>
+                                        {% endif %}
+                                    </div>
+                                </div>
                                 <p class="card-text card-body-productName pe-3">{{product.product_name}}</p>
 
-                                <div class="row rating">
+                                <div class="row rating align-items-center">
                                     {% if product.rating %}
-                                        <div class='col'>
+                                        <div class='col-auto pe-1'>
                                             <div class='px-0' id="product-{{product.id}}" name='product_rating' data-value='{{product.rating}}'></div>
+                                        </div>
+                                        <div class="col ps-1 fw-bold text-muted" style="font-size:15px;padding-top:5px"> 
+                                            {{product.reviews_count}}
                                         </div>
                                     {% else %}
                                         <div style='height:15px'><br></div>
@@ -77,7 +86,7 @@
                         {% endwith %}
                     </a>
                     
-                    <div class="card-bottom pb-3 pt-4 align-items-center">
+                    <div class="card-bottom pb-3 pt-4 align-items-center mt-auto">
                         <div class="row delivery-links">
                             {% if product.available_shipping_types.all %}
                                 {% for delivery_type in product.available_shipping_types.all %}

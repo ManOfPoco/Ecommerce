@@ -49,14 +49,16 @@ def category_products(request, **kwargs):
     category = get_object_or_404(Category, slug=slug)
     category_children = category.get_children()
     category_ancestors = category.get_ancestors(include_self=True)
+    category_descendants = category.get_descendants(
+            include_self=True)
 
     if request.method == 'GET':
         selected_filters = {key: request.GET.getlist(key)[0] if len(request.GET.getlist(
             key)) == 1 else request.GET.getlist(key) for key in request.GET}
 
         products = Product.objects.get_products(
-            category, filter_params=selected_filters)
-        product_filters = filters.get_filters(category)
+            category_descendants, filter_params=selected_filters)
+        product_filters = filters.get_filters(category_descendants)
         popular_products = Product.objects.get_popular_products()
 
         context = {

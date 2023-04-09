@@ -7,7 +7,7 @@
                 aria-controls="collapseExample">
                 <div class="row">
                     <div class="col text-start">
-                        {{filter}}
+                        {{filter|title}}
                     </div>
                     <div class="col-auto text-end">
                         <svg xmlns="http://www.w3.org/2000/svg" id="filter-arrow" x="0" y="0" version="1.1"
@@ -29,7 +29,7 @@
                                 From $
                             </div>
                             <div class="col px-0">
-                                <input type="number" id="minPrice" class="form-control border border-dark-subtle" name='price_from' min='0' max='{{values|floatformat:2}}' step='0.01'>
+                                <input type="number" id="minPrice" class="form-control border border-dark-subtle" name='min_price' min='0' max='{{values|floatformat:2}}' step='0.01'>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -37,14 +37,14 @@
                                 To $
                             </div>
                             <div class="col px-0">
-                                <input type="number" id="maxPrice" class="form-control border border-dark-subtle" min='0' max='{{values|floatformat:2}}' step='0.01' name='price_to' value="{{values|floatformat:2}}">
+                                <input type="number" id="maxPrice" class="form-control border border-dark-subtle" min='0' max='{{values|floatformat:2}}' step='0.01' name='max_price' value="{{values|floatformat:2}}">
                             </div>
                         </div>
                     </div>
                 {% elif filter == 'Customer Reviews' %}
                     {% for rating, value in values.items %}
                         <div class="form-check py-2">
-                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='reviews' value='{{forloop.counter}}'>
+                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='reviews'>
                             <div class='row'>
                                 <div class='col'>
                                     <div id="{{rating}}"></div>
@@ -60,8 +60,8 @@
                     
                 {% else %}
                     {% for value in values %}
-                        <div class="form-check py-2">
-                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='{{filter|lower}}' value='{{value}}'>
+                        <div class="form-check py-2 my-0">
+                            <input class="form-check-input border-dark" type="checkbox" id="flexCheck{{value}}" name='{{filter}}' value='{{value}}'>
                             <label class="form-check-label my-auto" for="flexCheck{{value}}">
                                 {{value}} {% if value.count %}({{value.count}}){% endif %}
                             </label>
