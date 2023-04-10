@@ -41,29 +41,13 @@ const maxPriceCheckbox = document.querySelector('#maxPrice')
 if (minPriceCheckbox.value === '') {
     minPriceCheckbox.value = 0;
 }
-if (maxPriceCheckbox.value === '') {
-    maxPriceCheckbox.value = 0;
-}
-
 if (urlParams.get('min_price') !== 0 && urlParams.get('min_price')) {
     minPriceCheckbox.value = urlParams.get('min_price');
 }
 
+if (maxPriceCheckbox.value === '') {
+    maxPriceCheckbox.value = 0;
+}
 if (urlParams.get('max_price') !== 0 && urlParams.get('max_price')) {
     maxPriceCheckbox.value = urlParams.get('max_price');
 }
-
-form = document.getElementById('filter-form')
-
-form.addEventListener('submit', function (event) {
-    if ((minPriceCheckbox.checked && parseInt(minPriceInput.value) <= 0) ||
-        (maxPriceCheckbox.checked && parseInt(maxPriceInput.value) <= 0)) {
-        event.preventDefault();
-        alert('Minimum and maximum prices cannot be negative or zero.');
-    }
-
-    if (parseInt(minPriceInput.value) > parseInt(maxPriceInput.value)) {
-        event.preventDefault();
-        alert('Minimum price cannot be greater than maximum price.');
-    }
-});

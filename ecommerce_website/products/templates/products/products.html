@@ -32,7 +32,7 @@
 
     <div class="row mb-3">
         <div class="col text-end fs-5 fw-bold">
-            {{products.count}} Items
+            {{page.paginator.count}} Items
         </div>
     </div>
 
@@ -73,7 +73,7 @@
                 {% include 'snippets/product-filters.html' with filters=specific_filters %}
                 <div class="row">
                     <div class="col text-center">
-                        <button type="submit" class="btn btn-primary" >Apply</button>
+                        <button type="submit" class="btn btn-primary">Apply</button>
                     </div>
                 </div>
             </form>
@@ -81,9 +81,10 @@
         <!-- End Product filters -->
 
         <!-- Products -->
-        {% include 'snippets/product-cards.html' with products=products %}
+        {% include 'snippets/product-cards.html' with products=page %}
         <!-- End Products -->
     </div>
+    {% include 'snippets/pagination.html' with page=page %}
 
     <!-- Popular Products -->
     {% include 'snippets/card-swiper-preview.html' with title='Popular Products' %}

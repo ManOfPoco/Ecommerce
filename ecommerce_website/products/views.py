@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
+from django.core.paginator import Paginator
+
 from . import services
 from . import filters
 
@@ -50,15 +52,27 @@ def category_products(request, **kwargs):
     category_children = category.get_children()
     category_ancestors = category.get_ancestors(include_self=True)
     category_descendants = category.get_descendants(
-            include_self=True)
+        include_self=True)
 
     if request.method == 'GET':
-        selected_filters = {key: request.GET.getlist(key)[0] if len(request.GET.getlist(
-            key)) == 1 else request.GET.getlist(key) for key in request.GET}
+        query_dict = request.GET
+        query_dict._mutable = True
+        page_number = query_dict.pop('page', 1)
+
+        selected_filters = {key: query_dict.getlist(key)[0] if len(query_dict.getlist(
+            key)) == 1 else query_dict.getlist(key) for key in query_dict}
 
         products = Product.objects.get_products(
             category_descendants, filter_params=selected_filters)
         product_filters = filters.get_filters(category_descendants)
+        paginator = Paginator(products, 24)
+
+        try:
+            page_number = int(page_number[0])
+        except TypeError:
+            page_number = 1
+        page = paginator.get_page(page_number)
+
         popular_products = Product.objects.get_popular_products()
 
         context = {
@@ -66,7 +80,7 @@ def category_products(request, **kwargs):
             'ancestors': category_ancestors,
             'subcategories': category_children,
             'popular_products': popular_products,
-            'products': products,
+            'page': page,
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
         }
