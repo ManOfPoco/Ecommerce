@@ -90,17 +90,16 @@ function addFilterToThePanel(filterValue, insertIntoElement, parentElement) {
 }
 
 // defele url params for specific key and value
-function deleteUrlParam(key, value) {
-    let urlParamsArray = urlParams.toString().split('&')
-    for (let i = 0; i < urlParamsArray.length; i++) {
-        let paramKey = urlParamsArray[i].split('=')[0].replaceAll('+', ' ').replaceAll('%27', "'")
-        let paramValue = urlParamsArray[i].split('=')[1].replaceAll('+', ' ').replaceAll('%27', "'")
-
-        if (paramKey === key && paramValue === value) {
-            urlParamsArray.splice(i, 1);
-            return urlParamsArray.join('&');
+function deleteUrlParam(delete_key, delete_value) {
+    let urlParamsArray = []
+    urlParams.forEach((value, key) => {
+        if (key !== delete_key || value !== delete_value) {
+            let keyComponent = encodeURIComponent(`${key}`)
+            let valueComponent = encodeURIComponent(`${value}`)
+            urlParamsArray.push(`${keyComponent}=${valueComponent}`)
         }
-    }
+    });
+    return urlParamsArray.join('&');
 }
 
 function handleOrderingChange(ordering) {
@@ -112,7 +111,7 @@ function handleOrderingChange(ordering) {
 }
 
 $('select').on('change', function (e) {
-    handleOrderingChange(this.value);
+    handleOrderingChange(this.value)
 });
 
 // Select correct ordering

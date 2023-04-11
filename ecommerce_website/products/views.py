@@ -33,7 +33,7 @@ class CategoryView(TemplateView):
             if value:
                 if key == 'brands':
                     context[key] = Product.objects.get_unique_product_brands(
-                        category)
+                        categories=category.get_descendants())
                 elif key == 'products':
                     context[key] = Product.objects.get_popular_products(
                         category=category)

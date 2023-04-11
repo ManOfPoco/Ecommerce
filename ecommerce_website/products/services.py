@@ -32,7 +32,7 @@ CATEGORY_PARAMS = {
         'products': True,
         'brands': True,
     },
-    'homedecor': {
+    'home-decor': {
         'categories': 'all_categories',
         'products': True,
         'brands': False,

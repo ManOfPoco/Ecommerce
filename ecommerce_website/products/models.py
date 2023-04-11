@@ -14,7 +14,6 @@ from django.http import Http404
 from django.template.defaultfilters import slugify
 
 from decimal import Decimal, InvalidOperation
-from collections import defaultdict
 
 
 class ProductManager(models.Manager):
