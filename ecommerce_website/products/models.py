@@ -50,7 +50,7 @@ class ProductManager(models.Manager):
 
         return brands
 
-    def get_products(self, categories, filter_params=None):
+    def get_products(self, categories, filter_params=None, ordering='features'):
         queryset = self.filter(
             category__in=categories, is_active=True)
 
@@ -108,7 +108,16 @@ class ProductManager(models.Manager):
                 is_default=True)),
             Prefetch(
                 'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
-        ).order_by('-updated_at', '-created_at')
+        )
+        ordering_types = {
+            'features': queryset.order_by('quantity'),  # temporarily
+            'price_up': queryset.order_by('regular_price'),
+            'price_down': queryset.order_by('-regular_price'),
+            'newest': queryset.order_by('-created_at', '-updated_at'),
+            'name_ascending': queryset.order_by('product_name'),
+            'name_descending': queryset.order_by('-product_name'),
+        }
+        queryset = ordering_types.get(ordering)
 
         return queryset
 

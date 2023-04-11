@@ -103,6 +103,28 @@ function deleteUrlParam(key, value) {
     }
 }
 
+function handleOrderingChange(ordering) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('ordering', ordering);
+    const newUrl = window.location.pathname + '?' + urlParams.toString();
+
+    window.location.href = newUrl;
+}
+
+$('select').on('change', function (e) {
+    handleOrderingChange(this.value);
+});
+
+// Select correct ordering
+const select = document.getElementById('ordering').children
+if (urlParams.has('ordering')) {
+    for (option of select) {
+        if (urlParams.get('ordering') === option.value) {
+            option.selected = true;
+        }
+    }
+}
+
 
 const minPriceCheckbox = document.querySelector('#minPrice')
 const maxPriceCheckbox = document.querySelector('#maxPrice')

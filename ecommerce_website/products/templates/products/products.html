@@ -56,22 +56,26 @@
         </div>
 
         {% if request.GET %}
-            <div class="col applied-filters align-self-center">
-                <div class="row fs-5" id="applied-filters">
-                    <div class="col col-auto clear-all-link py-1" id="clear-all">
-                        <a href="{{request.path}}">Clear All</a>
-                    </div>
+        <div class="col applied-filters align-self-center">
+            <div class="row fs-5" id="applied-filters">
+                <div class="col col-auto clear-all-link py-1" id="clear-all">
+                    <a href="{{request.path}}">Clear All</a>
                 </div>
             </div>
+        </div>
         {% endif %}
 
         <div class="col-auto pe-0 align-self-center">
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Featured</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
+            <form method='GET' id='ordering-form'>
+                <select class="form-select" aria-label="Ordering" id="ordering">
+                    <option value="features" selected>Featured</option>
+                    <option value="price_up">Price - Low to High</option>
+                    <option value="price_down">Price - High to Low</option>
+                    <option value="newest">Newest</option>
+                    <option value="name_ascending">Product Name - A to Z</option>
+                    <option value="name_descending">Product Name - Z to A</option>
+                </select>
+            </form>
         </div>
     </div>
 

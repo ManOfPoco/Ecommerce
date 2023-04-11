@@ -58,12 +58,23 @@ def category_products(request, **kwargs):
         query_dict = request.GET
         query_dict._mutable = True
         page_number = query_dict.pop('page', 1)
+        ordering = query_dict.pop('ordering', None)
 
         selected_filters = {key: query_dict.getlist(key)[0] if len(query_dict.getlist(
             key)) == 1 else query_dict.getlist(key) for key in query_dict}
 
-        products = Product.objects.get_products(
-            category_descendants, filter_params=selected_filters)
+        if ordering:
+            products = Product.objects.get_products(
+                category_descendants,
+                filter_params=selected_filters,
+                ordering=ordering[0]
+            )
+        else:
+            products = Product.objects.get_products(
+                category_descendants,
+                filter_params=selected_filters
+            )
+
         product_filters = filters.get_filters(category_descendants)
         paginator = Paginator(products, 24)
 
