@@ -95,10 +95,10 @@
         <!-- End Product filters -->
 
         <!-- Products -->
-        {% include 'snippets/product-cards.html' with products=page %}
+        {% include 'snippets/product-cards.html' with products=product_page %}
         <!-- End Products -->
     </div>
-    {% include 'snippets/pagination.html' with page=page %}
+    {% include 'snippets/pagination.html' with page=product_page %}
 
     <!-- Popular Products -->
     {% include 'snippets/card-swiper-preview.html' with title='Popular Products' %}

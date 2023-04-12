@@ -108,7 +108,7 @@ class ProductManager(models.Manager):
             Prefetch(
                 'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
         )
-        ordering_types = {
+        product_ordering_types = {
             'features': queryset.order_by('quantity'),  # temporarily
             'price_up': queryset.order_by('regular_price'),
             'price_down': queryset.order_by('-regular_price'),
@@ -116,7 +116,7 @@ class ProductManager(models.Manager):
             'name_ascending': queryset.order_by('product_name'),
             'name_descending': queryset.order_by('-product_name'),
         }
-        queryset = ordering_types.get(ordering)
+        queryset = product_ordering_types.get(ordering)
 
         return queryset
 

@@ -22,10 +22,22 @@ class ReviewManager(models.Manager):
 
         return queryset
 
-    def prefetch_review_ratings(self, product):
+    def prefetch_review_ratings(self, product, ordering='recent'):
+
         queryset = product.reviews.prefetch_related(
             'rating').annotate(likes=Count('rating', filter=Q(rating__is_like=True)),
                                dislikes=Count('rating', filter=Q(rating__is_like=False)))
+
+        review_ordering_types = {
+            'recent': queryset.order_by('-created_at', '-updated_at'),
+            'helpful': queryset.order_by('-product_rating', '-likes'),
+            'lowest': queryset.order_by('product_rating', '-dislikes'),
+            'highest': queryset.order_by('-product_rating', '-likes'),
+            'oldest': queryset.order_by('created_at')
+        }
+
+        queryset = review_ordering_types.get(
+            ordering, queryset.order_by('-created_at'))
 
         return queryset
 

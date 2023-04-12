@@ -109,3 +109,39 @@ let productReviews = document.getElementsByName('product-reviews')
 productReviews.forEach(review => {
     createRating(review.id, review.getAttribute('data-rating'))
 });
+
+// choise correct ordering option if user chose anything
+const urlParams = new URLSearchParams(window.location.search);
+function handleOrderingChange(ordering) {
+    urlParams.set('ordering', ordering);
+    const newUrl = window.location.pathname + '?' + urlParams.toString();
+
+    window.location.href = newUrl;
+}
+
+$('select').on('change', function (e) {
+    handleOrderingChange(this.value)
+});
+
+
+function scrollReviews() {
+    window.scrollTo({
+        top: $("#customersReview").offset().top - 146,
+        behavior: "smooth"
+    });
+}
+
+// Select correct ordering
+const select = document.getElementById('ordering').children
+if (urlParams.has('ordering')) {
+    for (option of select) {
+        if (urlParams.get('ordering') === option.value) {
+            option.selected = true;
+
+            scrollReviews();
+        }
+    }
+}
+else if (urlParams.has('page')) {
+    scrollReviews();
+}

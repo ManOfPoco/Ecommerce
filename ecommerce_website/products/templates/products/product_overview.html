@@ -72,9 +72,9 @@
                 </div>
                 <div class="col">
                     {% if product.reviews_count %}
-                        <a href="#customersReview" class='anchor'>{{product.reviews_count}} Reviews</a>
+                        <a class='anchor' onclick='scrollReviews()'>{{product.reviews_count}} Reviews</a>
                     {% else %}
-                        <a href="#customersReview" class='anchor'>Write a Review</a>
+                        <a class='anchor'onclick='scrollReviews()'>Write a Review</a>
                     {% endif %}
                 </div>
             </div>
@@ -560,17 +560,19 @@
                 </div>
 
                 <div class="col-auto px-4">
-                    <select class="form-select" aria-label="Default select example">
-                        <option>Sort reviews by</option>
-                        <option selected value="recent">Most recent</option>
-                        <option value="lowest">Lowest Rated</option>
-                        <option value="highest">Highest Rated</option>
-                        <option value="oldest">Oldest</option>
-                    </select>
+                    <form method='GET' id='ordering-form'>
+                        <select class="form-select" id='ordering' aria-label="Default select example">
+                            <option value="recent" selected>Most Recent</option>
+                            <option value="helpful">Most Helpful</option>
+                            <option value="lowest">Lowest Rated</option>
+                            <option value="highest">Highest Rated</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </form>
                 </div>
             </div>
 
-            {% for review in reviews %}
+            {% for review in review_page %}
                 <hr class="mt-3">
                 <!-- Comments -->
                 <div class="row mt-4">
@@ -636,6 +638,7 @@
         </div>
     </div>
     <!-- End Customer Reviews -->
+    {% include 'snippets/pagination.html' with page=review_page %}
 
 </div>
 <!-- Content -->

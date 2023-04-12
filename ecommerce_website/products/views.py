@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from django.core.paginator import Paginator
 
+from django.views.generic.list import MultipleObjectMixin
+
 from django.db.models import Prefetch, Avg, Count
 
 from . import services
@@ -94,7 +96,7 @@ def category_products(request, **kwargs):
             'ancestors': category_ancestors,
             'subcategories': category_children,
             'popular_products': popular_products,
-            'page': page,
+            'product_page': page,
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
         }
@@ -115,23 +117,46 @@ class ProductView(DetailView):
         category = product.category.first()
         category_ancestors = category.get_ancestors(include_self=True)
 
+        review_page = self.get_reviews()
         product_reviews_rating = Review.objects.aggregate_product_reviews(
             product)
-        reviews = Review.objects.prefetch_review_ratings(product)
-
         most_liked_positive_review = Review.objects.get_most_liked_positive_product_review(
             product)
         most_liked_negative_review = Review.objects.get_most_liked_negative_product_review(
             product)
 
+        popular_products = self.model.objects.get_popular_products()
+
         context['ancestors'] = category_ancestors
         context['product_reviews_rating'] = product_reviews_rating
-        context['reviews'] = reviews
+        context['review_page'] = review_page
+        context['popular_products'] = popular_products
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review
 
         return context
+
+    def get_reviews(self):
+        product = self.get_object()
+        reviews_ordering = self.request.GET.get('ordering', None)
+
+        if reviews_ordering:
+            reviews = Review.objects.prefetch_review_ratings(
+                product, ordering=reviews_ordering)
+        else:
+            reviews = Review.objects.prefetch_review_ratings(product)
+
+        paginator = Paginator(reviews, 10)
+        try:
+            query_dict = self.request.GET
+            query_dict._mutable = True
+            page_number = int(query_dict.pop('page', 1)[0])
+        except TypeError and ValueError:
+            page_number = 1
+        review_page = paginator.get_page(page_number)
+
+        return review_page
 
     def get_queryset(self):
         queryset = super().get_queryset()
