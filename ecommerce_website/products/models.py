@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Avg, Count, Q
+from django.db.models import Prefetch, Avg, Count, Q, Case, When
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType

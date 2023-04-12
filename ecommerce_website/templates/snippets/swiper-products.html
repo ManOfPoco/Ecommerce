@@ -1,6 +1,6 @@
 {% load product_tags %}
 <!-- Swiper -->
-<div class="swiper mb-4" id="brandAccessories">
+<div class="swiper mb-4" id="{{id|default:'popularProducts'}}">
     <div class="swiper-wrapper card-styles">
         {% for product in products %}
             <div class="swiper-slide">

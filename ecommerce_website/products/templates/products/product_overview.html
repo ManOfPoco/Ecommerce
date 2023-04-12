@@ -1,0 +1,657 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load product_tags %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'products/css/product_overview.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+{% endblock head %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavBar.html' with data=ancestors last_path=True %}
+    <!-- BreadCrumbNavBar -->
+
+    <!-- Product Overview -->
+    <div class="row">
+
+        <div class="col-lg-7">
+            <div class="row pb-1">
+                <div class="col ps-2">
+                    <h4 class="product-title fs-2 fw-bold" style="font-family: 'Futura PT';">{{product.product_name}}
+                    </h4>
+                    {% if product.brand.brand_name %}
+                    <h6 class="product-brand fs-5 mt-2 fw-normal" style="color: #767676;">{{product.brand.brand_name}}
+                    </h6>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if product.discounts.all %}
+            <div class="row">
+                <div class="col-auto sale-badge px-3 align-items-center">
+                    SALE
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <img src="{{ product.images.first.url.url }}" class="ps-0 py-2 pe-3" style='cursor:pointer'
+                    alt="{{product.images.first.alternative_text}}" id="currentImg">
+                <div id="fullpage" onclick="this.style.display='none';"></div>
+
+                <div class="row">
+                    <div class="swiper" id="productImages">
+                        <div class="swiper-wrapper card-border">
+                            {% for image in product.images.all %}
+                                <div class="swiper-slide">
+                                    {% if image.is_default %}
+                                        <img src="{{ image.url.url }}" class="active-img" alt="{{image.alternative_text}}">
+                                    {% else %}
+                                        <img src="{{ image.url.url }}" alt="{{image.alternative_text}}">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row fs-5 align-items-baseline">
+                <div class="col-auto ps-1">
+                    <div id='product-rating' data-rating='{{product.rating|floatformat:2}}'></div>
+                </div>
+                <div class="col">
+                    {% if product.reviews_count %}
+                        <a href="#customersReview" class='anchor'>{{product.reviews_count}} Reviews</a>
+                    {% else %}
+                        <a href="#customersReview" class='anchor'>Write a Review</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                {% with product.discounts as discount %}
+                <div class="col">
+                    <div class="row align-items-baseline" style="height:26px">
+                        {% if discount.first %}
+                        <div class="col-auto pe-0 fw-bold fs-2" style="font-family: 'Futura PT';">
+                            {% if discount.first %} ${{discount.first.discount_price|floatformat:'2'}} {% else %}
+                            ${{product.regular_price}} {% endif %}
+                        </div>
+                        <div class="col ps-2 text-decoration-line-through align-bottom product-old-price">
+                            ${{product.regular_price|floatformat:'2'}}
+                        </div>
+                        {% else %}
+                        <div class="col-auto pe-0 fw-bold fs-2" style="font-family: 'Futura PT';">
+                            {% if discount.first %} ${{discount.first.discount_price|floatformat:'2'}} {% else %}
+                            ${{product.regular_price}} {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if discount.first %}
+                    <div class="row">
+                        <div class="col product-promotion">
+                            {% calculate_discount_saving product.regular_price discount.first.discount_price as saving %}
+                            Save {{saving}}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if discount.last.discount_unit >= 2 %}
+                    <div class="row">
+                        <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
+                            <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discount.last.discount_description}}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endwith %}
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-auto">
+                    <h6 class="mb-0">Quantity:</h6>
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+
+                <div class="row mt-4">
+
+                    <div class="product-selection-info ps-5">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input border-dark fs-2" type="radio" name="flexRadioInfo"
+                                        id="flexRadioPickupat" checked>
+                                    <label class="form-check-label fs-5" for="flexRadioPickupat">
+                                        <span class="fw-bold">Pickup</span> at <a href="#">Gahanna</a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input border-dark fs-2" type="radio" name="flexRadioInfo"
+                                        id="flexRadioSameDayDelivery">
+                                    <label class="form-check-label fs-5" for="flexRadioSameDayDelivery">
+                                        <span class="fw-bold">Same-Day Delivery | $99</span><br>
+                                        <p class='mt-1 mb-1'>to <a href="#">Gahanna, OH 43230</a></p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input border-dark fs-2" type="radio" name="flexRadioInfo"
+                                        id="flexRadioDefault1">
+                                    <label class="form-check-label fs-5" for="flexRadioDefault1">
+                                        <span class="fw-bold">BIG Delivery | $149</span><br>
+                                        <p class="mt-1 mb-1">to <a href="#">Gahanna, OH 43230</a></p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 align-items-baseline">
+                        <div class="col-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" class="bi bi-heart"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                            </svg>
+                        </div>
+                        <div class="col">
+                            <button class="btn add-to-cart-button py-2 px-5">Add for Pickup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product info -->
+    <div class="row mt-5 pt-4">
+        <div class="col-12 col-sm-7 ps-4">
+            <div class="row product-description-title ps-3 mb-2">
+                PRODUCT OVERVIEW
+            </div>
+
+            <div class="row product-overview-title ps-4 align-middle">
+
+                <div class="row product-body-data">
+                    <a data-bs-toggle="collapse" href="#description" role="button" aria-expanded="true"
+                        aria-controls="collapseExample">
+                        <div class="row py-3">
+                            <div class="col align-self-center">
+                                Description
+                            </div>
+                            <div class="col-auto">
+                                <img src="{% static 'icons/minus.svg' %}" alt="collapse-down">
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="collapse show" id="description">
+                        <div class="row">
+                            <div class="col product-body lh-lg ps-0 pe-5 pb-3 mb-2">
+                                {{product.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row product-body-data">
+                    <a data-bs-toggle="collapse" href="#productDetails" role="button" aria-expanded="false"
+                        aria-controls="collapseExample">
+                        <div class="row py-3">
+                            <div class="col align-self-center">
+                                Product Details
+                            </div>
+                            <div class="col-auto">
+                                <img src="{% static 'icons/plus.svg' %}" alt="collapse-down">
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="collapse" id="productDetails">
+                        <div class="row py-3">
+                            <div class="col product-body lh-lg ps-0 pe-5 pb-3">
+                                SKU(s): {{product.sku}}
+                            </div>
+                            {% if product.attribute.all %}
+                            <div class="row fs-5 description-body-title">
+                                Specifications
+                            </div>
+                            <div class="col px-0">
+                                <ul>
+                                    {% for attr in product.attribute.all %}
+                                    <li class='fw-normal fs-5 ps-2'>{{attr}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            {% if product.features.all %}
+                            <div class="row fs-5 description-body-title">
+                                Features
+                            </div>
+                            <div class="col px-0">
+                                <ul>
+                                    {% for feature in product.features.all %}
+                                    <li class='fw-normal fs-5'>{{feature}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row product-body-data">
+                    <a data-bs-toggle="collapse" href="#returnPolicy" role="button" aria-expanded="false"
+                        aria-controls="collapseExample">
+                        <div class="row py-3">
+                            <div class="col align-self-center">
+                                Return Policy
+                            </div>
+                            <div class="col-auto">
+                                <img src="{% static 'icons/plus.svg' %}" alt="collapse-down">
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="collapse" id="returnPolicy">
+                        <div class="row">
+                            <div class="col product-body lh-lg ps-0 pe-5 pb-3 mb-2">
+                                If you wish to return your Big! Delivery item, contact our Customer Care Support
+                                Center
+                                at 1-866-BIG-LOTS (244-5687) for assistance with making your return. Please be
+                                prepared
+                                to provide your order number and email address, or your rewards number, so that we
+                                may
+                                better assist you.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row product-body-data">
+                    <a data-bs-toggle="collapse" href="#deliveryInfo" role="button" aria-expanded="false"
+                        aria-controls="collapseExample">
+                        <div class="row py-3">
+                            <div class="col align-self-center">
+                                Delivery Info
+                            </div>
+                            <div class="col-auto">
+                                <img src="{% static 'icons/plus.svg' %}" alt="collapse-down">
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="collapse" id="deliveryInfo">
+                        <div class="row">
+                            <div class="col product-body ps-0 pe-5 pb-3 mb-2">
+                                <h6 class="fw-bold fs-5 lh-lg mb-0">In-Store Pickup</h6>
+                                <p>In store pickup is FREE. Orders placed by 5pm local time can be picked up the
+                                    same
+                                    day.</p>
+                                <h6 class="fw-bold fs-5 lh-lg mb-0">Same-Day Delivery</h6>
+                                <p>Need it? Get it! Got it. Same Day Delivery available from select stores. You can
+                                    choose from available delivery windows in cart.</p>
+                                <h6 class="fw-bold fs-5 lh-lg">BIG Delivery | Room of Choice</h6>
+                                <p>B!G Delivery icon B!G Delivery | Room Of Choice</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row mt-4">
+                <div class="col">
+                    <h6 class="mb-0 fw-bold fs-5">General Disclaimer:</h6>
+                    <p class="fs-5">We aim to provide accurate product information, however some
+                        information presented is provided by a
+                        3rd party and is subject to change See our disclaimer.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Items -->
+    {% include 'snippets/card-swiper-preview.html' with title='Similar Items' %}
+    {% include 'snippets/swiper-products.html' with products=popular_products %}
+    <!-- End Similar Items -->
+
+    <!-- Cusmers Also Bought -->
+    {% include 'snippets/card-swiper-preview.html' with title='Customers Also Bought' %}
+    {% include 'snippets/swiper-products.html' with products=customers_bought id='customersPrefer' %}
+    <!-- End Cusmers Also Bought -->
+
+    <!-- Customer Reviews -->
+    <div class="row justify-content-center">
+        <div class="col-auto customers-review-title" id="customersReview">
+            Customer Reviews
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-auto" style="font-weight: 700;font-size: 14px;font-family: 'Futura PT';">
+            Share your thoughts, we value your opinion.
+        </div>
+    </div>
+
+    <!-- Review Ratings -->
+    <div class="row mt-4">
+        <!-- Write A Review -->
+        <div class="col col-sm text-center">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn add-to-cart-button px-5">Write A Review</button>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-auto">
+                            <div id='product-rating-down' data-rating='{{product.rating|floatformat:2}}'></div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-1">
+                        <div class="col">
+                            <span style='font-size: 18px;font-weight: 700;'>{{product.rating|floatformat:1}}</span>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <span style='font-size: 14px;'>{{product.reviews_count}} Reviews</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Write A Review -->
+        <div class="vr px-0"></div>
+        <!-- Rating ProgressBar -->
+        <div class="col-6 col-sm-4 fs-5">
+            {% with product.rating as rating %}
+            <div class="row pt-1">
+                <div class="col-auto pe-0 d-flex align-items-baseline">
+                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                </div>
+                <div class="col-auto ps-1 d-flex align-items-baseline">
+                    5
+                </div>
+                <div class="col" style="padding-top: 3px">
+                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                        aria-valuenow="{{product_reviews_rating.five_stars}}" aria-valuemin="0"
+                        aria-valuemax="{{product.reviews_count}}">
+                        <div class="progress-bar bg-warning"></div>
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                    {{product_reviews_rating.five_stars}}
+                </div>
+            </div>
+            <div class="row pt-1">
+                <div class="col-auto pe-0 d-flex align-items-baseline">
+                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                </div>
+                <div class="col-auto ps-1 d-flex align-items-baseline">
+                    4
+                </div>
+                <div class="col" style="padding-top: 3px">
+                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                        aria-valuenow="{{product_reviews_rating.four_stars}}" aria-valuemin="0"
+                        aria-valuemax="{{product.reviews_count}}">
+                        <div class="progress-bar bg-warning"></div>
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                    {{product_reviews_rating.four_stars}}
+                </div>
+            </div>
+            <div class="row pt-1">
+                <div class="col-auto pe-0 d-flex align-items-baseline">
+                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                </div>
+                <div class="col-auto ps-1 d-flex align-items-baseline">
+                    3
+                </div>
+                <div class="col" style="padding-top: 3px">
+                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                        aria-valuenow="{{product_reviews_rating.three_stars}}" aria-valuemin="0"
+                        aria-valuemax="{{product.reviews_count}}">
+                        <div class="progress-bar bg-warning"></div>
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                    {{product_reviews_rating.three_stars}}
+                </div>
+            </div>
+            <div class="row pt-1">
+                <div class="col-auto pe-0 d-flex align-items-baseline">
+                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                </div>
+                <div class="col-auto ps-1 d-flex align-items-baseline">
+                    2
+                </div>
+                <div class="col" style="padding-top: 3px">
+                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                        aria-valuenow="{{product_reviews_rating.two_stars}}" aria-valuemin="0"
+                        aria-valuemax="{{product.reviews_count}}">
+                        <div class="progress-bar bg-warning"></div>
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                    {{product_reviews_rating.two_stars}}
+                </div>
+            </div>
+            <div class="row pt-1">
+                <div class="col-auto pe-0 d-flex align-items-baseline">
+                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                </div>
+                <div class="col-auto ps-1 d-flex align-items-baseline">
+                    1
+                </div>
+                <div class="col" style="padding-top: 3px">
+                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                        aria-valuenow="{{product_reviews_rating.one_star}}" aria-valuemin="0" aria-valuemax="{{product.reviews_count}}">
+                        <div class="progress-bar bg-warning"></div>
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                    {{product_reviews_rating.one_star}}
+                </div>
+            </div>
+            {% endwith %}
+        </div>
+        <!-- End Rating ProgressBar -->
+    </div>
+
+    <!-- Most liked and disliked comment -->
+    {% if most_liked_positive_review and most_liked_negative_review %}
+        <div class="row mt-5 justify-content-center">
+            <div class="col-auto col-sm-5 border border-dark-subtle align-self-start">
+                <div class="row py-3 ps-3 pe-0">
+                    <div class="row fs-6 fw-bold">
+                        <div class="col">
+                            Most Liked Positive Review
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-auto d-flex align-items-baseline">
+                            <div class='ps-0' id='most-liked-positive-review' data-rating='{{most_liked_positive_review.product_rating}}'></div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col fw-bold fs-5">
+                            {{most_liked_positive_review.headline}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <p class="m-0 lh-lg fs-6">{{most_liked_positive_review.body}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto col-sm-1 text-center align-self-center fw-bold">
+                VS
+            </div>
+
+            <div class="col-auto col-sm-5 border border-dark-subtle align-self-start">
+                <div class="row py-3 ps-3 pe-0">
+                    <div class="row fw-bold fs-6">
+                        <div class="col">
+                            Most Liked Negative Review
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-auto d-flex align-items-baseline">
+                            <div class='ps-0' id='most-liked-negative-review' data-rating='{{most_liked_negative_review.product_rating}}'></div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col fw-bold fs-5">
+                            {{most_liked_negative_review.headline}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <p class="m-0 lh-lg fs-6">{{most_liked_negative_review.body}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- End Most liked and disliked comment -->
+
+    <!-- Comments -->
+    <div class="row">
+        <div class="col">
+            <div class="row mt-5">
+                <div class="col fs-5 align-self-end">
+                    Reviewed by {{product.reviews_count}} customer{{product.reviews_count|pluralize }}
+                </div>
+
+                <div class="col-auto px-4">
+                    <select class="form-select" aria-label="Default select example">
+                        <option>Sort reviews by</option>
+                        <option selected value="recent">Most recent</option>
+                        <option value="lowest">Lowest Rated</option>
+                        <option value="highest">Highest Rated</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+            </div>
+
+            {% for review in reviews %}
+                <hr class="mt-3">
+                <!-- Comments -->
+                <div class="row mt-4">
+                    <div class="col-auto pe-0 d-flex">
+                        <div class='px-0' name='product-reviews' id="review-{{review.id}}" data-rating="{{review.product_rating}}"></div>
+                    </div>
+                    <div class='col-auto'>
+                        {{review.product_rating}}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg">
+                            <div class="row fs-4 fw-bold mt-1">
+                                <div class="col">
+                                    {{review.headline}}
+                                </div>
+                            </div>
+
+                            <div class="row mt-1">
+                                <div class="col fs-5">
+                                    {{review.body}}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col fs-5">
+                                    {% if review.bottom_line == 'yes' %}
+                                        <span class="fw-bold">Bottom Line:</span> Yes, I would recommend this to a friend
+                                    {% else %}
+                                        <span class="fw-bold">Bottom Line:</span> No, I would not recommend this to a friend
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col fs-6 fw-bold">
+                                    Was this review helpful to you?
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-auto px-0">
+                                    <button class="btn">
+                                        <img src="{% static 'icons/like.svg' %}" alt="like"> {{review.likes}}
+                                    </button>
+                                </div>
+                                <div class="vr p-0"></div>
+                                <div class="col-auto px-0">
+                                    <button class="btn">
+                                        <img src="{% static 'icons/dislike.svg' %}" alt="dislike"> {{review.dislikes}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-auto p-0 fs-5 justify-content-end">
+                            Submitted: <span class="text-muted">{{review.created_at|timesince}} ago</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            <hr class="mt-4 px-0">
+        </div>
+    </div>
+    <!-- End Customer Reviews -->
+
+</div>
+<!-- Content -->
+
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+<script>
+    createSwiper('popularProducts');
+    createSwiper('customersPrefer');
+
+    const collapseDownIcon = "{% static 'icons/plus.svg' %}"
+    const collapseUpIcon = "{% static 'icons/minus.svg' %}"
+</script>
+<script src="{% static 'products/js/product_overview.js' %}"></script>
+{% endblock script %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count, Q
 
 from django.contrib.auth.models import User
 from products.models import Product
@@ -6,6 +7,39 @@ from products.models import Product
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from django.utils.translation import gettext_lazy as _
+
+
+class ReviewManager(models.Manager):
+
+    def aggregate_product_reviews(self, product):
+        queryset = product.reviews.aggregate(
+            five_stars=Count('product_rating', filter=Q(product_rating=5)),
+            four_stars=Count('product_rating', filter=Q(product_rating=4)),
+            three_stars=Count('product_rating', filter=Q(product_rating=3)),
+            two_stars=Count('product_rating', filter=Q(product_rating=2)),
+            one_star=Count('product_rating', filter=Q(product_rating=1)),
+        )
+
+        return queryset
+
+    def prefetch_review_ratings(self, product):
+        queryset = product.reviews.prefetch_related(
+            'rating').annotate(likes=Count('rating', filter=Q(rating__is_like=True)),
+                               dislikes=Count('rating', filter=Q(rating__is_like=False)))
+
+        return queryset
+
+    def get_most_liked_positive_product_review(self, product):
+        queryset = product.reviews.filter(
+            rating__is_like=True, product_rating__gte=3).order_by('-rating__is_like').first()
+
+        return queryset
+
+    def get_most_liked_negative_product_review(self, product):
+        queryset = product.reviews.filter(
+            rating__is_like=True, product_rating__lt=3).order_by('-rating__is_like').first()
+
+        return queryset
 
 
 class Review(models.Model):
@@ -26,6 +60,8 @@ class Review(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ReviewManager()
 
     class Meta:
         constraints = [models.UniqueConstraint(

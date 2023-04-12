@@ -1,11 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.core.paginator import Paginator
+
+from django.db.models import Prefetch, Avg, Count
 
 from . import services
 from . import filters
 
-from .models import Category, Product
+from .models import Category, Product, ProductDiscount
+from reviews.models import Review
 
 
 class CategoryView(TemplateView):
@@ -97,3 +100,51 @@ def category_products(request, **kwargs):
         }
 
         return render(request, 'products/products.html', context)
+
+
+class ProductView(DetailView):
+    model = Product
+    context_object_name = 'product'
+    template_name = 'products/product_overview.html'
+    slug_url_kwarg = 'product_slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        product = self.get_object()
+        category = product.category.first()
+        category_ancestors = category.get_ancestors(include_self=True)
+
+        product_reviews_rating = Review.objects.aggregate_product_reviews(
+            product)
+        reviews = Review.objects.prefetch_review_ratings(product)
+
+        most_liked_positive_review = Review.objects.get_most_liked_positive_product_review(
+            product)
+        most_liked_negative_review = Review.objects.get_most_liked_negative_product_review(
+            product)
+
+        context['ancestors'] = category_ancestors
+        context['product_reviews_rating'] = product_reviews_rating
+        context['reviews'] = reviews
+        if most_liked_positive_review and most_liked_negative_review:
+            context['most_liked_positive_review'] = most_liked_positive_review
+            context['most_liked_negative_review'] = most_liked_negative_review
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related('brand').prefetch_related(
+            'images',
+            'attribute',
+            'features',
+            'coupon',
+            'available_shipping_types',
+            Prefetch(
+                'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
+        ).annotate(
+            rating=Avg('reviews__product_rating'),
+            reviews_count=Count('reviews__product_rating')
+        )
+        return queryset.filter(slug=self.kwargs.get('product_slug'))

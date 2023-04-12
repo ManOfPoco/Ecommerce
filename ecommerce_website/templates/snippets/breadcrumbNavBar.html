@@ -19,6 +19,11 @@
                                     {% url 'products:products' breadcrumb_path %}
                                 {% endif %}
                                 ">
+                            {% elif last_path|default:False == True %}
+                                <a href="
+                                    {% build_url_path path as breadcrumb_path %}
+                                    {% url 'products:products' breadcrumb_path %}
+                                ">
                             {% endif %}
                         {{path}}</a></li>
                     {% endfor %}

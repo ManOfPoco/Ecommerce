@@ -24,7 +24,7 @@
                         </div>
                     </div>
 
-                    <a href="#">
+                    <a href="{% url 'products:product-overview' product.slug %}">
                         <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="{{ product.images.first.alternative_text }}">
 
                         {% with product.discounts as discounts %}
@@ -72,15 +72,13 @@
                                 </div>
                                 
                                 <div class="row">
-                                    {% with discounts.last as grand_discount %}
-                                        {% if grand_discount.discount_unit >= 2 %}
-                                            <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
-                                                <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{grand_discount.discount_description}}
-                                            </div>
-                                        {% else %}
-                                            <br>
-                                        {% endif %}
-                                    {% endwith %}
+                                    {% if discounts.last.discount_unit >= 2 %}
+                                        <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
+                                            <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discounts.last.discount_description}}
+                                        </div>
+                                    {% else %}
+                                        <br>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endwith %}

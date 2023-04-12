@@ -102,6 +102,7 @@ function deleteUrlParam(delete_key, delete_value) {
     return urlParamsArray.join('&');
 }
 
+// choise correct ordering option if user chose anything
 function handleOrderingChange(ordering) {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('ordering', ordering);

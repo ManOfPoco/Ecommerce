@@ -24,13 +24,13 @@ def get_default_filters(categories, products):
         five_stars=Count('rating',
                          filter=Q(rating__gt=5)),
         four_stars=Count('rating',
-                         filter=Q(rating__gt=4)),
+                         filter=Q(rating__gte=4)),
         three_stars=Count('rating',
-                          filter=Q(rating__gt=3)),
+                          filter=Q(rating__gte=3)),
         two_stars=Count('rating',
-                        filter=Q(rating__gt=2)),
+                        filter=Q(rating__gte=2)),
         one_star=Count('rating',
-                       filter=Q(rating__gt=1)),
+                       filter=Q(rating__gte=1)),
     )
 
     default_filters.default_factory = None

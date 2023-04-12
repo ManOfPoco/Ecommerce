@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'css/products.css' %}">
+<link rel="stylesheet" href="{% static 'products/css/products.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
 {% endblock head %}
 
@@ -56,13 +56,13 @@
         </div>
 
         {% if request.GET %}
-        <div class="col applied-filters align-self-center">
-            <div class="row fs-5" id="applied-filters">
-                <div class="col col-auto clear-all-link py-1" id="clear-all">
-                    <a href="{{request.path}}">Clear All</a>
+            <div class="col applied-filters align-self-center">
+                <div class="row fs-5" id="applied-filters">
+                    <div class="col col-auto clear-all-link py-1" id="clear-all">
+                        <a href="{{request.path}}">Clear All</a>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endif %}
 
         <div class="col-auto pe-0 align-self-center">
@@ -113,7 +113,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 <script>
-    createSwiper('brandAccessories');
+    createSwiper('popularProducts');
     let closeImgUrl = "{% static 'icons/close.svg' %}";
 </script>
 <script src="{% static 'products/js/products.js' %}"></script>

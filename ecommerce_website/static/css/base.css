@@ -98,7 +98,7 @@ a {
 
 @media (min-width: 1320px) {
 
-    #brandAccessories img,
+    #popularProducts img,
     #customersPrefer img {
         max-height: 150px;
     }
