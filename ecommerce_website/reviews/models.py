@@ -102,4 +102,4 @@ class ReviewRating(models.Model):
         )]
 
     def __str__(self) -> str:
-        return f"{self.is_like}"
+        return f"'{self.review.headline}' by {self.user.username} - {self.is_like}"

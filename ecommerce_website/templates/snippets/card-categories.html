@@ -7,7 +7,7 @@
                 {% url 'products:category' category.slug %}
             {% else %}
                 {% build_url_path category as path %}
-                {% url 'products:products' path %}
+                {% url 'products:all-products' path %}
             {% endif %}">
                 <div class="card">
                     <div class="col">

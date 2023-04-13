@@ -93,6 +93,10 @@ for (let i = 0; i < progressBarElements.length; i++) {
 
 let productRating = document.getElementById('product-rating')
 let productRatingDown = document.getElementById('product-rating-down')
+
+if (productRating.getAttribute('data-rating') === '') {
+    productRating.setAttribute('data-rating', 0)
+}
 createRating('product-rating', productRating.getAttribute('data-rating'), 14)
 createRating('product-rating-down', productRating.getAttribute('data-rating'), 20)
 
@@ -132,12 +136,11 @@ function scrollReviews() {
 }
 
 // Select correct ordering
-const select = document.getElementById('ordering').children
-if (urlParams.has('ordering')) {
+const select = document.getElementById('ordering')
+if (select && urlParams.has('ordering')) {
     for (option of select) {
         if (urlParams.get('ordering') === option.value) {
             option.selected = true;
-
             scrollReviews();
         }
     }
@@ -145,3 +148,41 @@ if (urlParams.has('ordering')) {
 else if (urlParams.has('page')) {
     scrollReviews();
 }
+
+
+$(document).ready(function () {
+
+    $('form').on('submit', function (e) {
+        let form = $(this)
+        let option = form.find('button:focus').data('option');
+        let oppositeOption = option === 'like' ? 'dislike' : 'like'
+        $.ajax({
+            type: "POST",
+            url: window.location.href,
+            data: $(this).serialize() + "&option=" + option,
+            success: function (response) {
+
+                let dataOption = `[data-option=${option}]`
+                let OppositeDataOption = `[data-option=${oppositeOption}]`
+                let basicSvg = option === 'like' ? likeSvg : dislikeSvg
+                let fillSvg = option === 'like' ? likeFillSvg : dislikeFillSvg
+                
+                if (response.status === 'Created') {
+                    form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
+                }
+                else if (response.status === 'Removed') {
+                    form.find(`[data-option="${option}"]`).html(`<img src=${basicSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) - 1}`);
+                }
+                else if (response.status === 'Changed') {
+                    let basicSvg = option === 'dislike' ? likeSvg : dislikeSvg
+                    form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
+                    form.find(`[data-option="${oppositeOption}"]`).html(`<img src=${basicSvg} alt="${oppositeOption}"> ${parseInt(form.find(OppositeDataOption).text()) - 1}`);
+                }
+            },
+            error: function (response) {
+                $('#reviewRateForm').after('<div class="invalid-feedback d-block" id="usernameError">Something went wrong</div>')
+            }
+        });
+        return false;
+    });
+});

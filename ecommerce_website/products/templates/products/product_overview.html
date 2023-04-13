@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load product_tags %}
+{% load review_tags %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'products/css/product_overview.css' %}">
@@ -357,6 +358,7 @@
     </div>
 
     <!-- Review Ratings -->
+    {% if review_page %}
     <div class="row mt-4">
         <!-- Write A Review -->
         <div class="col col-sm text-center">
@@ -390,102 +392,102 @@
         </div>
         <!-- End Write A Review -->
         <div class="vr px-0"></div>
-        <!-- Rating ProgressBar -->
-        <div class="col-6 col-sm-4 fs-5">
-            {% with product.rating as rating %}
-            <div class="row pt-1">
-                <div class="col-auto pe-0 d-flex align-items-baseline">
-                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
-                </div>
-                <div class="col-auto ps-1 d-flex align-items-baseline">
-                    5
-                </div>
-                <div class="col" style="padding-top: 3px">
-                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
-                        aria-valuenow="{{product_reviews_rating.five_stars}}" aria-valuemin="0"
-                        aria-valuemax="{{product.reviews_count}}">
-                        <div class="progress-bar bg-warning"></div>
+            <!-- Rating ProgressBar -->
+            <div class="col-6 col-sm-4 fs-5">
+                {% with product.rating as rating %}
+                <div class="row pt-1">
+                    <div class="col-auto pe-0 d-flex align-items-baseline">
+                        <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                    </div>
+                    <div class="col-auto ps-1 d-flex align-items-baseline">
+                        5
+                    </div>
+                    <div class="col" style="padding-top: 3px">
+                        <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                            aria-valuenow="{{product_reviews_rating.five_stars}}" aria-valuemin="0"
+                            aria-valuemax="{{product.reviews_count}}">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                        {{product_reviews_rating.five_stars}}
                     </div>
                 </div>
-                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
-                    {{product_reviews_rating.five_stars}}
-                </div>
-            </div>
-            <div class="row pt-1">
-                <div class="col-auto pe-0 d-flex align-items-baseline">
-                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
-                </div>
-                <div class="col-auto ps-1 d-flex align-items-baseline">
-                    4
-                </div>
-                <div class="col" style="padding-top: 3px">
-                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
-                        aria-valuenow="{{product_reviews_rating.four_stars}}" aria-valuemin="0"
-                        aria-valuemax="{{product.reviews_count}}">
-                        <div class="progress-bar bg-warning"></div>
+                <div class="row pt-1">
+                    <div class="col-auto pe-0 d-flex align-items-baseline">
+                        <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                    </div>
+                    <div class="col-auto ps-1 d-flex align-items-baseline">
+                        4
+                    </div>
+                    <div class="col" style="padding-top: 3px">
+                        <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                            aria-valuenow="{{product_reviews_rating.four_stars}}" aria-valuemin="0"
+                            aria-valuemax="{{product.reviews_count}}">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                        {{product_reviews_rating.four_stars}}
                     </div>
                 </div>
-                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
-                    {{product_reviews_rating.four_stars}}
-                </div>
-            </div>
-            <div class="row pt-1">
-                <div class="col-auto pe-0 d-flex align-items-baseline">
-                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
-                </div>
-                <div class="col-auto ps-1 d-flex align-items-baseline">
-                    3
-                </div>
-                <div class="col" style="padding-top: 3px">
-                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
-                        aria-valuenow="{{product_reviews_rating.three_stars}}" aria-valuemin="0"
-                        aria-valuemax="{{product.reviews_count}}">
-                        <div class="progress-bar bg-warning"></div>
+                <div class="row pt-1">
+                    <div class="col-auto pe-0 d-flex align-items-baseline">
+                        <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                    </div>
+                    <div class="col-auto ps-1 d-flex align-items-baseline">
+                        3
+                    </div>
+                    <div class="col" style="padding-top: 3px">
+                        <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                            aria-valuenow="{{product_reviews_rating.three_stars}}" aria-valuemin="0"
+                            aria-valuemax="{{product.reviews_count}}">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                        {{product_reviews_rating.three_stars}}
                     </div>
                 </div>
-                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
-                    {{product_reviews_rating.three_stars}}
-                </div>
-            </div>
-            <div class="row pt-1">
-                <div class="col-auto pe-0 d-flex align-items-baseline">
-                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
-                </div>
-                <div class="col-auto ps-1 d-flex align-items-baseline">
-                    2
-                </div>
-                <div class="col" style="padding-top: 3px">
-                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
-                        aria-valuenow="{{product_reviews_rating.two_stars}}" aria-valuemin="0"
-                        aria-valuemax="{{product.reviews_count}}">
-                        <div class="progress-bar bg-warning"></div>
+                <div class="row pt-1">
+                    <div class="col-auto pe-0 d-flex align-items-baseline">
+                        <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                    </div>
+                    <div class="col-auto ps-1 d-flex align-items-baseline">
+                        2
+                    </div>
+                    <div class="col" style="padding-top: 3px">
+                        <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                            aria-valuenow="{{product_reviews_rating.two_stars}}" aria-valuemin="0"
+                            aria-valuemax="{{product.reviews_count}}">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                        {{product_reviews_rating.two_stars}}
                     </div>
                 </div>
-                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
-                    {{product_reviews_rating.two_stars}}
-                </div>
-            </div>
-            <div class="row pt-1">
-                <div class="col-auto pe-0 d-flex align-items-baseline">
-                    <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
-                </div>
-                <div class="col-auto ps-1 d-flex align-items-baseline">
-                    1
-                </div>
-                <div class="col" style="padding-top: 3px">
-                    <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
-                        aria-valuenow="{{product_reviews_rating.one_star}}" aria-valuemin="0" aria-valuemax="{{product.reviews_count}}">
-                        <div class="progress-bar bg-warning"></div>
+                <div class="row pt-1">
+                    <div class="col-auto pe-0 d-flex align-items-baseline">
+                        <img src="{% static 'icons/star-fill.svg' %}" alt="rating">
+                    </div>
+                    <div class="col-auto ps-1 d-flex align-items-baseline">
+                        1
+                    </div>
+                    <div class="col" style="padding-top: 3px">
+                        <div class="progress bg-info-subtle" role="progressbar" aria-label="Warning"
+                            aria-valuenow="{{product_reviews_rating.one_star}}" aria-valuemin="0" aria-valuemax="{{product.reviews_count}}">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-baseline text-muted ps-1">
+                        {{product_reviews_rating.one_star}}
                     </div>
                 </div>
-                <div class="col-auto d-flex align-items-baseline text-muted ps-1">
-                    {{product_reviews_rating.one_star}}
-                </div>
+                {% endwith %}
             </div>
-            {% endwith %}
+            <!-- End Rating ProgressBar -->
         </div>
-        <!-- End Rating ProgressBar -->
-    </div>
 
     <!-- Most liked and disliked comment -->
     {% if most_liked_positive_review and most_liked_negative_review %}
@@ -498,8 +500,11 @@
                         </div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-auto d-flex align-items-baseline">
-                            <div class='ps-0' id='most-liked-positive-review' data-rating='{{most_liked_positive_review.product_rating}}'></div>
+                        <div class="col-auto pe-0 d-flex align-items-baseline">
+                            <div class='ps-0 pe-0' id='most-liked-positive-review' data-rating='{{most_liked_positive_review.product_rating}}'></div>
+                        </div>
+                        <div class='col-auto fs-3 text-muted'>
+                            {{most_liked_positive_review.product_rating}}
                         </div>
                     </div>
 
@@ -529,8 +534,11 @@
                         </div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-auto d-flex align-items-baseline">
-                            <div class='ps-0' id='most-liked-negative-review' data-rating='{{most_liked_negative_review.product_rating}}'></div>
+                        <div class="col-auto pe-0 d-flex align-items-baseline">
+                            <div class='ps-0 pe-0' id='most-liked-negative-review' data-rating='{{most_liked_negative_review.product_rating}}'></div>
+                        </div>
+                        <div class='col-auto fs-3 text-muted'>
+                            {{most_liked_negative_review.product_rating}}
                         </div>
                     </div>
 
@@ -551,94 +559,116 @@
     {% endif %}
     <!-- End Most liked and disliked comment -->
 
-    <!-- Comments -->
-    <div class="row">
-        <div class="col">
-            <div class="row mt-5">
-                <div class="col fs-5 align-self-end">
-                    Reviewed by {{product.reviews_count}} customer{{product.reviews_count|pluralize }}
-                </div>
-
-                <div class="col-auto px-4">
-                    <form method='GET' id='ordering-form'>
-                        <select class="form-select" id='ordering' aria-label="Default select example">
-                            <option value="recent" selected>Most Recent</option>
-                            <option value="helpful">Most Helpful</option>
-                            <option value="lowest">Lowest Rated</option>
-                            <option value="highest">Highest Rated</option>
-                            <option value="oldest">Oldest</option>
-                        </select>
-                    </form>
-                </div>
-            </div>
-
-            {% for review in review_page %}
-                <hr class="mt-3">
-                <!-- Comments -->
-                <div class="row mt-4">
-                    <div class="col-auto pe-0 d-flex">
-                        <div class='px-0' name='product-reviews' id="review-{{review.id}}" data-rating="{{review.product_rating}}"></div>
-                    </div>
-                    <div class='col-auto'>
-                        {{review.product_rating}}
+    <!-- Reviews -->
+        <div class="row">
+            <div class="col">
+                <div class="row mt-5">
+                    <div class="col fs-5 align-self-end">
+                        Reviewed by {{product.reviews_count}} customer{{product.reviews_count|pluralize }}
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg">
-                            <div class="row fs-4 fw-bold mt-1">
-                                <div class="col">
-                                    {{review.headline}}
-                                </div>
-                            </div>
+                    <div class="col-auto px-4">
+                        <form method='GET' id='ordering-form'>
+                            <select class="form-select" id='ordering' aria-label="Default select example">
+                                <option value="recent" selected>Most Recent</option>
+                                <option value="helpful">Most Helpful</option>
+                                <option value="lowest">Lowest Rated</option>
+                                <option value="highest">Highest Rated</option>
+                                <option value="oldest">Oldest</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
 
-                            <div class="row mt-1">
-                                <div class="col fs-5">
-                                    {{review.body}}
-                                </div>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col fs-5">
-                                    {% if review.bottom_line == 'yes' %}
-                                        <span class="fw-bold">Bottom Line:</span> Yes, I would recommend this to a friend
-                                    {% else %}
-                                        <span class="fw-bold">Bottom Line:</span> No, I would not recommend this to a friend
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col fs-6 fw-bold">
-                                    Was this review helpful to you?
-                                </div>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col-auto px-0">
-                                    <button class="btn">
-                                        <img src="{% static 'icons/like.svg' %}" alt="like"> {{review.likes}}
-                                    </button>
-                                </div>
-                                <div class="vr p-0"></div>
-                                <div class="col-auto px-0">
-                                    <button class="btn">
-                                        <img src="{% static 'icons/dislike.svg' %}" alt="dislike"> {{review.dislikes}}
-                                    </button>
-                                </div>
-                            </div>
+                {% for review in review_page %}
+                    <hr class="mt-3">
+                    <!-- Comments -->
+                    <div class="row mt-4">
+                        <div class="col-auto pe-0 d-flex">
+                            <div class='px-0' name='product-reviews' id="review-{{review.id}}" data-rating="{{review.product_rating}}"></div>
+                        </div>
+                        <div class='col-auto'>
+                            {{review.product_rating}}
                         </div>
 
-                        <div class="col-auto p-0 fs-5 justify-content-end">
-                            Submitted: <span class="text-muted">{{review.created_at|timesince}} ago</span>
+                        <div class="row">
+                            <div class="col-lg">
+                                <div class="row fs-4 fw-bold mt-1">
+                                    <div class="col">
+                                        {{review.headline}}
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col fs-5">
+                                        {{review.body}}
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col fs-5">
+                                        {% if review.bottom_line == 'yes' %}
+                                            <span class="fw-bold">Bottom Line:</span> Yes, I would recommend this to a friend
+                                        {% else %}
+                                            <span class="fw-bold">Bottom Line:</span> No, I would not recommend this to a friend
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col fs-6 fw-bold">
+                                        Was this review helpful to you?
+                                    </div>
+                                </div>
+
+                                <form method='POST' id='reviewRateForm'>{% csrf_token %}
+                                    <div class="row mt-3">
+                                        <div class="col-auto px-0">
+                                            <button type='submit' class="btn" name='option' data-option='like'>
+                                                {% is_liked request.user review.id True as is_like %}
+                                                {% if is_like %}
+                                                    <img src="{% static 'icons/like-fill.svg' %}" alt="like">  
+                                                {% else %}
+                                                    <img src="{% static 'icons/like.svg' %}" alt="like">  
+                                                {% endif %}
+                                                {{review.likes}}
+                                            </button>
+                                        </div>
+                                        <div class="vr p-0"></div>
+                                        <div class="col-auto px-0">
+                                            <button type='submit' class="btn" name='option' data-option='dislike'>
+                                                {% is_liked request.user review.id False as is_like %}
+                                                {% if is_like %}
+                                                    <img src="{% static 'icons/dislike-fill.svg' %}" alt="like">  
+                                                {% else %}
+                                                    <img src="{% static 'icons/dislike.svg' %}" alt="like">  
+                                                {% endif %}
+                                                {{review.dislikes}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="review_id" value="{{review.id}}">
+                                </form>
+                            </div>
+
+                            <div class="col-auto p-0 fs-5 justify-content-end">
+                                Submitted: <span class="text-muted">{{review.created_at|timesince}} ago</span>
+                            </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
-            <hr class="mt-4 px-0">
+                <hr class="mt-4 px-0">
+            </div>
         </div>
-    </div>
     <!-- End Customer Reviews -->
     {% include 'snippets/pagination.html' with page=review_page %}
+    {% else %}
+        <div class="row mt-4 text-center">
+            <div class="col">
+                <button class="btn add-to-cart-button px-5">Write A Review</button>
+            </div>
+        </div>
+    {% endif %}
 
 </div>
 <!-- Content -->
@@ -655,6 +685,10 @@
 
     const collapseDownIcon = "{% static 'icons/plus.svg' %}"
     const collapseUpIcon = "{% static 'icons/minus.svg' %}"
+    const likeSvg = "{% static 'icons/like.svg' %}"
+    const likeFillSvg = "{% static 'icons/like-fill.svg' %}"
+    const dislikeSvg = "{% static 'icons/dislike.svg' %}"
+    const dislikeFillSvg = "{% static 'icons/dislike-fill.svg' %}"
 </script>
 <script src="{% static 'products/js/product_overview.js' %}"></script>
 {% endblock script %}

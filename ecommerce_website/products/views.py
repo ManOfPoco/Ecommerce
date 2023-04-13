@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from django.core.paginator import Paginator
-
-from django.views.generic.list import MultipleObjectMixin
 
 from django.db.models import Prefetch, Avg, Count
 
@@ -10,7 +8,11 @@ from . import services
 from . import filters
 
 from .models import Category, Product, ProductDiscount
-from reviews.models import Review
+from reviews.models import Review, ReviewRating
+
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.db.utils import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CategoryView(TemplateView):
@@ -52,6 +54,7 @@ class CategoryView(TemplateView):
 
 
 def category_products(request, **kwargs):
+
     slug = kwargs.get('category_path').split('/')[-1]
     category = get_object_or_404(Category, slug=slug)
     category_children = category.get_children()
@@ -104,7 +107,7 @@ def category_products(request, **kwargs):
         return render(request, 'products/products.html', context)
 
 
-class ProductView(DetailView):
+class ProductDetailView(DetailView):
     model = Product
     context_object_name = 'product'
     template_name = 'products/product_overview.html'
@@ -125,7 +128,8 @@ class ProductView(DetailView):
         most_liked_negative_review = Review.objects.get_most_liked_negative_product_review(
             product)
 
-        popular_products = self.model.objects.get_popular_products()
+        popular_products = self.model.objects.get_popular_products(
+            category=category)
 
         context['ancestors'] = category_ancestors
         context['product_reviews_rating'] = product_reviews_rating
@@ -151,7 +155,7 @@ class ProductView(DetailView):
         try:
             query_dict = self.request.GET
             query_dict._mutable = True
-            page_number = int(query_dict.pop('page', 1)[0])
+            page_number = int(query_dict.pop('page', '1')[0])
         except TypeError and ValueError:
             page_number = 1
         review_page = paginator.get_page(page_number)
@@ -173,3 +177,55 @@ class ProductView(DetailView):
             reviews_count=Count('reviews__product_rating')
         )
         return queryset.filter(slug=self.kwargs.get('product_slug'))
+
+
+def review_rating(request, *args, **kwargs):
+
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if is_ajax:
+        if request.method == 'POST':
+            review = get_object_or_404(
+                Review, id=request.POST.get('review_id'))
+            is_like = request.POST.get('option') == 'like'
+
+            try:
+                instance = ReviewRating.objects.get(
+                    review=review, user=request.user)
+
+                if instance.is_like and is_like or \
+                        instance.is_like is False and is_like is False:
+                    instance.delete()
+                    status = 'Removed'
+
+                elif instance.is_like and is_like is False or \
+                        instance.is_like is False and is_like:
+                    instance.is_like = is_like
+                    instance.save()
+                    status = f'Changed'
+
+            except ObjectDoesNotExist:
+                ReviewRating.objects.create(
+                    review=review,
+                    user=request.user,
+                    is_like=is_like
+                )
+                status = 'Created'
+
+            except IntegrityError:
+                status = 'Something went wrong'
+
+            return JsonResponse({'status': status})
+        return JsonResponse({'status': 'Invalid request'}, status=400)
+    else:
+        return HttpResponseBadRequest('Invalid request')
+
+
+class ProductView(View):
+    def get(self, request, *args, **kwargs):
+        view = ProductDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = review_rating(request, *args, **kwargs)
+        return view

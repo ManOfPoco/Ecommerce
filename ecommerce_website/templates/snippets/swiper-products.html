@@ -5,29 +5,31 @@
         {% for product in products %}
             <div class="swiper-slide">
                 <div class="card">
-                    <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="{{product.images.first.alternative_text}}">
-                    <div class="card-body px-2">
-                        {% with product.discounts.first as discount %}
-                            <h4 class="card-title mb-0 azo-suns-bold fs-2">{% if discount %} ${{discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
-                            {% if discount.discount_unit == 1 %}
-                                <div class="row fs-7">
-                                    <div class="col-auto card-title text-decoration-line-through text-muted pe-0 fs-6">
-                                        ${{product.regular_price|floatformat:'2'}}
+                    <a href="{% url 'products:product-overview' product.slug %}">
+                        <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="{{product.images.first.alternative_text}}">
+                        <div class="card-body px-2">
+                            {% with product.discounts.first as discount %}
+                                <h4 class="card-title mb-0 azo-suns-bold fs-2">{% if discount %} ${{discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
+                                {% if discount.discount_unit == 1 %}
+                                    <div class="row fs-7">
+                                        <div class="col-auto card-title text-decoration-line-through text-muted pe-0 fs-6">
+                                            ${{product.regular_price|floatformat:'2'}}
+                                        </div>
+                                        {% calculate_discount_saving product.regular_price discount.discount_price as saving %}
+                                        <div class="col-auto ps-1 card-title-promotion">
+                                            Save {{saving}}
+                                        </div>
                                     </div>
-                                    {% calculate_discount_saving product.regular_price discount.discount_price as saving %}
-                                    <div class="col-auto ps-1 card-title-promotion">
-                                        Save {{saving}}
-                                    </div>
-                                </div>
-                            {% else %}
-                                <div style='height:26px'></div>
-                            {% endif %}
-                        {% endwith %}
-                        {% if product.brand.brand_name %}
-                            <p class="card-text card-body-brand">{{product.brand.brand_name}}</p>
-                        {% else %}<div style='height:18px'></div>{% endif %}
-                            <p class="card-text card-body-productName">{{product.product_name}}</p>
-                    </div>
+                                {% else %}
+                                    <div style='height:26px'></div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if product.brand.brand_name %}
+                                <p class="card-text card-body-brand">{{product.brand.brand_name}}</p>
+                            {% else %}<div style='height:18px'></div>{% endif %}
+                                <p class="card-text card-body-productName">{{product.product_name}}</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         {% endfor %}
