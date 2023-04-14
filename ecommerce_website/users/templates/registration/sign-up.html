@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Sign Up' %}
+    {% crispy form form.helper %}
+
+    <div class='row'>
+        <div class='col-auto'>
+            <button class="btn btn-primary" type='submit'>Create Account</button>
+        </div>
+        <div class='col align-self-center'>
+            Already have an account? <a href="{% url 'users:sign-in' %}" style='color: #006ab9!important;'>Sign In</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

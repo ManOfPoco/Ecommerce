@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    {% include 'snippets/breadcrumbNavBar.html' with data='Sign In' %}
+    {% include 'snippets/messages.html' %}
+    <div class="row">
+        <div class="col-12 col-lg ms-2 ps-0 pe-4">
+            <div class="fs-3 mb-2 fw-bold" style="border-bottom: 3px solid #ff5a00; box-sizing: border-box;">
+                Sign In
+            </div>
+            {% crispy form form.helper %}
+        </div>
+        <div class="col-12 col-lg">
+            <div class="fs-3 mb-3 fw-bold" style="border-bottom: 3px solid #ff5a00; box-sizing: border-box;">
+                Create An Account
+            </div>
+            <div class="fs-5 mb-3 fw-bold">
+                Create an account for added shopping convenience!
+            </div>
+            <div class="row mt-3 fs-5">
+                <div class="col ms-4">
+                    <div class="row align-items-center">
+                        <div class="col-auto pe-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><style>.a{fill:none;}</style></defs><path class="a" d="M0,0H24V24H0Z"/><path class="b" d="M12,12a2,2,0,1,1,2-2A2.006,2.006,0,0,1,12,12Zm6-1.8a6,6,0,1,0-12,0c0,2.34,1.95,5.44,6,9.14C16.05,15.64,18,12.54,18,10.2ZM12,2a7.955,7.955,0,0,1,8,8.2q0,4.98-8,11.8Q4.005,15.175,4,10.2A7.955,7.955,0,0,1,12,2Z"/></svg>
+                        </div>
+                        <div class="col">
+                            My Online Order History
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-auto pe-1">
+                            <img src="{% static 'icons/credit-card.svg' %}" alt="">
+                        </div>
+                        <div class="col">
+                            Save your preferred delivery address and payment method for faster checkout
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-auto pe-1">
+                            <img src="{% static 'icons/truck.svg' %}" alt="">
+                        </div>
+                        <div class="col">
+                            Quickly track your orders
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-auto pe-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                class="bi bi-heart" viewBox="0 0 16 16">
+                                <path
+                                    d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                            </svg>
+                        </div>
+                        <div class="col">
+                            Create and manage Favorites Lists
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-auto pe-1">
+                            <img src="{% static 'icons/email.svg' %}" alt="">
+                        </div>
+                        <div class="col">
+                            Manage communication preferences
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-auto">
+                    <button class="btn btn-primary"><a href="{% url 'users:sign-up' %}">Create An Account</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

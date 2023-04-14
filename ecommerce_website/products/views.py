@@ -202,7 +202,7 @@ def review_rating(request, *args, **kwargs):
                         instance.is_like is False and is_like:
                     instance.is_like = is_like
                     instance.save()
-                    status = f'Changed'
+                    status = 'Changed'
 
             except ObjectDoesNotExist:
                 ReviewRating.objects.create(
