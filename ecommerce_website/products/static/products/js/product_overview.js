@@ -1,3 +1,4 @@
+// initialize swiper for product images
 const swiper = new Swiper('#productImages', {
     direction: 'horizontal',
     spaceBetween: 5,
@@ -18,11 +19,10 @@ const swiper = new Swiper('#productImages', {
 });
 
 
-
+// if user click on the product image the main one should be replaced with new one
 let currentDisplaying = document.querySelector('#currentImg')
 let currentSwiperImg = document.querySelector('.active-img')
 let productImgs = document.querySelector('#productImages').getElementsByTagName('img')
-
 for (const img of productImgs) {
     img.addEventListener('click', () => {
         if (img != currentSwiperImg) {
@@ -34,6 +34,7 @@ for (const img of productImgs) {
     })
 }
 
+// open selected image in the full page
 let fullPage = document.getElementById('fullpage')
 currentDisplaying.addEventListener('click', function () {
     fullPage.style.backgroundImage = 'url(' + currentDisplaying.src + ')';
@@ -41,8 +42,8 @@ currentDisplaying.addEventListener('click', function () {
 });
 
 
+// hadnle collapsing product description and other product related sections
 let ProductDetailsCollapses = document.querySelectorAll('.product-body-data')
-
 for (const collapseSection of ProductDetailsCollapses) {
 
     let collapseElement = collapseSection.getElementsByClassName('collapse')
@@ -64,6 +65,7 @@ for (const collapseSection of ProductDetailsCollapses) {
     }
 }
 
+// create star rating function
 function createRating(id, rating, starWidth = 20) {
     $(function () {
         $('#' + id).rateYo({
@@ -74,12 +76,13 @@ function createRating(id, rating, starWidth = 20) {
     });
 }
 
+// calculare percent of the progress bar line
 function calculatePercent(number, searchingPercentNumber) {
     let percent = (searchingPercentNumber / number) * 100
     return percent
 }
 
-
+// initialize progress bar for product rating
 let progressBarElements = document.getElementsByClassName('progress')
 for (let i = 0; i < progressBarElements.length; i++) {
     let number = progressBarElements[i].getAttribute('aria-valuemax');
@@ -91,16 +94,16 @@ for (let i = 0; i < progressBarElements.length; i++) {
     progressBar.style.width = `${percent}%`
 }
 
+// initialize star rating for product
 let productRating = document.getElementById('product-rating')
 let productRatingDown = document.getElementById('product-rating-down')
-
 if (productRating.getAttribute('data-rating') === '') {
     productRating.setAttribute('data-rating', 0)
 }
 createRating('product-rating', productRating.getAttribute('data-rating'), 14)
 createRating('product-rating-down', productRating.getAttribute('data-rating'), 20)
 
-
+// initialize star rating if there is Most Liked Positive Review and Most Liked Negative Review
 let mostLikedPositiveReview = document.getElementById('most-liked-positive-review')
 let mostLikedNegativeReview = document.getElementById('most-liked-negative-review')
 if (mostLikedPositiveReview && mostLikedNegativeReview) {
@@ -108,7 +111,7 @@ if (mostLikedPositiveReview && mostLikedNegativeReview) {
     createRating('most-liked-negative-review', mostLikedNegativeReview.getAttribute('data-rating'), 20)
 }
 
-
+// initialize star ratings for reviews
 let productReviews = document.getElementsByName('product-reviews')
 productReviews.forEach(review => {
     createRating(review.id, review.getAttribute('data-rating'))
@@ -123,11 +126,12 @@ function handleOrderingChange(ordering) {
     window.location.href = newUrl;
 }
 
-$('select').on('change', function (e) {
+// select corrent order option if user choise any
+$('#ordering').on('change', function (e) {
     handleOrderingChange(this.value)
 });
 
-
+// scroll user to the reviews
 function scrollReviews() {
     window.scrollTo({
         top: $("#customersReview").offset().top - 146,
@@ -135,7 +139,7 @@ function scrollReviews() {
     });
 }
 
-// Select correct ordering
+// select correct ordering
 const select = document.getElementById('ordering')
 if (select && urlParams.has('ordering')) {
     for (option of select) {
@@ -149,40 +153,109 @@ else if (urlParams.has('page')) {
     scrollReviews();
 }
 
+// ajax like/dislike request
+$('.reviewRateForm').on('submit', function (e) {
+    let form = $(this)
+    let option = form.find('button:focus').data('option');
+    let oppositeOption = option === 'like' ? 'dislike' : 'like'
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $(this).serialize() + "&option=" + option,
+        success: function (response) {
 
-$(document).ready(function () {
+            let dataOption = `[data-option=${option}]`
+            let OppositeDataOption = `[data-option=${oppositeOption}]`
+            let basicSvg = option === 'like' ? likeSvg : dislikeSvg
+            let fillSvg = option === 'like' ? likeFillSvg : dislikeFillSvg
 
-    $('form').on('submit', function (e) {
-        let form = $(this)
-        let option = form.find('button:focus').data('option');
-        let oppositeOption = option === 'like' ? 'dislike' : 'like'
-        $.ajax({
-            type: "POST",
-            url: window.location.href,
-            data: $(this).serialize() + "&option=" + option,
-            success: function (response) {
-
-                let dataOption = `[data-option=${option}]`
-                let OppositeDataOption = `[data-option=${oppositeOption}]`
-                let basicSvg = option === 'like' ? likeSvg : dislikeSvg
-                let fillSvg = option === 'like' ? likeFillSvg : dislikeFillSvg
-                
-                if (response.status === 'Created') {
-                    form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
-                }
-                else if (response.status === 'Removed') {
-                    form.find(`[data-option="${option}"]`).html(`<img src=${basicSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) - 1}`);
-                }
-                else if (response.status === 'Changed') {
-                    let basicSvg = option === 'dislike' ? likeSvg : dislikeSvg
-                    form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
-                    form.find(`[data-option="${oppositeOption}"]`).html(`<img src=${basicSvg} alt="${oppositeOption}"> ${parseInt(form.find(OppositeDataOption).text()) - 1}`);
-                }
-            },
-            error: function (response) {
-                $('#reviewRateForm').after('<div class="invalid-feedback d-block" id="usernameError">Something went wrong</div>')
+            if (response.status === 'Created') {
+                form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
             }
-        });
-        return false;
+            else if (response.status === 'Removed') {
+                form.find(`[data-option="${option}"]`).html(`<img src=${basicSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) - 1}`);
+            }
+            else if (response.status === 'Changed') {
+                let basicSvg = option === 'dislike' ? likeSvg : dislikeSvg
+                form.find(`[data-option="${option}"]`).html(`<img src=${fillSvg} alt="${option}"> ${parseInt(form.find(dataOption).text()) + 1}`);
+                form.find(`[data-option="${oppositeOption}"]`).html(`<img src=${basicSvg} alt="${oppositeOption}"> ${parseInt(form.find(OppositeDataOption).text()) - 1}`);
+            }
+        },
+        error: function (response) {
+            $('.reviewRateForm').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+        }
     });
+    return false;
+});
+
+
+// initialize rating input for user
+$(function () {
+    $("<div class='error-message' style='display:none;'>Product Rating is required</div>").insertBefore("#div_id_product_rating")
+    $("<label class='form-label requiredField'>Product Rating*</label>").insertBefore("#div_id_product_rating")
+    $("#div_id_product_rating").addClass("ps-0");
+
+    $("#div_id_product_rating").rateYo({
+        rating: 0,
+        fullStar: true
+    });
+});
+
+// scroll user to the review form when button is clicked
+$('#write-review-btn').click(function (e) {
+
+    if ($('#review').css('display') === 'none') {
+        $('#review').css('display', 'block')
+        window.scrollTo({
+            top: $("#review").offset().top - 146,
+            behavior: "smooth"
+        });
+    } else {
+        $('#review').css('display', 'none')
+    }
+
+})
+
+
+// validate if user has choisen product rating
+function validateRating(reviewRating) {
+    if (reviewRating === 0) {
+        $("<div class='alert alert-danger mb-3' id='required-rating'>Product Rating is required</div>").insertAfter("#div_id_product_rating")
+        return false;
+    } else if ($('#required-rating')) {
+        $('#required-rating').css('display', 'none')
+        return true;
+    }
+}
+
+// ajax review request
+$('#create-review-form').on('submit', function (e) {
+    form = $(this)
+
+    let reviewRating = $("#div_id_product_rating").rateYo().rateYo("rating");
+    if (!validateRating(reviewRating)) {
+        return false
+    }
+
+    let product = window.location.href.split('/').slice(-2, -1)
+
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: form.serialize() + `&product_rating=${reviewRating}` + `&product=${product}`,
+        success: function (response) {
+            if (response.success) {
+                $("<div class='alert alert-success my-3' id='success-message'>Comment was added</div>").insertAfter('#create-review-form')
+            }
+            else {
+                if (!$('#error-message').length) {
+                    $("<div class='alert alert-danger my-3' id='error-message'>You can not comment the same product twice</div>").insertAfter('#create-review-form')
+                }
+            }
+        },
+        error: function (response) {
+            $('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>').insertAfter('#create-review-form')
+        }
+    });
+    return false;
 });

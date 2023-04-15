@@ -22,6 +22,11 @@
     font-size: 14px;
 }
 
+.add-to-cart-button:hover {
+    background-color: #ff7700;
+    color: white;
+}
+
 .sale-badge {
     background-color: #22A6FF;
     color: white;
@@ -117,4 +122,3 @@ li {
     margin-bottom: 5px;
     margin-top: 2px;
 }
-

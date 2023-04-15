@@ -9,10 +9,19 @@ from . import filters
 
 from .models import Category, Product, ProductDiscount
 from reviews.models import Review, ReviewRating
+from django.contrib.auth.models import User
 
-from django.http import HttpResponseBadRequest, JsonResponse
+from reviews.forms import ReviewForm
+
+from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+
+from django.template.context_processors import csrf
+from crispy_forms.utils import render_crispy_form
+
+from .decorators import is_ajax
+from django.utils.decorators import method_decorator
 
 
 class CategoryView(TemplateView):
@@ -135,6 +144,7 @@ class ProductDetailView(DetailView):
         context['product_reviews_rating'] = product_reviews_rating
         context['review_page'] = review_page
         context['popular_products'] = popular_products
+        context['form'] = ReviewForm()
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review
@@ -179,12 +189,11 @@ class ProductDetailView(DetailView):
         return queryset.filter(slug=self.kwargs.get('product_slug'))
 
 
-def review_rating(request, *args, **kwargs):
+class ReviewRatingView(View):
 
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-
-    if is_ajax:
-        if request.method == 'POST':
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
+        if 'option' in request.POST:
             review = get_object_or_404(
                 Review, id=request.POST.get('review_id'))
             is_like = request.POST.get('option') == 'like'
@@ -203,22 +212,32 @@ def review_rating(request, *args, **kwargs):
                     instance.is_like = is_like
                     instance.save()
                     status = 'Changed'
+                else:
+                    status = 'Error'
 
             except ObjectDoesNotExist:
                 ReviewRating.objects.create(
-                    review=review,
-                    user=request.user,
-                    is_like=is_like
-                )
+                    review=review, user=request.user, is_like=is_like)
                 status = 'Created'
 
             except IntegrityError:
                 status = 'Something went wrong'
 
             return JsonResponse({'status': status})
+        else:
+            form = ReviewForm(request.POST or None)
+            try:
+                if form.is_valid():
+                    form.instance.product = get_object_or_404(
+                        Product, slug=request.POST.get('product'))
+                    form.instance.user = request.user
+                    form.save()
+                    return JsonResponse({'success': True})
+            except IntegrityError:
+                return JsonResponse({'success': False})
+
+    def get(self, request, *args, **kwargs):
         return JsonResponse({'status': 'Invalid request'}, status=400)
-    else:
-        return HttpResponseBadRequest('Invalid request')
 
 
 class ProductView(View):
@@ -227,5 +246,5 @@ class ProductView(View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = review_rating(request, *args, **kwargs)
-        return view
+        view = ReviewRatingView.as_view()
+        return view(request, *args, **kwargs)
