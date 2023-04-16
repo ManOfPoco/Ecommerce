@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+<!-- Content -->
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavbar-list.html' with data=breadcrumb %}
+    <!-- End BreadCrumbNavBar -->
+
+    <form method='POST'>{% csrf_token %}
+        {{user_form|crispy}}
+        {{profile_form|crispy}}
+        <button class='btn btn-primary' type='submit'>Save Profile</button>
+    </form>
+</div>
+
+{% endblock content %}

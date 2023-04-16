@@ -1,0 +1,24 @@
+{% load product_tags %}
+
+<div class="row">
+    <div class="col px-1 mb-1">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mt-2 mb-1 fs-6">
+                <li class="breadcrumb-item text-muted"><a class="text-reset" href="{% url 'home' %}">Home</a></li>
+
+                {% for path, url in data.items %}
+                    {% if not url %}
+                        <li class="breadcrumb-item" aria-current="page">{{path}}</li>
+                    {% else %}
+                        <li class="breadcrumb-item text-muted" aria-current="page">
+                            <a class="text-reset" href="{% url url %}">
+                                {{path}}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+            </ol>
+        </nav>
+    </div>
+</div>

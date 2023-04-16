@@ -1,7 +1,10 @@
 from crispy_forms.layout import Submit
 from crispy_forms.helper import FormHelper
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django import forms
+
 from django.contrib.auth.models import User
+from .models import Profile
 
 
 class MyUserCreationForm(UserCreationForm):
@@ -24,3 +27,17 @@ class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username',  'password']
+
+
+class EditProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['phone_number', 'birthday']
+
+
+class EditUserForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']

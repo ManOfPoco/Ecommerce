@@ -63,7 +63,7 @@
         <!-- Profile SVG -->
         <div class="col-auto">
             {% if user.is_authenticated %}
-                <a href="#profile" class="text-muted">
+                <a href="{% url 'users:profile' %}" class="text-muted">
             {% else %}
                 <a href="{% url 'users:sign-up' %}" class="text-muted">
             {% endif %}

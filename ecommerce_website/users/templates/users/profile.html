@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+<!-- Content -->
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavbar.html' with data='My Account' %}
+    <!-- End BreadCrumbNavBar -->
+
+    <!-- Preview -->
+    <div class="row pb-1">
+        <div class="col ps-2">
+            <h4 class="mb-1 fs-1 fw-bold" style="border-bottom: 4px solid #ff5a00;">My Account</h4>
+        </div>
+    </div>
+    <!-- End Preview -->
+
+    <!-- Profile Info -->
+    <div class="row">
+
+        <div class="col-lg-6" style='padding:20px'>
+            <div class="row">
+                <div class="col fs-2">
+                    <img src="{% static 'icons/profile.svg' %}" alt="person-icon">
+                    My Profile
+                </div>
+            </div>
+            <div class="row personal-data-section">
+                <div class="row mt-4">
+                    <div class="col fs-7">
+                        USERNAME
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col fs-5 fw-bold">
+                        {{request.user.username}}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col fs-7">
+                        EMAIL
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col fs-5 fw-bold">
+                        {{request.user.email|default:'-'}}
+                    </div>
+                </div>
+                <div class="row mt-2 fs-5" style="color: #006ab9;">
+                    <div class="col">
+                        <a href="{% url 'users:edit-profile' %}">
+                            Edit My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row change-personal-data-section fs-5" style="color: #006ab9;">
+                <div class="row mt-5">
+                    <div class="col-auto">
+                        <img src="{% static 'icons/unlock.svg' %}" alt="changePassword">
+                    </div>
+                    <div class="col-auto ps-1">
+                        Change Password
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-auto">
+                        <img src="{% static 'icons/envelope.svg' %}" alt="emailpref">
+                    </div>
+                    <div class="col-auto ps-1">
+                        <a href="#">
+                            Manage Email Preferences
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-auto">
+                        <img src="{% static 'icons/shield.svg' %}" alt="security">
+                    </div>
+                    <div class="col-auto ps-1">
+                        <a href="#">
+                            Manage Security Questions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row payment-options mt-5">
+                <div class="col-auto">
+                    <img src="{% static 'icons/credit-card-fill.svg' %}" alt="credit-card-fill">
+                </div>
+                <div class="col fs-2 ps-0">
+                        Payment Options
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <img src="{% static 'icons/blcc.svg' %}" alt="blcc">
+                    </div>
+                    <div class="col-auto">
+                        Ro, SAVE BIG with the Big Lots Credit Card.
+                    </div>
+                </div>
+                <div class="row mt-4 mb-3 fs-5">
+                    <div class="col">
+                        Add and manage payment options. Set your preferred method for a faster checkout.
+                    </div>
+                </div>
+                <div class="row mt-3 fs-5">
+                    <div class="col" style="color: #006ab9;">
+                        <div class="row align-items-center">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-add.svg' %}" alt="account-link-add">
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    Add a payment method
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-settings.svg' %}" alt="settings">
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    Manage Payment Option
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row order-history-section mt-5">
+                <div class="col-auto">
+                    <img src="{% static 'icons/account-history.svg' %}" alt="">
+                </div>
+                <div class="col fs-2 ps-0">
+                    Order History
+                </div>
+                <div class="row mt-4 mb-3 fs-5">
+                    <div class="col">
+                        See your previous online orders and track all Big Lots purchases, both in-store & online.
+                    </div>
+                </div>
+                <div class="row mt-3 fs-5">
+                    <div class="col" style="color: #006ab9;">
+                        <div class="row align-items-center">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-globe.svg' %}" alt="globe">
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    My Online Order History
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-exclaim.svg' %}" alt="exclaim">
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    My Big Lots Purchase History
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row local-shops-section mt-5">
+                <div class="col-auto">
+                    <img src="{% static 'icons/account-store.svg' %}" alt="account-store">
+                </div>
+                <div class="col fs-2 ps-0">
+                    My Local Big Lots
+                </div>
+                <div class="row mt-4 mb-3 fs-5">
+                    <div class="col">
+                        Set your local Big Lots store so you can stay in the know with special offers and events!
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col fw-bold fs-5" style="color:#773dbd">
+                        MY LOCAL STORE
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col fs-5">
+                        E Peoria E Washington St
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col fs-5">
+                        (Big Lots #1534)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col fs-5">
+                        2500 E WASHINGTON ST
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col fs-5">
+                        EAST PEORIA IL, 61611-1861
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mt-2 fs-5">
+                        <span class="fw-bold">Open Now! </span>Saturday 09:00 AM - 09:00 PM
+                    </div>
+                </div>
+                <div class="row mt-3 fs-5">
+                    <div class="col" style="color: #006ab9;">
+                        <div class="row align-items-center">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-phone.svg' %}" alt="account-link-phone">
+                            </div>
+                            <div class="col">
+                                309-694-4191
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-auto pe-1">
+                                <img src="{% static 'icons/account-link-location.svg' %}" alt="account-link-location">
+                            </div>
+                            <div class="col">
+                                Get Directions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col my-account-section">
+            <div class="row">
+                <div class="row address-book-section mt-5">
+                    <div class="col-auto">
+                        <img src="{% static 'icons/account-address.svg' %}" alt="account-address">
+                    </div>
+                    <div class="col fs-2 ps-0">
+                        Address Book
+                    </div>
+                    <div class="row mt-4 mb-3 fs-5">
+                        <div class="col">
+                            Add addresses and mange saved addresses. Set your preferred address for faster checkout.
+                        </div>
+                    </div>
+                    <div class="row mt-3 fs-5">
+                        <div class="col" style="color: #006ab9;">
+                            <div class="row align-items-center">
+                                <div class="col-auto pe-1">
+                                    <img src="{% static 'icons/account-link-add.svg' %}" alt="account-link-add">
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        My Online Order History
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row align-items-center mt-3">
+                                <div class="col-auto pe-1">
+                                    <img src="{% static 'icons/account-link-settings.svg' %}" alt="">
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        My Big Lots Purchase History
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row address-book-section mt-5">
+                    <div class="col-auto">
+                        <img src="{% static 'icons/account-wishlist.svg' %}" alt="">
+                    </div>
+                    <div class="col fs-2 ps-0">
+                        Wish Lists
+                    </div>
+                    <div class="row mt-4 mb-3 fs-5">
+                        <div class="col">
+                            Create and manage your Wish Lists, where you can save your favorite items for later.
+                        </div>
+                    </div>
+                    <div class="row mt-3 fs-5">
+                        <div class="col" style="color: #006ab9;">
+                            <div class="row align-items-center">
+                                <div class="col-auto pe-1">
+                                    <img src="{% static 'icons/account-link-add.svg' %}" alt="account-link-add">
+                                </div>
+                                <div class="col">
+                                    Create A New List
+                                </div>
+                            </div>
+                            <div class="row align-items-center mt-3">
+                                <div class="col-auto pe-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#006ab9"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M16.5,3A5.988,5.988,0,0,0,12,5.09,5.988,5.988,0,0,0,7.5,3,5.447,5.447,0,0,0,2,8.5c0,3.78,3.4,6.86,8.55,11.54L12,21.35l1.45-1.32C18.6,15.36,22,12.28,22,8.5A5.447,5.447,0,0,0,16.5,3ZM12.1,18.55l-.1.1-.1-.1C7.14,14.24,4,11.39,4,8.5A3.418,3.418,0,0,1,7.5,5a3.909,3.909,0,0,1,3.57,2.36h1.87A3.885,3.885,0,0,1,16.5,5,3.418,3.418,0,0,1,20,8.5C20,11.39,16.86,14.24,12.1,18.55Z" />
+                                    </svg>
+                                </div>
+                                <div class="col">
+                                    Wish Lists
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Profile Info -->
+
+    <!-- Popular Products -->
+    {% include 'snippets/card-swiper-preview.html' with title='Our Top Picks For You' %} <!-- Fix later -->
+    {% include 'snippets/swiper-products.html' with products=popular_products %}
+    <!-- End Popular Products -->
+</div>
+<!-- Content -->
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    createSwiper('popularProducts');
+</script>
+{% endblock script %}
