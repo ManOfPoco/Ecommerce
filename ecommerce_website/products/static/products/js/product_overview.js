@@ -117,7 +117,7 @@ productReviews.forEach(review => {
     createRating(review.id, review.getAttribute('data-rating'))
 });
 
-// choise correct ordering option if user chose anything
+// chose correct ordering option if user chose anything
 const urlParams = new URLSearchParams(window.location.search);
 function handleOrderingChange(ordering) {
     urlParams.set('ordering', ordering);
@@ -217,7 +217,7 @@ $('#write-review-btn').click(function (e) {
 })
 
 
-// validate if user has choisen product rating
+// validate if user has chosen product rating
 function validateRating(reviewRating) {
     if (reviewRating === 0) {
         $("<div class='alert alert-danger mb-3' id='required-rating'>Product Rating is required</div>").insertAfter("#div_id_product_rating")

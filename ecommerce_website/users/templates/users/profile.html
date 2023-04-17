@@ -297,7 +297,9 @@
                                     <img src="{% static 'icons/account-link-add.svg' %}" alt="account-link-add">
                                 </div>
                                 <div class="col">
-                                    Create A New List
+                                    <a href=''>
+                                        Create A New List
+                                    </a>
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -309,7 +311,9 @@
                                     </svg>
                                 </div>
                                 <div class="col">
-                                    Wish Lists
+                                    <a href="{% url 'wishlist:wishlist' %}">
+                                        Wish Lists
+                                    </a>
                                 </div>
                             </div>
                         </div>

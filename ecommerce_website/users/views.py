@@ -9,7 +9,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from .forms import MyUserCreationForm, EditProfileForm, EditUserForm
 
-from .models import Profile
 from products.models import Product
 
 from django.contrib.auth.decorators import login_required

@@ -134,3 +134,7 @@ a {
 .disabled {
     color:rgba(33, 37, 41, 0.75)!important
 }
+
+.form-control, .form-check-input {
+    border: 1px solid #ced4da!important;
+}

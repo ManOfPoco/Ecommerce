@@ -1,0 +1,14 @@
+.link {
+    color: #ff5a00;
+    text-decoration: underline;
+}
+
+.active-list {
+    color: #ff5a00;
+    font-weight: bold;
+}
+
+.default-list {
+    color: #0061a2;
+    font-weight: 500;
+}

@@ -9,7 +9,6 @@ from . import filters
 
 from .models import Category, Product, ProductDiscount
 from reviews.models import Review, ReviewRating
-from django.contrib.auth.models import User
 
 from reviews.forms import ReviewForm
 
@@ -17,10 +16,7 @@ from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
-from django.template.context_processors import csrf
-from crispy_forms.utils import render_crispy_form
-
-from .decorators import is_ajax
+from ecommerce_website.decorators import is_ajax
 from django.utils.decorators import method_decorator
 
 

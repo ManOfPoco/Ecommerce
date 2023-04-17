@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load product_tags %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'wishlist/css/wishlist.css' %}">
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavBar.html' with data='Wish Lists' %}
+    <!-- End BreadCrumbNavBar -->
+
+    <!-- Preview -->
+    <div class="row mt-3 mb-0">
+        <div class="col-lg-2 col-auto ps-2 pe-0" style="border-bottom: 3px solid #ff5a00;">
+            <h4 class="mb-0 fs-3 fw-bold">WISH LISTS</h4>
+        </div>
+        <div class="col mb-0 ps-0 text-end border-bottom border-dark-subtle">
+            <img src="{% static 'icons/printer.svg' %}" alt="print">
+            <span class="fs-7 fw-bold link">
+                Print
+            </span>
+        </div>
+    </div>
+    <!-- End Preview -->
+
+    <div class=" row my-4">
+
+        <div class="col-lg-2 pt-2 fs-5 mb-3">
+            <div class="row mt-0">
+                <div class="col fw-bold p-2 ps-1 fs-4">Choice your list:</div>
+            </div>
+
+            <div class="row">
+                <hr class='m-0'>
+                {% for list in wishlists %}
+                {% if list.slug == wishlist.slug %}
+                <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
+                    <div class="row active-list my-1">
+                        {% else %}
+                        <div class='list ps-3 my-2'>
+                            <a href="{% url 'wishlist:wishlist-items' list.slug %}">
+                                <div class="row my-1">
+                                    {% endif %}
+                                    {{list.list_name}}
+                                </div>
+                                <div class="row">
+                                    {{list.wishlist_item.count}} ITEM{{list.wishlist_item.count|pluralize:'S'}}
+                                </div>
+                            </a>
+                            <div class="row default-list">
+                                {% if list.is_default %}
+                                    Default Wish List
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr class='m-0'>
+                        {% endfor %}
+                    </div>
+                <div class="row my-2">
+                    <div class="col d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#create-list-modal">
+                            Create List
+                        </button>
+                        {% include 'snippets/modal-form-center.html' with id='create-list-modal' form_id='create-list' modal_title='Create A New List' form=wishlist_form submit_btn_title='Create List'%}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col fs-3">
+                <div class="row justify-content-end">
+                    <div class="col">
+                        {{wishlist|title}} <span class='fs-6'>({{wishlist_items.count}} ITEMS)</span>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" aria-label="Default select example" id='ordering'>
+                            <option selected value="date-added">Date Added</option>
+                            <option value="name_ascending">Name A-Z</option>
+                            <option value="price-up">Price - Low to Hight</option>
+                            <option value="price-down">Price - Hight to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" class="btn fs-6 fw-bold link p-0" data-bs-toggle="modal" data-bs-target="#edit-wish-list-modal">
+                            Edit Wish List
+                        </button>
+                    </div>
+                        {% include 'snippets/modal-form-center.html' with id='edit-wish-list-modal' form_id='edit-wish-list' instance=wishlist modal_title='Edit Wish List' form=wishlist_update_form submit_btn_title='Save Wish List'%}
+                    <div class="vr p-0"></div>
+                    <div class="col-auto">
+                        <button type="button" class="btn fs-6 fw-bold link p-0" data-bs-toggle="modal" data-bs-target="#delete-list-modal">
+                            Delete Wish List
+                        </button>
+                    </div>
+                    {% include 'snippets/modal-form-delete-center.html' with id='delete-list-modal' form_id='wish-list-delete' slug=wishlist.slug modal_title='Are you sure you want to delete wishlist -' instance=wishlist form=wishlist_form submit_btn_title="Yes I'm Sure" %}
+                </div>
+                <hr class='mt-1'>
+                {% for item in wishlist_items %}
+                <div class="row wish-list-item">
+                    <div class="col">
+                        <a href="{% url 'products:product-overview' item.product.slug %}">
+                            <div class="row mt-4 mx-2">
+                                <div class="col-3 p-0 ps-2">
+                                    <img src="{{ item.product.product_image.0.url.url }}" alt='product_img'>
+                                </div>
+
+                                <div class="col mx-2">
+                                    <div class="row fs-6 text-muted">
+                                        {{item.date_added|date:'N d, Y'}}
+                                    </div>
+                                    <div class="row fs-5 mt-1 link fw-bold">
+                                        {{item.product.product_name}}
+                                    </div>
+                                    <div class="row fs-6 mt-2">
+                                        <div class="col ps-0">
+                                            <span class="fw-bold">SKU(s) :</span> {{item.product.sku}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="row fw-bold">
+                                        ${{item.product.regular_price}}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="row mt-3 justify-content-end ms-3 me-0">
+                            <div class="col ps-0 align-self-end">
+                                <button type="button" class="btn fs-6 fw-bold ps-0 link" data-bs-toggle="modal" data-bs-target="#delete-list-item-model-{{item.id}}">
+                                    Delete Item
+                                </button>
+                                <div class="modal fade" id="delete-list-item-model-{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form method='POST' class='items-deletion-form'>{% csrf_token %}
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-4" id="exampleModalLabel">Are you sure you want to delete '{{item.product.product_name}}' from '{{wishlist.list_name}}'</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger" data-product="{{item.product.slug}}" data-wishlist="{{wishlist.slug}}">Yes I'm Sure</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if item.product.quantity != 0 %}
+                            <div class="col-auto px-0">
+                                <button type="button" class="btn fs-5 px-4 add-to-cart-button">
+                                    Add to Cart
+                                </button>
+                            </div>
+                            {% else %}
+                            <div class="col-auto px-0 text-danger">
+                                Current product is out of stock
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                {% empty %}
+                    <div class='row mx-2'>No products here yet</div>
+                {% endfor %}
+                <!-- Continue -->
+            </div>
+        </div>
+
+    <!-- Popular Products -->
+    {% include 'snippets/card-swiper-preview.html' with title="We Think You'll Love These" %}
+    {% include 'snippets/swiper-products.html' with products=popular_products %}
+    <!-- End Popular Products -->
+</div>
+<!-- Content -->
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script>
+    createSwiper('popularProducts')
+</script>
+<script src="{% static 'wishlist/js/wishlist.js' %}"></script>
+{% endblock script %}
