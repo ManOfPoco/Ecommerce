@@ -33,32 +33,32 @@
                 <div class="col fw-bold p-2 ps-1 fs-4">Choice your list:</div>
             </div>
 
-            <div class="row">
+            <div class="row" id='wishlists'>
                 <hr class='m-0'>
                 {% for list in wishlists %}
-                {% if list.slug == wishlist.slug %}
-                <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
-                    <div class="row active-list my-1">
-                        {% else %}
-                        <div class='list ps-3 my-2'>
-                            <a href="{% url 'wishlist:wishlist-items' list.slug %}">
-                                <div class="row my-1">
-                                    {% endif %}
-                                    {{list.list_name}}
-                                </div>
-                                <div class="row">
-                                    {{list.wishlist_item.count}} ITEM{{list.wishlist_item.count|pluralize:'S'}}
-                                </div>
-                            </a>
-                            <div class="row default-list">
-                                {% if list.is_default %}
-                                    Default Wish List
-                                {% endif %}
+                    {% if list.slug == wishlist.slug %}
+                    <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
+                        <div class="row active-list my-1">
+                            {% else %}
+                            <div class='list ps-3 my-2'>
+                                <a href="{% url 'wishlist:wishlist-items' list.slug %}">
+                                    <div class="row my-1">
+                                        {% endif %}
+                                        {{list.list_name}}
+                                    </div>
+                                    <div class="row">
+                                        {{list.wishlist_item.count}} ITEM{{list.wishlist_item.count|pluralize:'S'}}
+                                    </div>
+                                </a>
+                                    <div class="row default-list">
+                                        {% if list.is_default %}
+                                            Default Wish List
+                                        {% endif %}
+                                    </div>
                             </div>
-                        </div>
-                        <hr class='m-0'>
-                        {% endfor %}
-                    </div>
+                <hr class='m-0'>
+                {% endfor %}
+                </div>
                 <div class="row my-2">
                     <div class="col d-flex justify-content-center">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -98,7 +98,7 @@
                             Delete Wish List
                         </button>
                     </div>
-                    {% include 'snippets/modal-form-delete-center.html' with id='delete-list-modal' form_id='wish-list-delete' slug=wishlist.slug modal_title='Are you sure you want to delete wishlist -' instance=wishlist form=wishlist_form submit_btn_title="Yes I'm Sure" %}
+                    {% include 'snippets/modal-form-delete-center.html' with id='delete-list-modal' form_id='wish-list-delete' modal_title='Are you sure you want to delete wishlist -' instance=wishlist submit_btn_title="Yes I'm Sure" %}
                 </div>
                 <hr class='mt-1'>
                 {% for item in wishlist_items %}

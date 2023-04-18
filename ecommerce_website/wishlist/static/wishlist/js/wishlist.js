@@ -29,7 +29,7 @@ $('#create-list').on('submit', function (e) {
         url: window.location.href,
         data: $(this).serialize(),
         success: function (response) {
-            console.log(1);
+            location.reload();
         },
         error: function (response) {
             $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
@@ -54,7 +54,9 @@ $('#edit-wish-list').on('submit', function (e) {
         url: window.location.href,
         data: $(this).serialize(),
         success: function (response) {
-            console.log(response.success);
+            let oldslug = window.location.pathname.split('/').slice(-1)[0];
+            history.replaceState(oldslug, "", response.slug);
+            location.reload();
         },
         error: function (response) {
             $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
@@ -63,37 +65,44 @@ $('#edit-wish-list').on('submit', function (e) {
     return false;
 });
 
-
-// ajax item deletion from wishlist
-$('#edit-wish-list').on('submit', function (e) {
-
-
-    $.ajax({
-        type: "POST",
-        url: window.location.href,
-        data: $(this).serialize(),
-        success: function (response) {
-            console.log(response.success);
-        },
-        error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
-    });
-    return false;
-});
-
-
-// check if user is trying to delete default wish list if is show alert message that he can't do it
+// ajax request for item deletion from the wish list
 $('.items-deletion-form').on('submit', function (e) {
+
     let product = $(this).find(':submit').data('product')
     let wishlist = $(this).find(':submit').data('wishlist')
 
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $(this).serialize() + `&product=${product}` + `&wishlist=${wishlist}`,
+        data: $(this).serialize() + `&product=${product}` + `&wishlist=${wishlist}` + `&item_deletion=True`,
         success: function (response) {
             console.log(response.success);
+        },
+        error: function (response) {
+            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+        }
+    });
+    return false;
+});
+
+// ajax request for wishlist deletion with check if user is trying to delete default wish list
+$('#wish-list-delete').on('submit', function (e) {
+
+    if ($(this).find(':submit').data('default') === 'True') {
+        if (!$('#default-error').length) {
+            $(this).find('.modal-body').append("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
+        }
+        return false
+    };
+
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $(this).serialize() + '&wishlist_deletion=True',
+        success: function (response) {
+            let oldslug = window.location.pathname.split('/').slice(-1)[0];
+            history.replaceState(oldslug, "", response.slug);
+            location.reload();
         },
         error: function (response) {
             $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
