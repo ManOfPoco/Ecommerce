@@ -24,15 +24,16 @@ if (select && urlParams.has('ordering')) {
 
 // ajax create new wish list request
 $('#create-list').on('submit', function (e) {
+    let form = $(this)
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $(this).serialize(),
+        data: form.serialize(),
         success: function (response) {
             location.reload();
         },
         error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;
@@ -41,25 +42,23 @@ $('#create-list').on('submit', function (e) {
 
 // ajax edit wish list request
 $('#edit-wish-list').on('submit', function (e) {
-
+    let form = $(this)
     if ($(this).find('input[type=checkbox]').is(":checked") === false && $(this).find(':submit').data('default') === 'True') {
-        if (!$('#default-error').length) {
-            $(this).find('.modal-body').append("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
-        }
+        form.find('.modal-messages').html("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
         return false
     };
 
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $(this).serialize(),
+        data: form.serialize(),
         success: function (response) {
             let oldslug = window.location.pathname.split('/').slice(-1)[0];
             history.replaceState(oldslug, "", response.slug);
             location.reload();
         },
         error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;
@@ -67,19 +66,17 @@ $('#edit-wish-list').on('submit', function (e) {
 
 // ajax request for item deletion from the wish list
 $('.items-deletion-form').on('submit', function (e) {
-
-    let product = $(this).find(':submit').data('product')
-    let wishlist = $(this).find(':submit').data('wishlist')
+    let form = $(this)
 
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $(this).serialize() + `&product=${product}` + `&wishlist=${wishlist}` + `&item_deletion=True`,
+        data: form.serialize() + `&item_deletion=True`,
         success: function (response) {
-            console.log(response.success);
+            location.reload();
         },
         error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;
@@ -87,25 +84,23 @@ $('.items-deletion-form').on('submit', function (e) {
 
 // ajax request for wishlist deletion with check if user is trying to delete default wish list
 $('#wish-list-delete').on('submit', function (e) {
-
+    let form = $(this)
     if ($(this).find(':submit').data('default') === 'True') {
-        if (!$('#default-error').length) {
-            $(this).find('.modal-body').append("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
-        }
+        form.find('.modal-messages').html("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
         return false
     };
 
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $(this).serialize() + '&wishlist_deletion=True',
+        data: form.serialize() + '&wishlist_deletion=True',
         success: function (response) {
             let oldslug = window.location.pathname.split('/').slice(-1)[0];
             history.replaceState(oldslug, "", response.slug);
             location.reload();
         },
         error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;

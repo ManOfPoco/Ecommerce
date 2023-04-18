@@ -116,5 +116,6 @@
     createSwiper('popularProducts');
     let closeImgUrl = "{% static 'icons/close.svg' %}";
 </script>
-<script src="{% static 'products/js/products.js' %}"></script>
+<script type='module' src="{% static 'products/js/products.js' %}"></script>
+<script type='module' src="{% static 'products/js/snippets/ajax.js' %}"></script>
 {% endblock script %}

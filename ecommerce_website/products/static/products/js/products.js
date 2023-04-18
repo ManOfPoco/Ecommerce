@@ -111,7 +111,7 @@ function handleOrderingChange(ordering) {
     window.location.href = newUrl;
 }
 
-$('select').on('change', function (e) {
+$('#ordering').on('change', function (e) {
     handleOrderingChange(this.value)
 });
 
@@ -153,3 +153,11 @@ setCheckboxValue(maxPriceCheckbox, 'max_price', 0);
 if (minPriceCheckbox.value === minPriceCheckbox.min && maxPriceCheckbox.value === maxPriceCheckbox.max && clearAllFilters) {
     clearAllFilters.style.display = 'none'
 }
+
+
+$('.wishlist').on('click', function (e) {
+    import('./snippets/ajax.js')
+        .then(ajax => {
+            ajax.wishlistAjax();
+        })
+});

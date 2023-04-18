@@ -63,7 +63,7 @@ class WishlistChangeView(View):
                 wishlist.is_default = True
 
             wishlist.save()
-            return JsonResponse({'success': True, })
+            return JsonResponse({'success': True, 'slug': wishlist.slug})
 
         except ObjectDoesNotExist:
             if form.is_valid():
@@ -115,8 +115,7 @@ class WishListItemDeleteView(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-
-        wishlist = WishList.objects.get(slug=request.POST.get('wishlist'))
+        wishlist = WishList.objects.get(id=request.POST.get('wishlist'))
         product = Product.objects.get(slug=request.POST.get('product'))
 
         WishListItem.objects.get(

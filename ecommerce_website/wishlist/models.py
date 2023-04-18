@@ -6,6 +6,8 @@ from products.models import Product, ProductImages
 
 from django.utils.translation import gettext_lazy as _
 
+from django.db.models import UniqueConstraint
+
 
 class WishListItemsManager(models.Manager):
 
@@ -50,3 +52,10 @@ class WishListItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product.product_name}"
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['product', 'wishlist'],
+                             name='unique_product_in_wishlist',
+                             violation_error_message="Wishlist can't have the same products")
+        ]

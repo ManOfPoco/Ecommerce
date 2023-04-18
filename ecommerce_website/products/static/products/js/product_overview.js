@@ -182,7 +182,8 @@ $('.reviewRateForm').on('submit', function (e) {
             }
         },
         error: function (response) {
-            $('.reviewRateForm').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            
+            form.find($('.modal-messages')).after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;
@@ -231,7 +232,6 @@ function validateRating(reviewRating) {
 // ajax review request
 $('#create-review-form').on('submit', function (e) {
     form = $(this)
-
     let reviewRating = $("#div_id_product_rating").rateYo().rateYo("rating");
     if (!validateRating(reviewRating)) {
         return false
@@ -245,17 +245,22 @@ $('#create-review-form').on('submit', function (e) {
         data: form.serialize() + `&product_rating=${reviewRating}` + `&product=${product}`,
         success: function (response) {
             if (response.success) {
-                $("<div class='alert alert-success my-3' id='success-message'>Comment was added</div>").insertAfter('#create-review-form')
+                form.$('.modal-messages').html("<div class='alert alert-success my-3' id='success-message'>Comment was added</div>")
             }
             else {
-                if (!$('#error-message').length) {
-                    $("<div class='alert alert-danger my-3' id='error-message'>You can not comment the same product twice</div>").insertAfter('#create-review-form')
-                }
+                form.$('.modal-messages').html("<div class='alert alert-danger my-3' id='error-message'>You can not comment the same product twice</div>")
             }
         },
         error: function (response) {
-            $('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>').insertAfter('#create-review-form')
+            form.$('.modal-messages').html('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>')
         }
     });
     return false;
+});
+
+$('.wishlist').on('click', function (e) {
+    import('./snippets/ajax.js')
+        .then(ajax => {
+            ajax.wishlistAjax();
+        })
 });

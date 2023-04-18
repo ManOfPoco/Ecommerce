@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import RedirectView
-from .views import CategoryView, ProductView, category_products
+from .views import CategoryView, ProductView, ProductsView
 
 
 app_name = 'products'
@@ -12,5 +12,5 @@ urlpatterns = [
     path('product/<slug:product_slug>/',
          ProductView.as_view(), name='product-overview'),
 
-    path('<path:category_path>/', category_products, name='all-products'),
+    path('<path:category_path>/', ProductsView.as_view(), name='all-products'),
 ]

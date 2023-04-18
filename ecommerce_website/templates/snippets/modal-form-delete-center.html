@@ -8,7 +8,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <input type='hidden' name='wishlist_slug' value='{{instance.slug}}'>
                 </div>
-                <div class="modal-body fs-4"></div>
+                <div class="modal-body fs-4">
+                    <div class='modal-messages'></div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger" data-default={{instance.is_default}}>{{submit_btn_title}}</button>

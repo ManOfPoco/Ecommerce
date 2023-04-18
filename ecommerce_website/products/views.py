@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, DetailView, View
+from django.views.generic import TemplateView, DetailView, View, ListView
 from django.core.paginator import Paginator
 
 from django.db.models import Prefetch, Avg, Count
@@ -9,8 +9,10 @@ from . import filters
 
 from .models import Category, Product, ProductDiscount
 from reviews.models import Review, ReviewRating
+from wishlist.models import WishListItem
 
 from reviews.forms import ReviewForm
+from wishlist.forms import WishListItemAddForm
 
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
@@ -58,7 +60,7 @@ class CategoryView(TemplateView):
         return [f"products/{self.kwargs.get('category_slug')}.html"]
 
 
-def category_products(request, **kwargs):
+def products_list(request, *args, **kwargs):
 
     slug = kwargs.get('category_path').split('/')[-1]
     category = get_object_or_404(Category, slug=slug)
@@ -107,9 +109,46 @@ def category_products(request, **kwargs):
             'product_page': page,
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
+            'wishlist_item_add_form': WishListItemAddForm(),
         }
 
         return render(request, 'products/products.html', context)
+
+
+class ProductWishLishAddForm(View):
+
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+
+        if 'wishlist_item_add' in request.POST:
+            form = WishListItemAddForm(request.POST or None)
+            product = Product.objects.get(
+                slug=request.POST.get('product_slug'))
+            try:
+                WishListItem.objects.get(
+                    product=product, wishlist=request.POST.get('wishlist'))
+                return JsonResponse({'success': False})
+            except ObjectDoesNotExist:
+                if form.is_valid():
+                    form.instance.product = product
+                    form.save()
+
+                    return JsonResponse({'success': True})
+
+        return JsonResponse({'success': False})
+
+
+class ProductsView(View):
+
+    def post(self, request, *args, **kwargs):
+        # if 'wishlist_item_add' in request.POST:
+        view = ProductWishLishAddForm.as_view()
+        return view(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        view = products_list
+        return view(request, *args, **kwargs)
 
 
 class ProductDetailView(DetailView):
@@ -141,6 +180,7 @@ class ProductDetailView(DetailView):
         context['review_page'] = review_page
         context['popular_products'] = popular_products
         context['form'] = ReviewForm()
+        context['wishlist_item_add_form'] = WishListItemAddForm()
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review
