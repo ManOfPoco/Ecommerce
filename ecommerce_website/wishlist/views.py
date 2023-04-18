@@ -53,11 +53,17 @@ class WishlistChangeView(View):
 
             wishlist.list_name = request.POST.get('list_name')
             wishlist.slug = slugify(request.POST.get('list_name'))
-            wishlist.is_default = True if request.POST.get(
-                'is_default') else wishlist.is_default
+
+            if request.POST.get('is_default'):
+                default_wishlist = WishList.objects.filter(
+                    is_default=True).first()
+                default_wishlist.is_default = False
+                default_wishlist.save()
+
+                wishlist.is_default = True
 
             wishlist.save()
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, })
 
         except ObjectDoesNotExist:
             if form.is_valid():
@@ -81,24 +87,34 @@ class WishListView(View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if 'product' in request.POST and 'wishlist' in request.POST:
-            view = WishListItemView.as_view()
+        if 'item_deletion' in request.POST:
+            view = WishListItemDeleteView.as_view()
+        elif 'wishlist_deletion' in request.POST:
+            view = WishListDeleteView.as_view()
         else:
             view = WishlistChangeView.as_view()
         return view(request, *args, **kwargs)
 
 
-class WishListDeleteView(DeleteView):
-    model = WishList
-    success_url = "/wishlist/"
-    slug_url_kwarg = 'wishlist_slug'
-
-
-class WishListItemView(View):
+class WishListDeleteView(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        print(request.POST)
+
+        user = request.user
+        slug = request.POST.get('wishlist_slug')
+
+        WishList.objects.get(
+            user=user, slug=slug).delete()
+
+        default_slug = WishList.objects.get(is_default=True).slug
+        return JsonResponse({'success': True, 'slug': default_slug})
+
+
+class WishListItemDeleteView(View):
+
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
 
         wishlist = WishList.objects.get(slug=request.POST.get('wishlist'))
         product = Product.objects.get(slug=request.POST.get('product'))

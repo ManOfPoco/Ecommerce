@@ -1,11 +1,12 @@
 <div class="modal fade" id="{{id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <form method='POST' action="{% url 'wishlist:delete-wishlist' slug %}" id='{{form_id}}'>{% csrf_token %}
+        <form method='POST' id='{{form_id}}'>{% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-4" id="exampleModalLabel">{{modal_title}} '{{instance.list_name|title}}'
                     </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <input type='hidden' name='wishlist_slug' value='{{instance.slug}}'>
                 </div>
                 <div class="modal-body fs-4"></div>
                 <div class="modal-footer">

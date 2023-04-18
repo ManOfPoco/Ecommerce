@@ -189,6 +189,7 @@ class ReviewRatingView(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
+        print(request.POST)
         if 'option' in request.POST:
             review = get_object_or_404(
                 Review, id=request.POST.get('review_id'))

@@ -124,17 +124,42 @@ a {
 }
 
 .page-link {
-    padding: 0.375rem 0.75rem 0.375rem 0.75rem!important;
+    padding: 0.375rem 0.75rem 0.375rem 0.75rem !important;
 }
 
 .active>.page-link {
-    color:#fff!important;
+    color: #fff !important;
 }
 
 .disabled {
-    color:rgba(33, 37, 41, 0.75)!important
+    color: rgba(33, 37, 41, 0.75) !important
 }
 
-.form-control, .form-check-input {
-    border: 1px solid #ced4da!important;
+.form-control,
+.form-check-input {
+    border: 1px solid #ced4da !important;
+}
+
+.product-promotion {
+    font-size: 14px;
+    color: #ff5a00;
+    font-family: 'Futura PT';
+}
+
+.product-old-price {
+    font-size: 14px;
+    color: #767676;
+    font-family: 'Futura PT';
+}
+
+.add-to-cart-button {
+    background-color: #ff5a00;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.add-to-cart-button:hover {
+    background-color: #ff7700;
+    color: white;
 }

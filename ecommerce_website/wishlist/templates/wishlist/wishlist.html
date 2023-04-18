@@ -33,35 +33,35 @@
                 <div class="col fw-bold p-2 ps-1 fs-4">Choice your list:</div>
             </div>
 
-            <div class="row">
+            <div class="row" id='wishlists'>
                 <hr class='m-0'>
                 {% for list in wishlists %}
-                {% if list.slug == wishlist.slug %}
-                <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
-                    <div class="row active-list my-1">
-                        {% else %}
-                        <div class='list ps-3 my-2'>
-                            <a href="{% url 'wishlist:wishlist-items' list.slug %}">
-                                <div class="row my-1">
-                                    {% endif %}
-                                    {{list.list_name}}
-                                </div>
-                                <div class="row">
-                                    {{list.wishlist_item.count}} ITEM{{list.wishlist_item.count|pluralize:'S'}}
-                                </div>
-                            </a>
-                            <div class="row default-list">
-                                {% if list.is_default %}
-                                    Default Wish List
-                                {% endif %}
+                    {% if list.slug == wishlist.slug %}
+                    <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
+                        <div class="row active-list my-1">
+                            {% else %}
+                            <div class='list ps-3 my-2'>
+                                <a href="{% url 'wishlist:wishlist-items' list.slug %}">
+                                    <div class="row my-1">
+                                        {% endif %}
+                                        {{list.list_name}}
+                                    </div>
+                                    <div class="row">
+                                        {{list.wishlist_item.count}} ITEM{{list.wishlist_item.count|pluralize:'S'}}
+                                    </div>
+                                </a>
+                                    <div class="row default-list">
+                                        {% if list.is_default %}
+                                            Default Wish List
+                                        {% endif %}
+                                    </div>
                             </div>
-                        </div>
-                        <hr class='m-0'>
-                        {% endfor %}
-                    </div>
+                <hr class='m-0'>
+                {% endfor %}
+                </div>
                 <div class="row my-2">
                     <div class="col d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button type="button" class="btn add-to-cart-button px-4 fs-5" data-bs-toggle="modal"
                             data-bs-target="#create-list-modal">
                             Create List
                         </button>
@@ -98,7 +98,7 @@
                             Delete Wish List
                         </button>
                     </div>
-                    {% include 'snippets/modal-form-delete-center.html' with id='delete-list-modal' form_id='wish-list-delete' slug=wishlist.slug modal_title='Are you sure you want to delete wishlist -' instance=wishlist form=wishlist_form submit_btn_title="Yes I'm Sure" %}
+                    {% include 'snippets/modal-form-delete-center.html' with id='delete-list-modal' form_id='wish-list-delete' modal_title='Are you sure you want to delete wishlist -' instance=wishlist submit_btn_title="Yes I'm Sure" %}
                 </div>
                 <hr class='mt-1'>
                 {% for item in wishlist_items %}
@@ -124,8 +124,42 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="row fw-bold">
-                                        ${{item.product.regular_price}}
+                                    <div class="row fw-bold justify-content-end">
+
+                                        <div class="col">
+                                            <div class="row align-items-baseline" style="height:26px">
+                                                {% if item.product.product_discounts.0 %}
+                                                    <div class="col-auto pe-0 fw-bold fs-3" style="font-family: 'Futura PT';">
+                                                        {% if item.product.product_discounts.0 %} ${{item.product.product_discounts.0.discount_price|floatformat:'2'}} {% else %}
+                                                        ${{item.product.regular_price}} {% endif %}
+                                                    </div>
+                                                    <div class="col ps-2 fw-normal text-decoration-line-through align-bottom product-old-price">
+                                                        ${{item.product.regular_price|floatformat:'2'}}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="col-auto pe-0 fw-bold fs-3" style="font-family: 'Futura PT';">
+                                                        {% if item.product.product_discounts.0 %} ${{item.product.product_discounts.0.discount_price|floatformat:'2'}} {% else %}
+                                                        ${{item.product.regular_price}} {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            {% if item.product.product_discounts.0 %}
+                                                <div class="row">
+                                                    <div class="col fw-normal product-promotion text-end">
+                                                        {% calculate_discount_saving item.product.regular_price item.product.product_discounts.0.discount_price as saving %}
+                                                        Save {{saving}}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            {% if item.product.product_discounts.1.discount_unit >= 2 %}
+                                                <div class="row">
+                                                    <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
+                                                        <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discount.last.discount_description}}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
