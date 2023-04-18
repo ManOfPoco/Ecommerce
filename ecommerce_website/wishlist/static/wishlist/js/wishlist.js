@@ -105,3 +105,29 @@ $('#wish-list-delete').on('submit', function (e) {
     });
     return false;
 });
+
+// ajax request for wishlist deletion with check if user is trying to delete default wish list
+$('#wish-list-delete').on('submit', function (e) {
+
+    if ($(this).find(':submit').data('default') === 'True') {
+        if (!$('#default-error').length) {
+            $(this).find('.modal-body').append("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
+        }
+        return false
+    };
+
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $(this).serialize() + '&wishlist_deletion=True',
+        success: function (response) {
+            let oldslug = window.location.pathname.split('/').slice(-1)[0];
+            history.replaceState(oldslug, "", response.slug);
+            location.reload();
+        },
+        error: function (response) {
+            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+        }
+    });
+    return false;
+});
