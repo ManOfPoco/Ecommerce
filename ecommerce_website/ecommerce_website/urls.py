@@ -25,7 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('category/', include('products.urls')),
     path('account/', include('users.urls')),
-    path('wishlist/', include('wishlist.urls'))
+    path('wishlist/', include('wishlist.urls')),
+    path('cart/', include('cart.urls'))
 ]
 
 handler404 = 'ecommerce_website.views.my_custom_page_not_found_view'

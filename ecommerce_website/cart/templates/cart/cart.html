@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load product_tags %}
+
+<!-- Content -->
+{% block content %}
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-7 mb-2">
+            <div class="row pb-1">
+                <div class="col ps-2">
+                    <h3 class="fw-bold" style="font-size: 26px;">My Cart</h3>
+                </div>
+                <div class="col-auto fs-5 fw-bold">
+                    {% with cart_items.count|add:save_for_later_items.count as products_count %}
+                        {{products_count}} Item{{products_count|pluralize}}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <div class="row mx-2">
+                <div class="col">
+                    <div class="row mt-4">
+                        <div class="col">
+                            <h3 class="fs-3 fw-bold mb-1">Pickup <span class="fs-6 ps-1">FREE</span></h3>
+                        </div>
+                        <div class="col-auto fs-6">
+                            {{cart_items.count}} Item{{cart_items.count|pluralize}}
+                        </div>
+                        <h4 class="fw-normal fs-6">Order by 5 PM local time to pickup today</h4>
+
+                        <h5 class="fw-bold fs-6 mt-3" style="color: #6b21be;">You're picking up at multiple stores!</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Items -->
+            <div class="card-items">
+                <!-- Cart Item -->
+                {% for item in cart_items %}
+                    <div class="card-item">
+                        <div class="row mt-4 mx-2">
+                            <div class="col-3 p-0 ps-2">
+                                <img src="{{item.product.product_image.0.url.url}}" alt="fritos">
+                            </div>
+
+                            <div class="col mx-2">
+                                <div class="row fs-6 text-muted">
+                                    {% if item.product.brand %}
+                                        {{item.product.brand}}
+                                    {% endif %}
+                                </div>
+                                <div class="row fs-5">
+                                    {{item.product.product_name}}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="row fw-bold justify-content-end">
+                                    {% if item.product.product_discounts.0.discount_price %}
+                                        ${{item.product.product_discounts.0.discount_price}}
+                                    {% else %}
+                                        ${{item.product.regular_price}}
+                                    {% endif %}
+                                </div>
+                                {% if item.product.product_discounts.0.discount_price %}
+                                    <div class="row fs-6 justify-content-end text-decoration-line-through">
+                                        ${{item.product.regular_price}}
+                                    </div>
+                                    <div class="row fs-6 fw-bold product-promotion justify-content-end">
+                                        {% calculate_discount_saving item.product.regular_price item.product.product_discounts.0.discount_price as saving %}
+                                        Save {{saving}}
+                                    </div>
+                                {% endif %}
+                                <div class="row mt-4">
+                                    <div class='col'>
+                                        <select class="form-select" aria-label="Default select example">
+                                            {% if item.product.quantity >= 10 %}
+                                                {% make_int_list 10 as list %}
+                                            {% else %}
+                                                {% make_int_list item.product.quantity as list %}
+                                            {% endif %}
+                                            {% for num in list %}
+                                                <option value="{{num}}">{{num}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4 ms-2">
+                            <div class="col fs-5">
+                                Pickup at <span class="fw-bold" style="color:#ff5a00">{{item.pickup.shop_name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2 justify-content-end ms-3 me-0">
+                            <div class="col ps-0">
+                                <img src="{% static 'icons/three-dots-vertical.svg' %}" alt="more">
+                                <button type="button" class="btn fs-6 ps-0" style="color: #006ab9;">
+                                    More Options
+                                </button>
+                            </div>
+                            <div class="col-auto px-0">
+                                <button type="button" class="btn fs-6" style="color: #006ab9;">
+                                    Save for Later
+                                </button>
+                            </div>
+                            <div class="vr px-0 my-1"></div>
+                            <div class="col-auto px-0">
+                                <button type="button" class="btn fs-6" style="color: #006ab9;">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col mx-4 fs-5">
+            <!-- Financial Data -->
+            <div class="row mt-4">
+                <div class="col">ItemItem{{cart_items.count|pluralize}}({{cart_items.count}})</div>
+                <div class="col-auto fw-bold">${{bill|floatformat:2}}</div>
+            </div>
+            <div class="row mt-4">
+                <div class="col">Pickup</div>
+                <div class="col-auto fw-bold" style="color:#6b21be">Free</div>
+            </div>
+            <div class="row mt-4">
+                <div class="col">Delivery</div>
+                <div class="col-auto fw-bold">FREE</div>
+            </div>
+            <div class="row mt-4">
+                <div class="col">Sales Tax</div>
+                <div class="col-auto fw-bold">$0.00</div>
+                <div class="row text-muted fs-6" style="font-weight: 500;">
+                    <div class="col">
+                        Calculated at Checkout
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5 mb-4 fw-bold">
+                <div class="col">
+                    Estimated Order Total
+                </div>
+                <div class="col-auto">
+                    ${{bill|floatformat:2}}
+                </div>
+            </div>
+
+
+            <div id="smart-button-container">
+                <div style="text-align: center;">
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-7 mt-5 mb-5">
+        <div class="row pb-1">
+            <div class="col ps-2">
+                <h3 class="fw-bold" style="font-size: 26px;">Saved For Later</h3>
+            </div>
+            <div class="col-auto fs-5 fw-bold">
+                {{save_for_later_items.count}} Item{{save_for_later_items.count|pluralize}}
+            </div>
+        </div>
+        
+        <div class='saved-for-later'>
+            {% for saved_item in save_for_later_items %}
+                <div class="row mt-4 mx-2">
+                    <div class="col-3 p-0 ps-2">
+                        <img src="{{saved_item.product.product_image.0.url.url}}" alt="fritos">
+                    </div>
+
+                    <div class="col mx-2">
+                        <div class="row fs-6 text-muted">
+                        {% if saved_item.product.brand %}
+                            {{saved_item.product.brand}}
+                        {% endif %}
+                        </div>
+                        <div class="row fs-5">
+                            {{saved_item.product.product_name}}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row fw-bold">
+                            <div class="row fw-bold justify-content-end">
+                                {% if saved_item.product.product_discounts.0.discount_price %}
+                                    ${{saved_item.product.product_discounts.0.discount_price}}
+                                {% else %}
+                                    ${{saved_item.product.regular_price}}
+                                {% endif %}
+                            </div>
+                            {% if saved_item.product.product_discounts.0.discount_price %}
+                                <div class="row fs-6 justify-content-end text-decoration-line-through">
+                                    ${{saved_item.product.regular_price}}
+                                </div>
+                                <div class="row fs-6 fw-bold product-promotion justify-content-end">
+                                    {% calculate_discount_saving saved_item.product.regular_price saved_item.product.product_discounts.0.discount_price as saving %}
+                                    Save {{saving}}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4 justify-content-end ms-3 me-0">
+                    <div class="col ps-0 align-self-end">
+                        <button type="button" class="btn fs-6 ps-0" style="color: #006ab9;">
+                            Remove
+                        </button>
+                    </div>
+                    <div class="col-auto px-0">
+                        <button type="button" class="btn fs-5 px-4 add-to-cart-button">
+                            Move to Cart
+                        </button>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Popular Products -->
+    {% include 'snippets/card-swiper-preview.html' with title='Recommended For You' %}
+    {% include 'snippets/swiper-products.html' with products=popular_products %}
+    <!-- End Popular Products -->
+
+</div>
+<!-- Content -->    
+{% endblock content %}
+{% block script %}
+
+<script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD"
+    data-sdk-integration-source="button-factory"></script>
+<script>
+    function initPayPalButton() {
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'horizontal',
+                label: 'paypal',
+                tagline: false,
+
+            },
+
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{ "amount": { "currency_code": "USD", "value": 1 } }]
+                });
+            },
+
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (orderData) {
+
+                    // Full available details
+                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+
+                    // Show a success message within this page, e.g.
+                    const element = document.getElementById('paypal-button-container');
+                    element.innerHTML = '';
+                    element.innerHTML = '<h3>Thank you for your payment!</h3>';
+
+                    // Or go to another URL:  actions.redirect('thank_you.html');
+
+                });
+            },
+
+            onError: function (err) {
+                console.log(err);
+            }
+        }).render('#paypal-button-container');
+    };
+    {% comment %} initPayPalButton(); {% endcomment %}
+    createSwiper('popularProducts');
+</script>
+{% endblock script %}
+</body>
+
+</html>

@@ -29,3 +29,8 @@ def is_string(value):
 @register.filter
 def get_dict_value(dictionary, key):
     return dictionary.get(key)
+
+
+@register.simple_tag
+def make_int_list(num: str):
+    return [i for i in range(1, int(num) + 1)]

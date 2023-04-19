@@ -232,7 +232,7 @@ class ProductDiscount(models.Model):
     discount_unit = models.IntegerField()
     start_date = models.DateTimeField(blank=True, null=True)
     expire_date = models.DateTimeField(blank=True, null=True)
-    manimum_order_value = models.IntegerField(
+    minimum_order_value = models.IntegerField(
         validators=[MinValueValidator(1)])
     maximum_order_value = models.IntegerField()
 
