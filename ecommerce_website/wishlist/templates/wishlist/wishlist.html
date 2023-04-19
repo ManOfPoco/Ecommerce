@@ -210,7 +210,7 @@
                 {% empty %}
                     <div class='row mx-2'>No products here yet</div>
                 {% endfor %}
-                <!-- Continue -->
+                {% include 'snippets/pagination.html' with page=wishlist_items %}
             </div>
         </div>
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from django.views.generic import ListView, DeleteView, FormView
+from django.views.generic import ListView
 from django.views import View
 
 from .models import WishList, WishListItem
@@ -16,6 +16,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.template.defaultfilters import slugify
 
+from django.core.paginator import Paginator
+
 
 class WishListListView(ListView):
     model = WishList
@@ -27,7 +29,6 @@ class WishListListView(ListView):
 
         if slug := self.kwargs.get('wishlist_slug'):
             wishlist = WishList.objects.get(slug=slug)
-            context['wishlist_update_form'] = WishlistForm(instance=wishlist)
         else:
             wishlist = WishList.objects.get(is_default=True)
 
@@ -35,8 +36,19 @@ class WishListListView(ListView):
         wishlist_items = WishListItem.objects.get_wishlist_products(
             wishlist, ordering)
 
+        paginator = Paginator(wishlist_items, 24)
+        query_dict = self.request.GET
+        query_dict._mutable = True
+        page_number = query_dict.pop('page', 1)
+        try:
+            page_number = int(page_number[0] or 1)
+        except TypeError:
+            page_number = 1
+        wishlist_items = paginator.get_page(page_number)
+
         context['wishlist'] = wishlist
         context['wishlist_form'] = WishlistForm()
+        context['wishlist_update_form'] = WishlistForm(instance=wishlist)
         context['wishlist_items'] = wishlist_items
         context['popular_products'] = Product.objects.get_popular_products()
         return context
