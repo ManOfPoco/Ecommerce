@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import Prefetch, UniqueConstraint, Sum, F, OuterRef, Subquery, Q
 from django.db.models.functions import Coalesce
 
@@ -9,6 +9,9 @@ from ecommerce.models import Shop
 from django.core.validators import MinValueValidator
 
 from django.utils.translation import gettext_lazy as _
+
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 
 class CartItemManager(models.Manager):
@@ -22,9 +25,32 @@ class CartItemManager(models.Manager):
 
         return queryset
 
+    def check_availability(self, queryset, cart_item_instance):
+        not_available_products = []
+        for item in queryset:
+            if item.quantity > item.product.quantity:
+                queryset = queryset.exclude(product=item.product)
+                not_available_products.append((item.product, item.cart))
+                item.delete()
+
+        for product, cart in not_available_products:
+            try:
+                SaveForLater.objects.create(product=product, cart=cart)
+            except IntegrityError:
+                continue
+
+        if not getattr(cart_item_instance, 'not_available_products', None):
+            setattr(cart_item_instance, 'not_available_products', 
+                    [product[0] for product in not_available_products])
+
+        return queryset
+
     def calculate_bill(self, cart_items):
+        today = make_aware(datetime.now())
         discounts = ProductDiscount.objects.filter(
             Q(product=OuterRef('product')) &
+            Q(start_date__lte=today) &
+            Q(expire_date__gte=today) &
             Q(minimum_order_value__lte=OuterRef('quantity')) &
             Q(maximum_order_value__gte=OuterRef('quantity'))
         ).order_by("-discount_unit").values('discount_price')
@@ -32,11 +58,22 @@ class CartItemManager(models.Manager):
         queryset = cart_items.annotate(
             current_price=Coalesce(
                 Subquery(discounts[:1]), F('product__regular_price')
-            ) * F('quantity')
+            ) * F('quantity'),
+            base_price=F('product__regular_price') * F('quantity')
         )
 
         bill = queryset.aggregate(
-            bill=Sum('current_price'))['bill']
+            discount_price=Sum('current_price'),
+            base_price=Sum('base_price'))
+
+        if bill['discount_price'] != bill['base_price']:
+            bill['discount_amount'] = bill['base_price'] - \
+                bill['discount_price']
+            # modify total_price in the future. Add order price
+            bill['total_price'] = bill['discount_price']
+        else:
+            bill['total_price'] = bill['base_price']
+
         return bill
 
 

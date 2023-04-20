@@ -182,8 +182,7 @@ $('.reviewRateForm').on('submit', function (e) {
             }
         },
         error: function (response) {
-            
-            form.find($('.modal-messages')).after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            form.find($('.form-messages')).html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
         }
     });
     return false;
@@ -245,14 +244,14 @@ $('#create-review-form').on('submit', function (e) {
         data: form.serialize() + `&product_rating=${reviewRating}` + `&product=${product}`,
         success: function (response) {
             if (response.success) {
-                form.$('.modal-messages').html("<div class='alert alert-success my-3' id='success-message'>Comment was added</div>")
+                $('.review-messages').html("<div class='alert alert-success my-3' id='success-message'>Review was added</div>")
             }
             else {
-                form.$('.modal-messages').html("<div class='alert alert-danger my-3' id='error-message'>You can not comment the same product twice</div>")
+                $('.review-messages').html("<div class='alert alert-danger my-3' id='error-message'>You can not comment the same product twice</div>")
             }
         },
         error: function (response) {
-            form.$('.modal-messages').html('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>')
+            $('.review-messages').html('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>')
         }
     });
     return false;

@@ -14,6 +14,8 @@ from django.http import Http404
 from django.template.defaultfilters import slugify
 
 from decimal import Decimal, InvalidOperation
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 
 class ProductManager(models.Manager):
@@ -23,7 +25,7 @@ class ProductManager(models.Manager):
             Prefetch('images', queryset=ProductImages.objects.filter(is_default=True)))
 
         queryset = queryset.prefetch_related(Prefetch(
-            'discounts', queryset=ProductDiscount.objects.order_by('discount_unit')))
+            'discounts', queryset=ProductDiscount.objects.order_by("-discount_unit")))
 
         if category:
             categories = category.get_descendants(include_self=True)
@@ -103,10 +105,10 @@ class ProductManager(models.Manager):
             'reviews__product_rating'), reviews_count=Count('reviews__product_rating')
         ).select_related('brand').prefetch_related(
             'available_shipping_types',
-            Prefetch('images', queryset=ProductImages.objects.filter(
-                is_default=True)),
             Prefetch(
-                'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
+                'images', queryset=ProductImages.objects.filter(is_default=True)),
+            Prefetch(
+                'discounts', queryset=ProductDiscount.objects.get_discounts(), to_attr='product_discounts')
         )
         product_ordering_types = {
             'features': queryset.order_by('quantity'),  # temporarily
@@ -119,6 +121,21 @@ class ProductManager(models.Manager):
         queryset = product_ordering_types.get(ordering)
 
         return queryset
+
+
+class ProductDiscountManager(models.Manager):
+
+    def get_discounts(self, product_slug=None):
+        today = make_aware(datetime.now())
+        discounts = ProductDiscount.objects.filter(
+            Q(start_date__lte=today) &
+            Q(expire_date__gte=today))
+
+        if product_slug:
+            discounts = discounts.filter(
+                Q(product__slug=product_slug))
+
+        return discounts.order_by("-discount_unit")
 
 
 class Product(models.Model):
@@ -235,6 +252,8 @@ class ProductDiscount(models.Model):
     minimum_order_value = models.IntegerField(
         validators=[MinValueValidator(1)])
     maximum_order_value = models.IntegerField()
+
+    objects = ProductDiscountManager()
 
     def __str__(self) -> str:
         return f"Discount for: {self.product.product_name}"

@@ -210,6 +210,7 @@ class ProductDetailView(DetailView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        product_slug = self.kwargs.get('product_slug')
         queryset = queryset.select_related('brand').prefetch_related(
             'images',
             'attribute',
@@ -217,19 +218,19 @@ class ProductDetailView(DetailView):
             'coupon',
             'available_shipping_types',
             Prefetch(
-                'discounts', queryset=ProductDiscount.objects.order_by('discount_unit'))
+                'discounts', queryset=ProductDiscount.objects.get_discounts(product_slug), to_attr='product_discounts')
         ).annotate(
             rating=Avg('reviews__product_rating'),
             reviews_count=Count('reviews__product_rating')
         )
-        return queryset.filter(slug=self.kwargs.get('product_slug'))
+
+        return queryset.filter(slug=product_slug)
 
 
 class ReviewRatingView(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         if 'option' in request.POST:
             review = get_object_or_404(
                 Review, id=request.POST.get('review_id'))
@@ -270,6 +271,7 @@ class ReviewRatingView(View):
                     form.instance.user = request.user
                     form.save()
                     return JsonResponse({'success': True})
+                return JsonResponse({'success': False})
             except IntegrityError:
                 return JsonResponse({'success': False})
 

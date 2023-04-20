@@ -18,10 +18,29 @@
                     {% endwith %}
                 </div>
             </div>
+            
+            {% if not_available_products %}
+                <div class='not-available-items'>
+                    <div class="row mx-2 mt-3">
+                        <div class="col alert alert-warning fs-5">
+                            The availability of some of your items has changed. See available options to purchase or save for later.
+                        </div>
+                    </div>
+                    <div class='row'>
+                        {% for item in not_available_products %}
+                            <div class='col-2 px-0'>
+                                <a href="{% url 'products:product-overview' item.slug %}">
+                                    <img src="{{item.product_image.0.url.url}}" alt='{{item.0.product_name}}'>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
 
-            <div class="row mx-2">
+            <div class="row mx-2 mt-4">
                 <div class="col">
-                    <div class="row mt-4">
+                    <div class="row">
                         <div class="col">
                             <h3 class="fs-3 fw-bold mb-1">Pickup <span class="fs-6 ps-1">FREE</span></h3>
                         </div>
@@ -91,7 +110,7 @@
 
                         <div class="row mt-4 ms-2">
                             <div class="col fs-5">
-                                Pickup at <span class="fw-bold" style="color:#ff5a00">{{item.pickup.shop_name}}</span>
+                                Pickup at <span class="fw-bold" style="color:#ff5a00">{{item.pickup.shop_name|default:'...'}}</span>
                             </div>
                         </div>
 
@@ -122,10 +141,29 @@
 
         <div class="col mx-4 fs-5">
             <!-- Financial Data -->
-            <div class="row mt-4">
-                <div class="col">ItemItem{{cart_items.count|pluralize}}({{cart_items.count}})</div>
-                <div class="col-auto fw-bold">${{bill|floatformat:2}}</div>
-            </div>
+
+            {% if bill.discount_price != bill.base_price %}
+                <div class="row mt-4">
+                    <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
+                    <div class="col-auto fw-bold">${{bill.base_price|floatformat:2}}</div>
+                </div>
+                <div class="row mt-4 mb-5">
+                    <div class="col">Discount</div>
+                    <div class="col-auto fw-bold">-${{bill.discount_amount|floatformat:2}}</div>
+                </div>
+            {% else %}
+                <div class="row mt-4">
+                    <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
+                    <div class="col-auto fw-bold">${{bill.base_price|floatformat:2}}</div>
+                </div>
+            {% endif %}
+            
+            {% if bill.discount_price != bill.base_price %}
+                <div class="row mt-4">
+                    <div class="col">Price After Discounts</div>
+                    <div class="col-auto fw-bold">${{bill.discount_price|floatformat:2}}</div>
+                </div>
+            {% endif %} 
             <div class="row mt-4">
                 <div class="col">Pickup</div>
                 <div class="col-auto fw-bold" style="color:#6b21be">Free</div>
@@ -149,7 +187,7 @@
                     Estimated Order Total
                 </div>
                 <div class="col-auto">
-                    ${{bill|floatformat:2}}
+                    ${{bill.total_price|floatformat:2}}
                 </div>
             </div>
 
