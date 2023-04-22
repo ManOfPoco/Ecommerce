@@ -10,9 +10,6 @@ from django.core.validators import MinValueValidator
 
 from django.utils.translation import gettext_lazy as _
 
-from datetime import datetime
-from django.utils.timezone import make_aware
-
 
 class CartItemManager(models.Manager):
 
@@ -22,7 +19,7 @@ class CartItemManager(models.Manager):
         ).prefetch_related(Prefetch('product__images', to_attr='product_image',
                                     queryset=ProductImages.objects.filter(is_default=True))).annotate(
             current_price=Coalesce(
-                Subquery(ProductDiscount.objects.get_best_discount_price()), 
+                Subquery(ProductDiscount.objects.get_best_discount_price()),
                 F('product__regular_price')) * F('quantity'),
             base_price=F('product__regular_price') * F('quantity')
         ).order_by('-product__product_name')

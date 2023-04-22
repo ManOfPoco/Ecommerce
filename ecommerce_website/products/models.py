@@ -137,25 +137,15 @@ class ProductDiscountManager(models.Manager):
 
         return discounts.order_by("-discount_unit")
 
-    def get_best_discount_price(self, item=None):
+    def get_best_discount_price(self):
         today = make_aware(datetime.now())
-        if not item:
-            discount_price = ProductDiscount.objects.filter(
-                Q(product=OuterRef('product')) &
-                Q(start_date__lte=today) &
-                Q(expire_date__gte=today) &
-                Q(minimum_order_value__lte=OuterRef('quantity')) &
-                Q(maximum_order_value__gte=OuterRef('quantity'))
-            ).order_by("-discount_unit").values('discount_price')
-
-        else:
-            discount_price = ProductDiscount.objects.filter(
-                Q(product=item.product) &
-                Q(start_date__lte=today) &
-                Q(expire_date__gte=today) &
-                Q(minimum_order_value__lte=item.quantity) &
-                Q(maximum_order_value__gte=item.quantity)
-            ).order_by("-discount_unit").values('discount_price')
+        discount_price = ProductDiscount.objects.filter(
+            Q(product=OuterRef('product')) &
+            Q(start_date__lte=today) &
+            Q(expire_date__gte=today) &
+            Q(minimum_order_value__lte=OuterRef('quantity')) &
+            Q(maximum_order_value__gte=OuterRef('quantity'))
+        ).order_by("-discount_unit").values('discount_price')
 
         return discount_price[:1]
 

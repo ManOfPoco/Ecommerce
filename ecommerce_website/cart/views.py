@@ -7,16 +7,12 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Cart, CartItem, SaveForLater
-from django.db.models.functions import Coalesce
-from products.models import Product, ProductDiscount
+from products.models import Product
 from ecommerce.models import Shop
 
 from ecommerce_website.decorators import is_ajax
 from django.utils.decorators import method_decorator
-from django.http import JsonResponse
-from django.http import HttpResponseBadRequest
-
-from decimal import Decimal, InvalidOperation
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 class CartListView(ListView):
@@ -56,59 +52,26 @@ class CartItemsFormView(View):
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
 
-        if 'new_quantity' in request.POST:
-            cart = get_object_or_404(Cart, user=request.user)
-            product = get_object_or_404(
-                Product, slug=request.POST.get('product_slug'))
-            item = get_object_or_404(CartItem, cart=cart, product=product)
+        cart = get_object_or_404(Cart, user=request.user)
+        product = get_object_or_404(
+            Product, slug=request.POST.get('product_slug'))
+        item = get_object_or_404(CartItem, cart=cart, product=product)
 
-            try:
-                new_quantity = int(request.POST.get('new_quantity'))
-            except ValueError:
-                return HttpResponseBadRequest('Invalid quantity')
+        try:
+            new_quantity = int(request.POST.get('new_quantity'))
+        except ValueError:
+            return HttpResponseBadRequest('Invalid quantity')
 
-            if new_quantity > product.quantity:
-                return JsonResponse({'success': False, 'status': 'Not enough products'})
+        if new_quantity > product.quantity:
+            return JsonResponse({'success': False, 'status': 'Not enough products'})
 
-            item.quantity = new_quantity
-            item.save()
+        item.quantity = new_quantity
+        item.save()
 
-            base_product_price = item.product.regular_price * new_quantity
-            current_price = ProductDiscount.objects.get_best_discount_price(item=item)[
-                0]['discount_price'] * new_quantity if ProductDiscount.objects.get_best_discount_price(item=item) else base_product_price
-
-            try:
-                discount_amount = Decimal(request.POST.get('discount_amount'))
-            except InvalidOperation:
-                discount_amount = Decimal(0)
-
-            base_bill_price = Decimal(request.POST.get('total_price'))
-            product_old_price = Decimal(request.POST.get('old_price'))
-
-            bill = {}
-            bill['current_price'] = current_price
-            bill['base_product_price'] = base_product_price
-            bill['discount_amount'] = discount_amount if base_product_price == current_price else base_product_price - current_price
-
-            if base_product_price == current_price:
-                bill['bill_base_price'] = base_bill_price - \
-                    product_old_price + base_product_price
-                bill['bill_discount_price'] = base_bill_price - \
-                    product_old_price + current_price - discount_amount
-            else:
-                bill['bill_discount_price'] = base_bill_price - \
-                    (product_old_price + discount_amount) + current_price
-                bill['bill_base_price'] = base_bill_price - \
-                    (product_old_price + discount_amount) + base_product_price
-
-            # add order price later
-            bill['total_price'] = bill['bill_discount_price']
-
-            return JsonResponse({
-                'success': True,
-                'status': 'Quantity changed',
-                'bill': bill
-            })
+        return JsonResponse({
+            'success': True,
+            'status': 'Quantity changed',
+        })
 
 
 class CartItemRemove(View):

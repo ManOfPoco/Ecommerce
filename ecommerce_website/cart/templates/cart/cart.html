@@ -114,8 +114,7 @@
                                                     {% endfor %}
                                                 </select>
                                                 <input type='hidden' id='quanitity-data' data-product='{{item.product.slug}}'
-                                                                                         data-old-quanitity='{{item.quantity}}'
-                                                                                         data-old-price='{{item.current_price|floatformat:2}}'>
+                                                                                         data-old-quanitity='{{item.quantity}}'>
                                             </div>
                                         </div>
                                     </form>
@@ -125,7 +124,7 @@
 
                         <div class="row mt-4 ms-2">
                             <div class="col fs-5">
-                                Pickup at <span class="fw-bold" style="color:#ff5a00">{{item.pickup.shop_name|default:'...'}}</span>
+                                Pickup at <span class="fw-bold" style="color:#ff5a00">{{item.pickup_shop.shop_name|default:'...'}}</span>
                             </div>
                         </div>
 
