@@ -10,6 +10,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .forms import MyUserCreationForm, EditProfileForm, EditUserForm
 
 from products.models import Product
+from cart.models import CartItem
 
 from django.contrib.auth.decorators import login_required
 
@@ -20,6 +21,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["popular_products"] = Product.objects.get_popular_products()
+        context['cart_items_count'] = CartItem.objects.count()
         return context
 
 
@@ -50,7 +52,8 @@ def edit_profile(request):
         'breadcrumb': {
             'My Account': 'users:profile',
             'Edit Profile': None
-        }
+        },
+        'cart_items_count': CartItem.objects.count()
     }
     return render(request, 'users/user-edit-template.html', context)
 

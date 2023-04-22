@@ -7,6 +7,9 @@
 {% endblock head %}
 
 {% block content %}
+
+{% include 'snippets/bootstrap-toast.html' %}
+
 <div class="container">
     <!-- BreadCrumbNavBar -->
     {% include 'snippets/breadcrumbNavBar.html' with data='Wish Lists' %}

@@ -170,4 +170,4 @@ class MoveToCart(View):
             )
         except IntegrityError:
             return JsonResponse({'success': False, 'status': 'Object already exists'})
-        return JsonResponse({'success': True, 'status': 'Moved successfully'})
+        return JsonResponse({'success': True, 'status': 'Added successfully'})
