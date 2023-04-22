@@ -116,7 +116,7 @@ class CartItemRemove(View):
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
         get_object_or_404(CartItem,
-                          cart=request.POST.get('cart'),
+                          cart__user=request.user,
                           product__slug=request.POST.get('product_slug')).delete()
         return JsonResponse({'success': True})
 
@@ -126,7 +126,7 @@ class SaveForLaterRemove(View):
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
         get_object_or_404(SaveForLater,
-                          cart=request.POST.get('cart'),
+                          cart__user=request.user,
                           product__slug=request.POST.get('product_slug')).delete()
         return JsonResponse({'success': True})
 
@@ -135,15 +135,15 @@ class SaveForLaterCreate(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        cart = request.POST.get('cart')
+        cart = Cart.objects.get(user=request.user)
         product_slug = request.POST.get('product_slug')
 
         get_object_or_404(CartItem,
-                          cart=request.POST.get('cart'),
+                          cart=cart,
                           product__slug=request.POST.get('product_slug')).delete()
         try:
             SaveForLater.objects.create(
-                cart=get_object_or_404(Cart, id=cart),
+                cart=cart,
                 product=get_object_or_404(Product, slug=product_slug)
             )
         except IntegrityError:
