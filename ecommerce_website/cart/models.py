@@ -1,6 +1,6 @@
 from django.db import models, IntegrityError
-from django.db.models import Prefetch, UniqueConstraint, Sum, F, Subquery
-from django.db.models.functions import Coalesce
+from django.db.models import Prefetch, UniqueConstraint, Sum, F, Subquery, DecimalField
+from django.db.models.functions import Coalesce, Cast
 
 from django.contrib.auth.models import User
 from products.models import Product, ProductImages, ProductDiscount
@@ -49,8 +49,8 @@ class CartItemManager(models.Manager):
     def calculate_bill(self, queryset):
 
         bill = queryset.aggregate(
-            discount_price=Sum('current_price'),
-            base_price=Sum('base_price'))
+            discount_price=Cast(Sum('current_price'), output_field=DecimalField(max_digits=10, decimal_places=2)),
+            base_price=Cast(Sum('base_price'), output_field=DecimalField(max_digits=10, decimal_places=2)))
 
         if bill['discount_price'] != bill['base_price']:
             bill['discount_amount'] = bill['base_price'] - \
@@ -60,7 +60,7 @@ class CartItemManager(models.Manager):
         else:
             bill['total_price'] = bill['base_price']
 
-        return bill
+        return {key: round(value, 2) for key, value in bill.items()}
 
 
 class SaveForLaterManager(models.Manager):

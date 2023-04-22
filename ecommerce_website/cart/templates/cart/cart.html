@@ -168,28 +168,28 @@
             
             {% if bill.base_price is not None or bill.total_price is not None %}
                 {% if bill.discount_price < bill.base_price %}
-                    <div class="row mt-4">
+                    <div class="row mt-4" id='items'>
                         <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
                         <div class="col-auto fw-bold" id='base-price'>${{bill.base_price|floatformat:2}}</div>
                     </div>
-                    <div class="row mt-4 mb-5">
+                    <div class="row mt-4 mb-5" id='discount-section'>
                         <div class="col">Discount</div>
                         <div class="col-auto fw-bold" id='discount-amount'>-${{bill.discount_amount|floatformat:2}}</div>
                     </div>
                 {% else %}
-                    <div class="row mt-4">
+                    <div class="row mt-4" id='items'>
                         <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
                         <div class="col-auto fw-bold" id='base-price'>${{bill.base_price|floatformat:2}}</div>
                     </div>
                 {% endif %}
                 
-                {% if bill.discount_price != bill.base_price %}
-                    <div class="row mt-4">
+                {% if bill.discount_price < bill.base_price %}
+                    <div class="row mt-4" id='price-after-discount'>
                         <div class="col">Price After Discounts</div>
                         <div class="col-auto fw-bold" id='discount-price'>${{bill.discount_price|floatformat:2}}</div>
                     </div>
                 {% endif %} 
-                <div class="row mt-4">
+                <div class="row mt-4" id='pickup'>
                     <div class="col">Pickup</div>
                     <div class="col-auto fw-bold" style="color:#6b21be">Free</div>
                 </div>

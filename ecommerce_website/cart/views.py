@@ -36,6 +36,40 @@ class CartListView(ListView):
         context['popular_products'] = Product.objects.get_popular_products()
 
         return context
+    
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
+
+        cart = get_object_or_404(Cart, user=request.user)
+        product = get_object_or_404(
+            Product, slug=request.POST.get('product_slug'))
+        item = get_object_or_404(CartItem, cart=cart, product=product)
+
+        try:
+            new_quantity = int(request.POST.get('new_quantity'))
+        except ValueError:
+            return HttpResponseBadRequest('Invalid quantity')
+
+        if new_quantity > product.quantity:
+            return JsonResponse({'success': False, 'status': 'Not enough products'})
+
+        item.quantity = new_quantity
+        item.save()
+
+        queryset = self.get_queryset()
+        bill = self.model.objects.calculate_bill(queryset)
+        product = queryset.get(product=product)
+        print(bill)
+
+        return JsonResponse({
+            'success': True,
+            'status': 'Quantity changed',
+            'product': {
+                'base_price': round(product.base_price, 2),
+                'discount_price': round(product.current_price, 2)
+            },
+            'bill': bill
+        })
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -139,12 +173,12 @@ class MoveToCart(View):
         return JsonResponse({'success': True, 'status': 'Moved successfully'})
 
 
-class CartView(View):
+# class CartView(View):
 
-    def get(self, request, *args, **kwargs):
-        view = CartListView.as_view()
-        return view(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         view = CartListView.as_view()
+#         return view(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        view = CartItemsFormView.as_view()
-        return view(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
+#         view = CartItemsFormView.as_view()
+#         return view(request, *args, **kwargs)
