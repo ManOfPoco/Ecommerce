@@ -34,9 +34,10 @@ class CartListView(ListView):
         context['save_for_later_items'] = save_for_later
         context['bill'] = bill
         context['popular_products'] = Product.objects.get_popular_products()
+        context['cart_items_count'] = CartItem.objects.count()
 
         return context
-    
+
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
 
@@ -59,7 +60,6 @@ class CartListView(ListView):
         queryset = self.get_queryset()
         bill = self.model.objects.calculate_bill(queryset)
         product = queryset.get(product=product)
-        print(bill)
 
         return JsonResponse({
             'success': True,
@@ -171,14 +171,3 @@ class MoveToCart(View):
         except IntegrityError:
             return JsonResponse({'success': False, 'status': 'Object already exists'})
         return JsonResponse({'success': True, 'status': 'Moved successfully'})
-
-
-# class CartView(View):
-
-#     def get(self, request, *args, **kwargs):
-#         view = CartListView.as_view()
-#         return view(request, *args, **kwargs)
-
-#     def post(self, request, *args, **kwargs):
-#         view = CartItemsFormView.as_view()
-#         return view(request, *args, **kwargs)

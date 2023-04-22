@@ -49,7 +49,8 @@ class CartItemManager(models.Manager):
     def calculate_bill(self, queryset):
 
         bill = queryset.aggregate(
-            discount_price=Cast(Sum('current_price'), output_field=DecimalField(max_digits=10, decimal_places=2)),
+            discount_price=Cast(Sum('current_price'), output_field=DecimalField(
+                max_digits=10, decimal_places=2)),
             base_price=Cast(Sum('base_price'), output_field=DecimalField(max_digits=10, decimal_places=2)))
 
         if bill['discount_price'] != bill['base_price']:

@@ -194,9 +194,12 @@
                             </div>
                             {% if item.product.quantity != 0 %}
                             <div class="col-auto px-0">
-                                <button type="button" class="btn fs-5 px-4 add-to-cart-button">
-                                    Add to Cart
-                                </button>
+                                <form class='move-to-cart'>{% csrf_token %}
+                                    <button type="submit" class="btn fs-5 px-4 add-to-cart-button">
+                                        Add to Cart
+                                    </button>
+                                    <input type='hidden' id='data-input' data-product='{{item.product.slug}}'>
+                                </form>
                             </div>
                             {% else %}
                             <div class="col-auto px-0 text-danger">
@@ -228,5 +231,6 @@
 <script>
     createSwiper('popularProducts')
 </script>
-<script src="{% static 'wishlist/js/wishlist.js' %}"></script>
+<script type='module' src="{% static 'wishlist/js/wishlist.js' %}"></script>
+<script type='module' src="{% static 'products/js/snippets/ajax.js' %}"></script>
 {% endblock script %}

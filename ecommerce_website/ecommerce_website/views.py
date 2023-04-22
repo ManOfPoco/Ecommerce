@@ -1,9 +1,7 @@
 from django.shortcuts import render
 
-from products.models import (
-    Product,
-    Category
-)
+from products.models import Product, Category
+from cart.models import CartItem
 
 
 def home(request):
@@ -12,7 +10,8 @@ def home(request):
 
     context = {
         'products': products,
-        'categories': categories
+        'categories': categories,
+        'cart_items_count': CartItem.objects.count()
     }
 
     return render(request, 'home.html', context)

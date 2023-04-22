@@ -230,9 +230,10 @@ function validateRating(reviewRating) {
     }
 }
 
-// ajax review request
+// ajax request for comment creation
 $('#create-review-form').on('submit', function (e) {
-    form = $(this)
+
+    let form = $(this)
     let reviewRating = $("#div_id_product_rating").rateYo().rateYo("rating");
     if (!validateRating(reviewRating)) {
         return false
@@ -242,7 +243,7 @@ $('#create-review-form').on('submit', function (e) {
 
     $.ajax({
         type: "POST",
-        url: window.location.href,
+        url: 'http://127.0.0.1:8000/review/write-review/',
         data: form.serialize() + `&product_rating=${reviewRating}` + `&product=${product}`,
         success: function (response) {
             if (response.success) {

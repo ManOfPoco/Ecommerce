@@ -10,6 +10,7 @@ from . import filters
 from .models import Category, Product, ProductDiscount
 from reviews.models import Review, ReviewRating
 from wishlist.models import WishListItem
+from cart.models import CartItem
 
 from reviews.forms import ReviewForm
 from wishlist.forms import WishListItemAddForm
@@ -54,6 +55,7 @@ class CategoryView(TemplateView):
                 elif key == 'size':
                     context[key] = value
 
+        context['cart_items_count'] = CartItem.objects.count()
         return context
 
     def get_template_names(self):
@@ -110,6 +112,7 @@ def products_list(request, *args, **kwargs):
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
             'wishlist_item_add_form': WishListItemAddForm(),
+            'cart_items_count': CartItem.objects.count(),
         }
 
         return render(request, 'products/products.html', context)
@@ -119,7 +122,6 @@ class ProductWishLishAddForm(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        print(request.POST)
 
         if 'wishlist_item_add' in request.POST:
             form = WishListItemAddForm(request.POST or None)
@@ -142,7 +144,6 @@ class ProductWishLishAddForm(View):
 class ProductsView(View):
 
     def post(self, request, *args, **kwargs):
-        # if 'wishlist_item_add' in request.POST:
         view = ProductWishLishAddForm.as_view()
         return view(request, *args, **kwargs)
 
@@ -181,6 +182,7 @@ class ProductDetailView(DetailView):
         context['popular_products'] = popular_products
         context['form'] = ReviewForm()
         context['wishlist_item_add_form'] = WishListItemAddForm()
+        context['cart_items_count'] = CartItem.objects.count()
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review
@@ -231,49 +233,36 @@ class ReviewRatingView(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        if 'option' in request.POST:
-            review = get_object_or_404(
-                Review, id=request.POST.get('review_id'))
-            is_like = request.POST.get('option') == 'like'
+        review = get_object_or_404(
+            Review, id=request.POST.get('review_id'))
+        is_like = request.POST.get('option') == 'like'
 
-            try:
-                instance = ReviewRating.objects.get(
-                    review=review, user=request.user)
+        try:
+            instance = ReviewRating.objects.get(
+                review=review, user=request.user)
 
-                if instance.is_like and is_like or \
-                        instance.is_like is False and is_like is False:
-                    instance.delete()
-                    status = 'Removed'
+            if instance.is_like and is_like or \
+                    instance.is_like is False and is_like is False:
+                instance.delete()
+                status = 'Removed'
 
-                elif instance.is_like and is_like is False or \
-                        instance.is_like is False and is_like:
-                    instance.is_like = is_like
-                    instance.save()
-                    status = 'Changed'
-                else:
-                    status = 'Error'
+            elif instance.is_like and is_like is False or \
+                    instance.is_like is False and is_like:
+                instance.is_like = is_like
+                instance.save()
+                status = 'Changed'
+            else:
+                status = 'Error'
 
-            except ObjectDoesNotExist:
-                ReviewRating.objects.create(
-                    review=review, user=request.user, is_like=is_like)
-                status = 'Created'
+        except ObjectDoesNotExist:
+            ReviewRating.objects.create(
+                review=review, user=request.user, is_like=is_like)
+            status = 'Created'
 
-            except IntegrityError:
-                status = 'Something went wrong'
+        except IntegrityError:
+            status = 'Something went wrong'
 
-            return JsonResponse({'status': status})
-        else:
-            form = ReviewForm(request.POST or None)
-            try:
-                if form.is_valid():
-                    form.instance.product = get_object_or_404(
-                        Product, slug=request.POST.get('product'))
-                    form.instance.user = request.user
-                    form.save()
-                    return JsonResponse({'success': True})
-                return JsonResponse({'success': False})
-            except IntegrityError:
-                return JsonResponse({'success': False})
+        return JsonResponse({'status': status})
 
     def get(self, request, *args, **kwargs):
         return JsonResponse({'status': 'Invalid request'}, status=400)

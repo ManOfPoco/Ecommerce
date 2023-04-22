@@ -1,3 +1,5 @@
+import { moveToCartAjax } from '/static/products/js/snippets/ajax.js';
+
 const urlParams = new URLSearchParams(window.location.search);
 function handleOrderingChange(ordering) {
     urlParams.set('ordering', ordering);
@@ -131,3 +133,5 @@ $('#wish-list-delete').on('submit', function (e) {
     });
     return false;
 });
+
+moveToCartAjax();

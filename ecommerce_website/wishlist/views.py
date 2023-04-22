@@ -5,6 +5,7 @@ from django.views import View
 
 from .models import WishList, WishListItem
 from products.models import Product
+from cart.models import CartItem
 
 from .forms import WishlistForm
 
@@ -51,6 +52,7 @@ class WishListListView(ListView):
         context['wishlist_update_form'] = WishlistForm(instance=wishlist)
         context['wishlist_items'] = wishlist_items
         context['popular_products'] = Product.objects.get_popular_products()
+        context['cart_items_count'] = CartItem.objects.count()
         return context
 
 
