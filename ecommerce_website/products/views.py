@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, DetailView, View, ListView
+from django.views.generic import TemplateView, DetailView, View
 from django.core.paginator import Paginator
 
 from django.db.models import Prefetch, Avg, Count

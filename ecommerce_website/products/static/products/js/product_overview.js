@@ -1,3 +1,5 @@
+import { moveToCartAjax } from './snippets/ajax.js';
+
 // initialize swiper for product images
 const swiper = new Swiper('#productImages', {
     direction: 'horizontal',
@@ -257,9 +259,13 @@ $('#create-review-form').on('submit', function (e) {
     return false;
 });
 
+// import ajax function for adding product to the wishlist via ajax request
 $('.wishlist').on('click', function (e) {
     import('./snippets/ajax.js')
         .then(ajax => {
             ajax.wishlistAjax();
         })
 });
+
+// evoking ajax function for moving product to the cart via ajax request
+moveToCartAjax();

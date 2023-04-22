@@ -1,5 +1,5 @@
 from django.db import models, IntegrityError
-from django.db.models import Prefetch, UniqueConstraint, Sum, F, OuterRef, Subquery, Q
+from django.db.models import Prefetch, UniqueConstraint, Sum, F, Subquery
 from django.db.models.functions import Coalesce
 
 from django.contrib.auth.models import User
@@ -19,9 +19,13 @@ class CartItemManager(models.Manager):
     def get_cart_products(self, cart: 'Cart'):
         queryset = CartItem.objects.filter(cart=cart).select_related('product', 'pickup_shop').only(
             'product__product_name', 'product__slug', 'product__brand', 'product__quantity', 'product__regular_price', 'pickup_shop__shop_name'
-        ).prefetch_related(Prefetch('product__discounts', to_attr='product_discounts'),
-                           Prefetch('product__images', to_attr='product_image',
-                                    queryset=ProductImages.objects.filter(is_default=True)))
+        ).prefetch_related(Prefetch('product__images', to_attr='product_image',
+                                    queryset=ProductImages.objects.filter(is_default=True))).annotate(
+            current_price=Coalesce(
+                Subquery(ProductDiscount.objects.get_best_discount_price()), 
+                F('product__regular_price')) * F('quantity'),
+            base_price=F('product__regular_price') * F('quantity')
+        ).order_by('-product__product_name')
 
         return queryset
 
@@ -40,27 +44,12 @@ class CartItemManager(models.Manager):
                 continue
 
         if not getattr(cart_item_instance, 'not_available_products', None):
-            setattr(cart_item_instance, 'not_available_products', 
+            setattr(cart_item_instance, 'not_available_products',
                     [product[0] for product in not_available_products])
 
         return queryset
 
-    def calculate_bill(self, cart_items):
-        today = make_aware(datetime.now())
-        discounts = ProductDiscount.objects.filter(
-            Q(product=OuterRef('product')) &
-            Q(start_date__lte=today) &
-            Q(expire_date__gte=today) &
-            Q(minimum_order_value__lte=OuterRef('quantity')) &
-            Q(maximum_order_value__gte=OuterRef('quantity'))
-        ).order_by("-discount_unit").values('discount_price')
-
-        queryset = cart_items.annotate(
-            current_price=Coalesce(
-                Subquery(discounts[:1]), F('product__regular_price')
-            ) * F('quantity'),
-            base_price=F('product__regular_price') * F('quantity')
-        )
+    def calculate_bill(self, queryset):
 
         bill = queryset.aggregate(
             discount_price=Sum('current_price'),

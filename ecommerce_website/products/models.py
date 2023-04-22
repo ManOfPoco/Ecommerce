@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Avg, Count, Q, Case, When
+from django.db.models import Prefetch, Avg, Count, Q, OuterRef
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -136,6 +136,28 @@ class ProductDiscountManager(models.Manager):
                 Q(product__slug=product_slug))
 
         return discounts.order_by("-discount_unit")
+
+    def get_best_discount_price(self, item=None):
+        today = make_aware(datetime.now())
+        if not item:
+            discount_price = ProductDiscount.objects.filter(
+                Q(product=OuterRef('product')) &
+                Q(start_date__lte=today) &
+                Q(expire_date__gte=today) &
+                Q(minimum_order_value__lte=OuterRef('quantity')) &
+                Q(maximum_order_value__gte=OuterRef('quantity'))
+            ).order_by("-discount_unit").values('discount_price')
+
+        else:
+            discount_price = ProductDiscount.objects.filter(
+                Q(product=item.product) &
+                Q(start_date__lte=today) &
+                Q(expire_date__gte=today) &
+                Q(minimum_order_value__lte=item.quantity) &
+                Q(maximum_order_value__gte=item.quantity)
+            ).order_by("-discount_unit").values('discount_price')
+
+        return discount_price[:1]
 
 
 class Product(models.Model):

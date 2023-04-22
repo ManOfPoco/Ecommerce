@@ -1,3 +1,5 @@
+import { moveToCartAjax } from './snippets/ajax.js'
+
 // create star ratings
 function ratingCreation(id, rating, starWidth = 20) {
     $(function () {
@@ -154,10 +156,13 @@ if (minPriceCheckbox.value === minPriceCheckbox.min && maxPriceCheckbox.value ==
     clearAllFilters.style.display = 'none'
 }
 
-
+// import ajax function for adding product to the wishlist via ajax request
 $('.wishlist').on('click', function (e) {
     import('./snippets/ajax.js')
         .then(ajax => {
             ajax.wishlistAjax();
         })
 });
+
+// evoking ajax function for moving product to the cart via ajax request
+moveToCartAjax();

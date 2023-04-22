@@ -20,3 +20,23 @@ export function wishlistAjax(href='http://127.0.0.1:8000/category/grocery/chocol
         return false;
     });
 }
+
+export function moveToCartAjax(href='http://127.0.0.1:8000/cart/move-to-cart/') {
+    $('.move-to-cart').on('submit', function (e) {
+        let form = $(this);
+        let product_slug = form.find(('#data-input')).data('product')
+        $.ajax({
+            type: "POST",
+            url: href,
+            data: form.serialize() + `&product_slug=${product_slug}` ,
+            success: function (response) {
+                console.log('added');
+            },
+            error: function (response) {
+                console.log(response.success);
+            }
+        });
+        return false;
+    });
+}
+

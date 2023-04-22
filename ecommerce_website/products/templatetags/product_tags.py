@@ -2,6 +2,7 @@ from django import template
 from decimal import Decimal
 from django.utils.safestring import SafeString
 
+
 register = template.Library()
 
 

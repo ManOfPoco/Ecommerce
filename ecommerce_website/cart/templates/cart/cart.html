@@ -48,8 +48,6 @@
                             {{cart_items.count}} Item{{cart_items.count|pluralize}}
                         </div>
                         <h4 class="fw-normal fs-6">Order by 5 PM local time to pickup today</h4>
-
-                        <h5 class="fw-bold fs-6 mt-3" style="color: #6b21be;">You're picking up at multiple stores!</h5>
                     </div>
                 </div>
             </div>
@@ -58,52 +56,69 @@
             <div class="card-items">
                 <!-- Cart Item -->
                 {% for item in cart_items %}
-                    <div class="card-item">
+                    <div class="card-item" id='{{item.product.slug}}'>
                         <div class="row mt-4 mx-2">
                             <div class="col-3 p-0 ps-2">
-                                <img src="{{item.product.product_image.0.url.url}}" alt="fritos">
+                                <a href="{% url 'products:product-overview' item.product.slug %}">
+                                    <img src="{{item.product.product_image.0.url.url}}" alt="fritos">
+                                </a>
                             </div>
 
                             <div class="col mx-2">
-                                <div class="row fs-6 text-muted">
-                                    {% if item.product.brand %}
-                                        {{item.product.brand}}
-                                    {% endif %}
-                                </div>
-                                <div class="row fs-5">
-                                    {{item.product.product_name}}
-                                </div>
+                                <a href="{% url 'products:product-overview' item.product.slug %}">
+                                    <div class="row fs-6 text-muted">
+                                        {% if item.product.brand %}
+                                            {{item.product.brand}}
+                                        {% endif %}
+                                    </div>
+                                    <div class="row fs-5">
+                                        {{item.product.product_name}}
+                                    </div>
+                                </a>
                             </div>
-                            <div class="col-auto">
-                                <div class="row fw-bold justify-content-end">
-                                    {% if item.product.product_discounts.0.discount_price %}
-                                        ${{item.product.product_discounts.0.discount_price}}
+                            <div class="col-3">
+                                <div class="row fw-bold justify-content-end" id='product-price'>
+                                    {% if item.current_price < item.base_price %}
+                                        ${{item.current_price|floatformat:2}}
                                     {% else %}
-                                        ${{item.product.regular_price}}
+                                        ${{item.base_price|floatformat:2}}
                                     {% endif %}
                                 </div>
-                                {% if item.product.product_discounts.0.discount_price %}
-                                    <div class="row fs-6 justify-content-end text-decoration-line-through">
-                                        ${{item.product.regular_price}}
-                                    </div>
-                                    <div class="row fs-6 fw-bold product-promotion justify-content-end">
-                                        {% calculate_discount_saving item.product.regular_price item.product.product_discounts.0.discount_price as saving %}
-                                        Save {{saving}}
-                                    </div>
-                                {% endif %}
+                                <div id='product-discount'>
+                                    {% if item.current_price < item.base_price %}
+                                        <div class="row fs-6 justify-content-end text-decoration-line-through">
+                                            ${{item.base_price|floatformat:2}}
+                                        </div>
+                                        <div class="row fs-6 fw-bold product-promotion justify-content-end">
+                                            {% calculate_discount_saving item.base_price item.current_price as saving %}
+                                            Save {{saving}}
+                                        </div>
+                                    {% endif %}
+                                </div>
                                 <div class="row mt-4">
-                                    <div class='col'>
-                                        <select class="form-select" aria-label="Default select example">
-                                            {% if item.product.quantity >= 10 %}
-                                                {% make_int_list 10 as list %}
-                                            {% else %}
-                                                {% make_int_list item.product.quantity as list %}
-                                            {% endif %}
-                                            {% for num in list %}
-                                                <option value="{{num}}">{{num}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                    <form method="POST" class='quanitity-select-form'>{% csrf_token %}
+                                        <div class='row justify-content-end'>
+                                            <div class='col-auto'>
+                                                <select class="form-select" aria-label="Default select example">
+                                                    {% if item.product.quantity >= 20 %}
+                                                        {% make_int_list 20 as list %}
+                                                    {% else %}
+                                                        {% make_int_list item.product.quantity as list %}
+                                                    {% endif %}
+                                                    {% for num in list %}
+                                                        {% if item.quantity == num %}
+                                                            <option value="{{num}}" selected>{{num}}</option>
+                                                        {% else %}
+                                                            <option value="{{num}}">{{num}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                <input type='hidden' id='quanitity-data' data-product='{{item.product.slug}}'
+                                                                                         data-old-quanitity='{{item.quantity}}'
+                                                                                         data-old-price='{{item.current_price|floatformat:2}}'>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -116,88 +131,100 @@
 
                         <div class="row mt-2 justify-content-end ms-3 me-0">
                             <div class="col ps-0">
-                                <img src="{% static 'icons/three-dots-vertical.svg' %}" alt="more">
                                 <button type="button" class="btn fs-6 ps-0" style="color: #006ab9;">
+                                <img src="{% static 'icons/three-dots-vertical.svg' %}" alt="more">
                                     More Options
                                 </button>
                             </div>
                             <div class="col-auto px-0">
-                                <button type="button" class="btn fs-6" style="color: #006ab9;">
-                                    Save for Later
-                                </button>
+                                <form class='save-for-later'>{% csrf_token %}
+                                    <button type="submit" class="btn fs-6" style="color: #006ab9;">
+                                        Save for Later
+                                    </button>
+                                    <input type='hidden' id='data-input' data-product='{{item.product.slug}}'>
+                                </form>
                             </div>
                             <div class="vr px-0 my-1"></div>
                             <div class="col-auto px-0">
-                                <button type="button" class="btn fs-6" style="color: #006ab9;">
-                                    Remove
-                                </button>
+                                <form class='cart-item-remove'>{% csrf_token %}
+                                    <button type="submit" class="btn fs-6" style="color: #006ab9;">
+                                        Remove
+                                    </button>
+                                    <input type='hidden' id='data-input' data-product='{{item.product.slug}}'>
+                                </form>
                             </div>
                         </div>
                     </div>
                     <hr>
+                {% empty %}
+                    <div class='alert alert-warning mx-2 my-2'>
+                        You haven't added any products yet
+                    </div>
                 {% endfor %}
             </div>
         </div>
 
         <div class="col mx-4 fs-5">
             <!-- Financial Data -->
-
-            {% if bill.discount_price != bill.base_price %}
-                <div class="row mt-4">
-                    <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
-                    <div class="col-auto fw-bold">${{bill.base_price|floatformat:2}}</div>
-                </div>
-                <div class="row mt-4 mb-5">
-                    <div class="col">Discount</div>
-                    <div class="col-auto fw-bold">-${{bill.discount_amount|floatformat:2}}</div>
-                </div>
-            {% else %}
-                <div class="row mt-4">
-                    <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
-                    <div class="col-auto fw-bold">${{bill.base_price|floatformat:2}}</div>
-                </div>
-            {% endif %}
             
-            {% if bill.discount_price != bill.base_price %}
+            {% if bill.base_price is not None or bill.total_price is not None %}
+                {% if bill.discount_price < bill.base_price %}
+                    <div class="row mt-4">
+                        <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
+                        <div class="col-auto fw-bold" id='base-price'>${{bill.base_price|floatformat:2}}</div>
+                    </div>
+                    <div class="row mt-4 mb-5">
+                        <div class="col">Discount</div>
+                        <div class="col-auto fw-bold" id='discount-amount'>-${{bill.discount_amount|floatformat:2}}</div>
+                    </div>
+                {% else %}
+                    <div class="row mt-4">
+                        <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
+                        <div class="col-auto fw-bold" id='base-price'>${{bill.base_price|floatformat:2}}</div>
+                    </div>
+                {% endif %}
+                
+                {% if bill.discount_price != bill.base_price %}
+                    <div class="row mt-4">
+                        <div class="col">Price After Discounts</div>
+                        <div class="col-auto fw-bold" id='discount-price'>${{bill.discount_price|floatformat:2}}</div>
+                    </div>
+                {% endif %} 
                 <div class="row mt-4">
-                    <div class="col">Price After Discounts</div>
-                    <div class="col-auto fw-bold">${{bill.discount_price|floatformat:2}}</div>
+                    <div class="col">Pickup</div>
+                    <div class="col-auto fw-bold" style="color:#6b21be">Free</div>
                 </div>
-            {% endif %} 
-            <div class="row mt-4">
-                <div class="col">Pickup</div>
-                <div class="col-auto fw-bold" style="color:#6b21be">Free</div>
-            </div>
-            <div class="row mt-4">
-                <div class="col">Delivery</div>
-                <div class="col-auto fw-bold">FREE</div>
-            </div>
-            <div class="row mt-4">
-                <div class="col">Sales Tax</div>
-                <div class="col-auto fw-bold">$0.00</div>
-                <div class="row text-muted fs-6" style="font-weight: 500;">
-                    <div class="col">
-                        Calculated at Checkout
+                <div class="row mt-4">
+                    <div class="col">Delivery</div>
+                    <div class="col-auto fw-bold">FREE</div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">Sales Tax</div>
+                    <div class="col-auto fw-bold">$0.00</div>
+                    <div class="row text-muted fs-6" style="font-weight: 500;">
+                        <div class="col">
+                            Calculated at Checkout
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mt-5 mb-4 fw-bold">
-                <div class="col">
-                    Estimated Order Total
+                <div class="row mt-5 mb-4 fw-bold">
+                    <div class="col">
+                        Estimated Order Total
+                    </div>
+                    <div class="col-auto" id='total-price'>
+                        ${{bill.total_price|floatformat:2}}
+                    </div>
                 </div>
-                <div class="col-auto">
-                    ${{bill.total_price|floatformat:2}}
+
+
+                <div id="smart-button-container">
+                    <div style="text-align: center;">
+                        <div id="paypal-button-container"></div>
+                    </div>
                 </div>
-            </div>
 
-
-            <div id="smart-button-container">
-                <div style="text-align: center;">
-                    <div id="paypal-button-container"></div>
-                </div>
-            </div>
-
+            {% endif %}
         </div>
     </div>
 
@@ -228,7 +255,7 @@
                             {{saved_item.product.product_name}}
                         </div>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-3">
                         <div class="row fw-bold">
                             <div class="row fw-bold justify-content-end">
                                 {% if saved_item.product.product_discounts.0.discount_price %}
@@ -252,14 +279,20 @@
 
                 <div class="row mt-4 justify-content-end ms-3 me-0">
                     <div class="col ps-0 align-self-end">
-                        <button type="button" class="btn fs-6 ps-0" style="color: #006ab9;">
-                            Remove
-                        </button>
+                        <form class='save-for-later-remove'>{% csrf_token %}
+                            <button type="submit" class="btn fs-6 ps-0" style="color: #006ab9;">
+                                Remove
+                            </button>
+                            <input type='hidden' id='data-input' data-product='{{saved_item.product.slug}}'>
+                        </form>
                     </div>
                     <div class="col-auto px-0">
-                        <button type="button" class="btn fs-5 px-4 add-to-cart-button">
-                            Move to Cart
-                        </button>
+                        <form class='move-to-cart'>{% csrf_token %}
+                            <button type="submit" class="btn fs-5 px-4 add-to-cart-button">
+                                Move to Cart
+                            </button>
+                            <input type='hidden' id='data-input' data-product='{{saved_item.product.slug}}'>
+                        </form>
                     </div>
                 </div>
                 <hr>
@@ -276,9 +309,10 @@
 <!-- Content -->    
 {% endblock content %}
 {% block script %}
-
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD"
     data-sdk-integration-source="button-factory"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+
 <script>
     function initPayPalButton() {
         paypal.Buttons({
@@ -321,6 +355,7 @@
     {% comment %} initPayPalButton(); {% endcomment %}
     createSwiper('popularProducts');
 </script>
+<script src="{% static 'cart/js/cart.js' %}"></script>
 {% endblock script %}
 </body>
 
