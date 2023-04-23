@@ -14,9 +14,10 @@ $('#ordering').on('change', function (e) {
 });
 
 // select correct ordering
-const select = document.getElementById('ordering')
+const select = document.getElementById('ordering');
 if (select && urlParams.has('ordering')) {
-    for (option of select) {
+    for (let i = 0; i < select.options.length; i++) {
+        let option = select.options[i];
         if (urlParams.get('ordering') === option.value) {
             option.selected = true;
         }

@@ -120,7 +120,7 @@
                         <div class="row mt-4">
                             <form class='move-to-cart'>{% csrf_token %}
                                 <div class="col text-center">
-                                    <button class="btn add-to-cart-button px-5">Add to Cart</button>
+                                    <button type='submit' class="btn add-to-cart-button px-5">Add to Cart</button>
                                 </div>
                                 <input type='hidden' id='data-input' data-product='{{product.slug}}'>
                             </form>

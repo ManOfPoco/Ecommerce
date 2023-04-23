@@ -118,9 +118,10 @@ $('#ordering').on('change', function (e) {
 });
 
 // Select correct ordering
-const select = document.getElementById('ordering').children
-if (urlParams.has('ordering')) {
-    for (option of select) {
+const select = document.getElementById('ordering');
+if (select && urlParams.has('ordering')) {
+    for (let i = 0; i < select.options.length; i++) {
+        let option = select.options[i];
         if (urlParams.get('ordering') === option.value) {
             option.selected = true;
         }

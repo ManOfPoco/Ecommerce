@@ -62,11 +62,8 @@
         </div>
         <!-- Profile SVG -->
         <div class="col-auto">
-            {% if user.is_authenticated %}
-                <a href="{% url 'users:profile' %}" class="text-muted">
-            {% else %}
+            {% if not user.is_authenticated %}
                 <a href="{% url 'users:sign-up' %}" class="text-muted">
-            {% endif %}
                     <svg xmlns="http://www.w3.org/2000/svg" width="24.016" height="24"
                         viewBox="0 0 24.016 24" class="icon mini-profile-icon" aria-hidden="true">
                         <path
@@ -74,10 +71,32 @@
                             transform="translate(-0.001 -0.01)" />
                     </svg>
                 </a>
+            {% else %}
+                <div class="dropdown" id='nav-bar-dropdown'>
+                    <a type="button" class="text-muted dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24.016" height="24"
+                            viewBox="0 0 24.016 24" class="icon mini-profile-icon" aria-hidden="true">
+                            <path
+                                d="M20.272,3.3a12.005,12.005,0,1,0-.014,17.425l.017-.014c.142-.137.284-.278.42-.421a.3.3,0,0,0,.1-.095,12.006,12.006,0,0,0-.525-16.9ZM9.642,7.117A3.319,3.319,0,0,1,12,6.139h0a3.343,3.343,0,1,1-2.364.978Zm5.241,8.136a7.658,7.658,0,0,1,4.145,4.121,10.12,10.12,0,0,1-14.046,0A7.618,7.618,0,0,1,14.883,15.253Zm2.285-5.179a5.182,5.182,0,1,0-8.49,3.4,9.425,9.425,0,0,0-4.988,4.4,10.167,10.167,0,0,1,8.316-16.01h.013a10.17,10.17,0,0,1,8.327,16.01,9.42,9.42,0,0,0-4.987-4.4A5.148,5.148,0,0,0,17.168,10.074Z"
+                                transform="translate(-0.001 -0.01)" />
+                        </svg>
+                    </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'wishlist:wishlist' %}">Wishlist</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
+                        </ul>
+                </div>
+            {% endif %}
         </div>
         <!-- Cart SVG -->
         <div class="col-auto">
-            <a href="{% url 'cart:cart' %}" class="text-muted"><svg id="Cart" xmlns="http://www.w3.org/2000/svg" width="27.697" height="24"
+            {% if user.is_authenticated %}
+            <a href="{% url 'cart:cart' %}" class="text-muted">
+            {% else %}
+            <a href="{% url 'users:sign-up' %}" class="text-muted">
+            {% endif %}
+                <svg id="Cart" xmlns="http://www.w3.org/2000/svg" width="27.697" height="24"
                     viewBox="0 0 27.697 24" class="icon icon-cart mini-cart-icon" aria-hidden="true">
                     <path id="Path_5345" data-name="Path 5345"
                         d="M32.259,13.886a.921.921,0,0,0-.732-.363H11.559l-1.371-3.151a.919.919,0,0,0-.843-.552H5.669a.919.919,0,1,0,0,1.838H8.727l1.328,3.083L12.391,23.9l.72,3.574a.919.919,0,0,0,.9.74h13.4a.919.919,0,1,0,0-1.838H14.793l-.361-1.761H28.975a.922.922,0,0,0,.885-.671l2.555-9.261A.926.926,0,0,0,32.259,13.886ZM30.312,15.36l-2.048,7.421H14.034l-1.9-7.421Z"

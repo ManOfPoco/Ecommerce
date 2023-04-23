@@ -37,7 +37,6 @@ class OrderItem(models.Model):
 
 class OrderStatus(models.Model):
     status_name = models.CharField(_('Status Name'), max_length=100)
-    color = models.CharField(_('Color'), max_length=50)
 
     class Meta:
         verbose_name_plural = 'Order Statuses'

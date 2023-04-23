@@ -1,14 +1,16 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic.base import RedirectView
+
 from .forms import UserLoginForm
 
 from .views import SignUpView, ProfileView, edit_profile
-
 
 app_name = 'users'
 
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/account/profile/')),
     path('sign-up', SignUpView.as_view(), name='sign-up'),
     path('sign-in', LoginView.as_view(template_name='registration/sign-in.html',
          authentication_form=UserLoginForm), name='sign-in'),

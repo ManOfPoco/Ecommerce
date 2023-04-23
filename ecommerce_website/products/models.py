@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Prefetch, Avg, Count, Q, OuterRef
+from django.db.models import Prefetch, Avg, Count, Q, F, OuterRef, CheckConstraint
 
 from mptt.models import MPTTModel, TreeForeignKey
 from shippings.models import ShippingType
@@ -269,6 +269,13 @@ class ProductDiscount(models.Model):
 
     def __str__(self) -> str:
         return f"Discount for: {self.product.product_name}"
+
+    class Meta:
+        constraints = [
+            CheckConstraint(check=Q(discount_unit__gte=F('minimum_order_value')),
+                            name='discount_unit_greater_than_or_equal_to_minimum_order_unit',
+                            violation_error_message='Discount unit should be greater or equal to the minimum order value')
+        ]
 
 
 class ProductImages(models.Model):

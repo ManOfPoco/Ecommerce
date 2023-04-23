@@ -13,6 +13,10 @@ body img {
     height: auto;
 }
 
+#nav-bar-dropdown .dropdown-menu a {
+    padding: 0.25rem 1rem 0.25rem 1rem!important;
+}
+
 a {
     padding: 0 !important;
 }

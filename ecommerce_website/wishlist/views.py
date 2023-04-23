@@ -31,7 +31,7 @@ class WishListListView(ListView):
         if slug := self.kwargs.get('wishlist_slug'):
             wishlist = WishList.objects.get(slug=slug)
         else:
-            wishlist = WishList.objects.get(is_default=True)
+            wishlist = WishList.objects.get(user=self.request.user,is_default=True)
 
         ordering = self.request.GET.get('ordering', 'date-added')
         wishlist_items = WishListItem.objects.get_wishlist_products(

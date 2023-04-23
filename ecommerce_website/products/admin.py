@@ -12,7 +12,6 @@ from .models import (
     Attribute,
     ProductImages,
     ProductDiscount,
-    ShippingType,
 )
 
 
