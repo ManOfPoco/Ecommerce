@@ -11,8 +11,8 @@ app_name = 'users'
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/account/profile/')),
-    path('sign-up', SignUpView.as_view(), name='sign-up'),
-    path('sign-in', LoginView.as_view(template_name='registration/sign-in.html',
+    path('sign-up/', SignUpView.as_view(), name='sign-up'),
+    path('sign-in/', LoginView.as_view(template_name='registration/sign-in.html',
          authentication_form=UserLoginForm), name='sign-in'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),

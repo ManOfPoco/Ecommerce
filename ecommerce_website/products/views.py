@@ -55,7 +55,7 @@ class CategoryView(TemplateView):
                 elif key == 'size':
                     context[key] = value
 
-        context['cart_items_count'] = CartItem.objects.count()
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(self.request)
         return context
 
     def get_template_names(self):
@@ -112,7 +112,7 @@ def products_list(request, *args, **kwargs):
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
             'wishlist_item_add_form': WishListItemAddForm(),
-            'cart_items_count': CartItem.objects.count(),
+            'cart_items_count': CartItem.objects.get_cart_items_count(request),
         }
 
         return render(request, 'products/products.html', context)
@@ -182,7 +182,7 @@ class ProductDetailView(DetailView):
         context['popular_products'] = popular_products
         context['form'] = ReviewForm()
         context['wishlist_item_add_form'] = WishListItemAddForm()
-        context['cart_items_count'] = CartItem.objects.count()
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(self.request)
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review

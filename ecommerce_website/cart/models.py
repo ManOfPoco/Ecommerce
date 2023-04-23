@@ -11,6 +11,27 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 
+class CartManager(models.Manager):
+
+    def get_or_create_cart(self, request):
+        try:
+            cart = Cart.objects.get(user_id=request.user.id)
+
+            return cart
+        except Cart.DoesNotExist:
+            cart = request.session.get('cart_id', None)
+
+            if cart is None:
+                cart = Cart.objects.create()
+                request.session['cart_id'] = cart.pk
+
+                return cart
+            else:
+                cart = CartItem.objects.filter(cart=cart)
+
+                return cart
+
+
 class CartItemManager(models.Manager):
 
     def get_cart_products(self, cart: 'Cart'):
@@ -63,6 +84,25 @@ class CartItemManager(models.Manager):
 
         return {key: round(value, 2) for key, value in bill.items()}
 
+    def get_cart_items_count(self, request):
+        try:
+            cart = Cart.objects.get(user_id=request.user.id)
+            cart_items_count = self.model.objects.filter(cart=cart).count()
+
+            return cart_items_count
+        except Cart.DoesNotExist:
+            cart = request.session.get('cart_id', None)
+
+            if cart is None:
+                cart = Cart.objects.create()
+                request.session['cart_id'] = cart.pk
+
+                return 0
+            else:
+                cart_items_count = CartItem.objects.filter(cart=cart).count()
+
+                return cart_items_count
+
 
 class SaveForLaterManager(models.Manager):
 
@@ -77,7 +117,9 @@ class SaveForLaterManager(models.Manager):
 
 class Cart(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='cart')
+        User, on_delete=models.CASCADE, related_name='cart', blank=True, null=True)
+
+    objects = CartManager()
 
     class Meta:
         verbose_name_plural = 'Carts'

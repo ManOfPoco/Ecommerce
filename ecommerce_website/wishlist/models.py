@@ -14,7 +14,7 @@ class WishListItemsManager(models.Manager):
     def get_wishlist_products(self, wishlist, ordering='date-added'):
         queryset = WishListItem.objects.filter(
             wishlist=wishlist).select_related('product').only(
-            'product__product_name', 'product__slug', 'product__sku', 'product__quantity', 'product__regular_price'
+            'product__id', 'product__product_name', 'product__slug', 'product__sku', 'product__quantity', 'product__regular_price'
         ).prefetch_related(Prefetch('product__discounts', to_attr='product_discounts'),
                            Prefetch('product__images', to_attr='product_image', queryset=ProductImages.objects.filter(is_default=True)))
 
@@ -32,7 +32,7 @@ class WishListItemsManager(models.Manager):
 
 
 class WishList(models.Model):
-    user = models.ForeignKey(User, models.CASCADE, related_name='wishlist')
+    user = models.ForeignKey(User, models.CASCADE, related_name='wishlist', blank=True, null=True)
     list_name = models.CharField(_('List Name'), max_length=100, unique=True)
     slug = slug = models.SlugField(blank=True, max_length=100, unique=True)
     is_default = models.BooleanField(default=False)

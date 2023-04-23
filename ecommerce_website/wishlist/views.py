@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from django.views.generic import ListView
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import WishList, WishListItem
 from products.models import Product
@@ -20,18 +21,20 @@ from django.template.defaultfilters import slugify
 from django.core.paginator import Paginator
 
 
-class WishListListView(ListView):
+class WishListListView(LoginRequiredMixin, ListView):
+    login_url = '/account/sign-up/'
     model = WishList
     template_name = 'wishlist/wishlist.html'
     context_object_name = 'wishlists'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         if slug := self.kwargs.get('wishlist_slug'):
-            wishlist = WishList.objects.get(slug=slug)
+            wishlist = WishList.objects.get(
+                slug=slug, user_id=self.request.user.id)
         else:
-            wishlist = WishList.objects.get(user=self.request.user,is_default=True)
+            wishlist = WishList.objects.get(
+                user_id=self.request.user.id, is_default=True)
 
         ordering = self.request.GET.get('ordering', 'date-added')
         wishlist_items = WishListItem.objects.get_wishlist_products(
@@ -52,8 +55,14 @@ class WishListListView(ListView):
         context['wishlist_update_form'] = WishlistForm(instance=wishlist)
         context['wishlist_items'] = wishlist_items
         context['popular_products'] = Product.objects.get_popular_products()
-        context['cart_items_count'] = CartItem.objects.count()
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
         return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = WishList.objects.filter(user_id=self.request.user)
+        return queryset
 
 
 class WishlistChangeView(View):
@@ -101,12 +110,7 @@ class WishListView(View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if 'item_deletion' in request.POST:
-            view = WishListItemDeleteView.as_view()
-        elif 'wishlist_deletion' in request.POST:
-            view = WishListDeleteView.as_view()
-        else:
-            view = WishlistChangeView.as_view()
+        view = WishlistChangeView.as_view()
         return view(request, *args, **kwargs)
 
 
@@ -115,13 +119,13 @@ class WishListDeleteView(View):
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
 
-        user = request.user
+        user = request.user.id
         slug = request.POST.get('wishlist_slug')
 
         WishList.objects.get(
-            user=user, slug=slug).delete()
+            user_id=user, slug=slug).delete()
 
-        default_slug = WishList.objects.get(is_default=True).slug
+        default_slug = WishList.objects.get(is_default=True, user_id=request.user.id).slug
         return JsonResponse({'success': True, 'slug': default_slug})
 
 

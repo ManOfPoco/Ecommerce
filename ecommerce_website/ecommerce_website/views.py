@@ -11,7 +11,7 @@ def home(request):
     context = {
         'products': products,
         'categories': categories,
-        'cart_items_count': CartItem.objects.count()
+        'cart_items_count': CartItem.objects.get_cart_items_count(request)
     }
 
     return render(request, 'home.html', context)

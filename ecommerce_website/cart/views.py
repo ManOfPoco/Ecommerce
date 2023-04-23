@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Cart, CartItem, SaveForLater
 from products.models import Product
 from ecommerce.models import Shop
+from django.db import transaction
 
 from ecommerce_website.decorators import is_ajax
 from django.utils.decorators import method_decorator
@@ -23,7 +24,7 @@ class CartListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        cart = Cart.objects.get(user=self.request.user)
+        cart = Cart.objects.get_or_create_cart(self.request)
         save_for_later = SaveForLater.objects.get_cart_products(cart)
         bill = CartItem.objects.calculate_bill(self.get_queryset())
         pickup_shops = Shop.objects.all()
@@ -34,7 +35,7 @@ class CartListView(ListView):
         context['save_for_later_items'] = save_for_later
         context['bill'] = bill
         context['popular_products'] = Product.objects.get_popular_products()
-        context['cart_items_count'] = CartItem.objects.count()
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(self.request)
 
         return context
 
@@ -73,7 +74,7 @@ class CartListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        cart = Cart.objects.get(user=self.request.user)
+        cart = Cart.objects.get_or_create_cart(self.request)
 
         queryset = self.model.objects.get_cart_products(cart)
         queryset = self.model.objects.check_availability(queryset, self)
@@ -152,22 +153,34 @@ class MoveToCart(View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        cart = get_object_or_404(Cart, user=request.user)
-        product_slug = request.POST.get('product_slug')
+        product_id = request.POST.get('product_id')
+        try:
+            cart = Cart.objects.get(user_id=request.user.id)
+        except Cart.DoesNotExist:
+            cart = request.session.get('cart', None)
+            if cart is None:
+                cart = Cart.objects.create()
+                request.session['cart_id'] = cart.pk
+            request.session['cart_items'] = {}
+            cart = Cart.objects.create()
+            request.session['cart_id'] = cart.pk
 
         try:
-            SaveForLater.objects.get(cart=cart,
-                                     product__slug=request.POST.get('product_slug')).delete()
+            SaveForLater.objects.get(
+                cart=cart, product__id=request.POST.get('product_id')).delete()
         except ObjectDoesNotExist:
             pass
 
         try:
             CartItem.objects.create(
                 cart=cart,
-                product=get_object_or_404(Product, slug=product_slug),
+                product=get_object_or_404(Product, id=product_id),
                 quantity=1,
                 pickup_shop=Shop.objects.get(id=1)
             )
         except IntegrityError:
             return JsonResponse({'success': False, 'status': 'Object already exists'})
+
+        request.session['cart_items']['product_id'] = product_id
+
         return JsonResponse({'success': True, 'status': 'Added successfully'})

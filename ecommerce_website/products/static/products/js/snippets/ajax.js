@@ -24,11 +24,11 @@ export function wishlistAjax(href='http://127.0.0.1:8000/category/grocery/chocol
 export function moveToCartAjax(href='http://127.0.0.1:8000/cart/move-to-cart/') {
     $('.move-to-cart').on('submit', function (e) {
         let form = $(this);
-        let product_slug = form.find(('#data-input')).data('product')
+        let product_id = form.find(('#data-input')).data('product')
         $.ajax({
             type: "POST",
             url: href,
-            data: form.serialize() + `&product_slug=${product_slug}` ,
+            data: form.serialize() + `&product_id=${product_id}` ,
             success: function (response) {
                 let id = 'toast-' + new Date().getTime();
                 if (response.success && response.status === 'Added successfully') {

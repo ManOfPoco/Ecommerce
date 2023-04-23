@@ -95,8 +95,8 @@ $('#wish-list-delete').on('submit', function (e) {
 
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: form.serialize() + '&wishlist_deletion=True',
+        url: 'http://127.0.0.1:8000/wishlist/wishlist-item-delete/',
+        data: form.serialize(),
         success: function (response) {
             let oldslug = window.location.pathname.split('/').slice(-1)[0];
             history.replaceState(oldslug, "", response.slug);
@@ -118,11 +118,10 @@ $('#wish-list-delete').on('submit', function (e) {
         }
         return false
     };
-
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $(this).serialize() + '&wishlist_deletion=True',
+        url: 'http://127.0.0.1:8000/wishlist/wishlist-delete/',
+        data: $(this).serialize(),
         success: function (response) {
             let oldslug = window.location.pathname.split('/').slice(-1)[0];
             history.replaceState(oldslug, "", response.slug);

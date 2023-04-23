@@ -119,11 +119,11 @@ $('.save-for-later').on('submit', function (e) {
 
 $('.move-to-cart').on('submit', function (e) {
     let form = $(this);
-    let product_slug = form.find(('#data-input')).data('product')
+    let product_id = form.find(('#data-input')).data('product')
     $.ajax({
         type: "POST",
         url: window.location.href + 'move-to-cart/',
-        data: form.serialize() + `&product_slug=${product_slug}`,
+        data: form.serialize() + `&product_id=${product_id}`,
         success: function (response) {
             location.reload();
         },

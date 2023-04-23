@@ -91,27 +91,23 @@
         </div>
         <!-- Cart SVG -->
         <div class="col-auto">
-            {% if user.is_authenticated %}
             <a href="{% url 'cart:cart' %}" class="text-muted">
-            {% else %}
-            <a href="{% url 'users:sign-up' %}" class="text-muted">
-            {% endif %}
-                <svg id="Cart" xmlns="http://www.w3.org/2000/svg" width="27.697" height="24"
-                    viewBox="0 0 27.697 24" class="icon icon-cart mini-cart-icon" aria-hidden="true">
-                    <path id="Path_5345" data-name="Path 5345"
-                        d="M32.259,13.886a.921.921,0,0,0-.732-.363H11.559l-1.371-3.151a.919.919,0,0,0-.843-.552H5.669a.919.919,0,1,0,0,1.838H8.727l1.328,3.083L12.391,23.9l.72,3.574a.919.919,0,0,0,.9.74h13.4a.919.919,0,1,0,0-1.838H14.793l-.361-1.761H28.975a.922.922,0,0,0,.885-.671l2.555-9.261A.926.926,0,0,0,32.259,13.886ZM30.312,15.36l-2.048,7.421H14.034l-1.9-7.421Z"
-                        transform="translate(-4.75 -9.82)" />
-                    <path id="Path_5346" data-name="Path 5346"
-                        d="M36.859,72.84a2.349,2.349,0,1,0,2.349,2.349A2.349,2.349,0,0,0,36.859,72.84Z"
-                        transform="translate(-25.395 -53.539)" />
-                    <path id="Path_5347" data-name="Path 5347"
-                        d="M64.479,72.84a2.349,2.349,0,1,0,2.349,2.349A2.349,2.349,0,0,0,64.479,72.84Z"
-                        transform="translate(-44.557 -53.539)" />
-                    <span class="position-absolute top-1 start-98 translate-middle badge rounded-pill"
-                        style="background-color: #fd7e14;" id='cart-items-count'>
-                        {{cart_items_count|default:0}}
-                        <span class="visually-hidden">cart elements</span>
-                </svg></a>
+            <svg id="Cart" xmlns="http://www.w3.org/2000/svg" width="27.697" height="24"
+                viewBox="0 0 27.697 24" class="icon icon-cart mini-cart-icon" aria-hidden="true">
+                <path id="Path_5345" data-name="Path 5345"
+                    d="M32.259,13.886a.921.921,0,0,0-.732-.363H11.559l-1.371-3.151a.919.919,0,0,0-.843-.552H5.669a.919.919,0,1,0,0,1.838H8.727l1.328,3.083L12.391,23.9l.72,3.574a.919.919,0,0,0,.9.74h13.4a.919.919,0,1,0,0-1.838H14.793l-.361-1.761H28.975a.922.922,0,0,0,.885-.671l2.555-9.261A.926.926,0,0,0,32.259,13.886ZM30.312,15.36l-2.048,7.421H14.034l-1.9-7.421Z"
+                    transform="translate(-4.75 -9.82)" />
+                <path id="Path_5346" data-name="Path 5346"
+                    d="M36.859,72.84a2.349,2.349,0,1,0,2.349,2.349A2.349,2.349,0,0,0,36.859,72.84Z"
+                    transform="translate(-25.395 -53.539)" />
+                <path id="Path_5347" data-name="Path 5347"
+                    d="M64.479,72.84a2.349,2.349,0,1,0,2.349,2.349A2.349,2.349,0,0,0,64.479,72.84Z"
+                    transform="translate(-44.557 -53.539)" />
+                <span class="position-absolute top-1 start-98 translate-middle badge rounded-pill"
+                    style="background-color: #fd7e14;" id='cart-items-count'>
+                    {{cart_items_count|default:0}}
+                    <span class="visually-hidden">cart elements</span>
+            </svg></a>
         </div>
     </div>
     <div class="row mt-1 justify-content-end order">

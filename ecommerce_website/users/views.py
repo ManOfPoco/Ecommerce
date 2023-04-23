@@ -21,7 +21,8 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["popular_products"] = Product.objects.get_popular_products()
-        context['cart_items_count'] = CartItem.objects.count()
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
         return context
 
 
@@ -53,7 +54,7 @@ def edit_profile(request):
             'My Account': 'users:profile',
             'Edit Profile': None
         },
-        'cart_items_count': CartItem.objects.count()
+        'cart_items_count': CartItem.objects.get_cart_items_count(request)
     }
     return render(request, 'users/user-edit-template.html', context)
 
@@ -63,6 +64,13 @@ class SignUpView(SuccessMessageMixin, FormView):
     form_class = MyUserCreationForm
     success_url = 'sign-in'
     success_message = "Account was created successfully"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
+        return context
 
     def form_valid(self, form: MyUserCreationForm):
         form.save()
