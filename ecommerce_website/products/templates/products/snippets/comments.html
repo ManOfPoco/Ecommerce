@@ -46,11 +46,15 @@
                     <div class="row mt-3">
                         <div class="col-auto px-0">
                             <button type='submit' class="btn" name='option' data-option='like'>
-                                {% is_liked request.user review.id True as is_like %}
-                                {% if is_like %}
-                                    <img src="{% static 'icons/like-fill.svg' %}" alt="like">  
+                                {% if user.is_authenticated %}
+                                    {% is_liked request.user review.id True as is_like %}
+                                    {% if is_like %}
+                                        <img src="{% static 'icons/like-fill.svg' %}" alt="like">  
+                                    {% else %}
+                                        <img src="{% static 'icons/like.svg' %}" alt="like">
+                                        {% endif %}
                                 {% else %}
-                                    <img src="{% static 'icons/like.svg' %}" alt="like">  
+                                    <img src="{% static 'icons/like.svg' %}" alt="like">
                                 {% endif %}
                                 {{review.likes}}
                             </button>
@@ -58,11 +62,15 @@
                         <div class="vr p-0"></div>
                         <div class="col-auto px-0">
                             <button type='submit' class="btn" name='option' data-option='dislike'>
-                                {% is_liked request.user review.id False as is_like %}
-                                {% if is_like %}
-                                    <img src="{% static 'icons/dislike-fill.svg' %}" alt="like">  
+                                {% if user.is_authenticated %}
+                                    {% is_liked request.user review.id False as is_like %}
+                                    {% if is_like %}
+                                        <img src="{% static 'icons/dislike-fill.svg' %}" alt="like">  
+                                    {% else %}
+                                        <img src="{% static 'icons/dislike.svg' %}" alt="like">  
+                                    {% endif %}
                                 {% else %}
-                                    <img src="{% static 'icons/dislike.svg' %}" alt="like">  
+                                    <img src="{% static 'icons/like.svg' %}" alt="like">
                                 {% endif %}
                                 {{review.dislikes}}
                             </button>

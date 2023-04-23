@@ -124,6 +124,7 @@ if (select && urlParams.has('ordering')) {
         let option = select.options[i];
         if (urlParams.get('ordering') === option.value) {
             option.selected = true;
+            scrollReviews();
         }
     }
 }

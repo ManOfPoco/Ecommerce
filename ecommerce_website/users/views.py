@@ -3,11 +3,12 @@ from django.urls import reverse
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.contrib.auth.views import LoginView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib.messages.views import SuccessMessageMixin
-from .forms import MyUserCreationForm, EditProfileForm, EditUserForm
+from .forms import MyUserCreationForm, EditProfileForm, EditUserForm, UserLoginForm
 
 from products.models import Product
 from cart.models import CartItem
@@ -26,7 +27,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         return context
 
 
-@login_required(login_url='/users/sign-in/')
+@login_required
 def edit_profile(request):
 
     if request.method == 'POST':
@@ -75,3 +76,14 @@ class SignUpView(SuccessMessageMixin, FormView):
     def form_valid(self, form: MyUserCreationForm):
         form.save()
         return super().form_valid(form)
+
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/sign-in.html'
+    authentication_form = UserLoginForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
+        return context

@@ -15,34 +15,42 @@
                             </div>
                         {% endif %}
                         <div class="col text-end pe-1">
-                            <button class='border border-0 wishlist' type="submit" data-bs-toggle="modal" data-bs-target="#product-{{product.slug}}" style='background-color:white'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" fill="grey" class="bi bi-heart" viewBox="0 0 16 16">
-                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                </svg>
-                            </button>
-                            <div class="modal fade" id="product-{{product.slug}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <form method='POST' class='wishlist-item-add-form'>{% csrf_token %}
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">My Favorites</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body text-start">
-                                            {{wishlist_item_add_form|crispy}}
-                                            <input type='hidden' name='product_slug' value='{{product.slug}}'>
-                                            <div class='modal-messages'></div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-danger"
-                                                data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Add To List</button>
-                                        </div>
-                                    </form>
+                            {% if user.is_authenticated %}
+                                <button class='border border-0 wishlist' type="submit" data-bs-toggle="modal" data-bs-target="#product-{{product.slug}}" style='background-color:white'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" fill="grey" class="bi bi-heart" viewBox="0 0 16 16">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                    </svg>
+                                </button>
+                                <div class="modal fade" id="product-{{product.slug}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <form method='POST' class='wishlist-item-add-form'>{% csrf_token %}
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">My Favorites</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-start">
+                                                {{wishlist_item_add_form|crispy}}
+                                                <input type='hidden' name='product_slug' value='{{product.slug}}'>
+                                                <div class='modal-messages'></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Add To List</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'users:sign-up' %}" class='border border-0'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" class="bi bi-heart" viewBox="0 0 16 16" style='background-color:white'>
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                    </svg>
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -55,8 +63,7 @@
                                     <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
                                     <div class="row" style='height:16.5px'>
                                         {% if discounts.first %}
-                                            <div
-                                                class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
+                                            <div class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
                                                 ${{product.regular_price|floatformat:'2'}}
                                             </div>
                                             {% calculate_discount_saving product.regular_price unit_discount.discount_price as saving %}
@@ -119,9 +126,9 @@
 
                         <div class="row mt-4">
                             <form class='move-to-cart'>{% csrf_token %}
-                                <div class="col text-center">
-                                    <button type='submit' class="btn add-to-cart-button px-5">Add to Cart</button>
-                                </div>
+                                    <div class="col text-center">
+                                        <button type='submit' class="btn add-to-cart-button px-5">Add to Cart</button>
+                                    </div>
                                 <input type='hidden' id='data-input' data-product='{{product.id}}'>
                             </form>
                         </div>

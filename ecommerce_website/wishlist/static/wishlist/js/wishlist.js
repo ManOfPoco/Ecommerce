@@ -37,7 +37,12 @@ $('#create-list').on('submit', function (e) {
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
+        },
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });
@@ -62,7 +67,12 @@ $('#edit-wish-list').on('submit', function (e) {
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
+        },
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });
@@ -73,14 +83,21 @@ $('.items-deletion-form').on('submit', function (e) {
 
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: form.serialize() + `&item_deletion=True`,
+        url: 'http://127.0.0.1:8000/wishlist/wishlist-item-delete/',
+        data: form.serialize(),
         success: function (response) {
-            location.reload();
+            if (response.success) {
+                location.reload();
+            }
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
+        },
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });
@@ -95,41 +112,21 @@ $('#wish-list-delete').on('submit', function (e) {
 
     $.ajax({
         type: "POST",
-        url: 'http://127.0.0.1:8000/wishlist/wishlist-item-delete/',
+        url: 'http://127.0.0.1:8000/wishlist/wishlist-delete/',
         data: form.serialize(),
         success: function (response) {
-            let oldslug = window.location.pathname.split('/').slice(-1)[0];
-            history.replaceState(oldslug, "", response.slug);
-            location.reload();
+            if (response.success) {
+                location.href = `http://127.0.0.1:8000/wishlist/${response.slug}/`
+            }
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
-    });
-    return false;
-});
-
-// ajax request for wishlist deletion with check if user is trying to delete default wish list
-$('#wish-list-delete').on('submit', function (e) {
-
-    if ($(this).find(':submit').data('default') === 'True') {
-        if (!$('#default-error').length) {
-            $(this).find('.modal-body').append("<div class='alert alert-danger m-0' id='default-error'>You can't delete default wish list</div>")
-        }
-        return false
-    };
-    $.ajax({
-        type: "POST",
-        url: 'http://127.0.0.1:8000/wishlist/wishlist-delete/',
-        data: $(this).serialize(),
-        success: function (response) {
-            let oldslug = window.location.pathname.split('/').slice(-1)[0];
-            history.replaceState(oldslug, "", response.slug);
-            location.reload();
         },
-        error: function (response) {
-            $('.create-list').after('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });

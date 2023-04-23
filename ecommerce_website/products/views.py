@@ -1,26 +1,23 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, DetailView, View
+from django.http import JsonResponse, HttpResponseBadRequest
+
+from django.views.generic import TemplateView, DetailView
 from django.core.paginator import Paginator
 
 from django.db.models import Prefetch, Avg, Count
+
+from django.utils.decorators import method_decorator
+from ecommerce_website.decorators import is_ajax
 
 from . import services
 from . import filters
 
 from .models import Category, Product, ProductDiscount
-from reviews.models import Review, ReviewRating
-from wishlist.models import WishListItem
+from reviews.models import Review
 from cart.models import CartItem
 
 from reviews.forms import ReviewForm
 from wishlist.forms import WishListItemAddForm
-
-from django.http import JsonResponse
-from django.db.utils import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
-
-from ecommerce_website.decorators import is_ajax
-from django.utils.decorators import method_decorator
 
 
 class CategoryView(TemplateView):
@@ -55,7 +52,8 @@ class CategoryView(TemplateView):
                 elif key == 'size':
                     context[key] = value
 
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(self.request)
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
         return context
 
     def get_template_names(self):
@@ -111,45 +109,11 @@ def products_list(request, *args, **kwargs):
             'product_page': page,
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
-            'wishlist_item_add_form': WishListItemAddForm(),
+            'wishlist_item_add_form': WishListItemAddForm(request.user),
             'cart_items_count': CartItem.objects.get_cart_items_count(request),
         }
 
         return render(request, 'products/products.html', context)
-
-
-class ProductWishLishAddForm(View):
-
-    @method_decorator(is_ajax)
-    def post(self, request, *args, **kwargs):
-
-        if 'wishlist_item_add' in request.POST:
-            form = WishListItemAddForm(request.POST or None)
-            product = Product.objects.get(
-                slug=request.POST.get('product_slug'))
-            try:
-                WishListItem.objects.get(
-                    product=product, wishlist=request.POST.get('wishlist'))
-                return JsonResponse({'success': False})
-            except ObjectDoesNotExist:
-                if form.is_valid():
-                    form.instance.product = product
-                    form.save()
-
-                    return JsonResponse({'success': True})
-
-        return JsonResponse({'success': False})
-
-
-class ProductsView(View):
-
-    def post(self, request, *args, **kwargs):
-        view = ProductWishLishAddForm.as_view()
-        return view(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        view = products_list
-        return view(request, *args, **kwargs)
 
 
 class ProductDetailView(DetailView):
@@ -157,6 +121,27 @@ class ProductDetailView(DetailView):
     context_object_name = 'product'
     template_name = 'products/product_overview.html'
     slug_url_kwarg = 'product_slug'
+
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
+
+        product = self.get_object()
+        discounts = ProductDiscount.objects.get_discounts(product.slug)
+
+        try:
+            quantity = int(request.POST.get('quantity'))
+        except TypeError:
+            return HttpResponseBadRequest('Invalid Request')
+
+        price = {}
+        if discount := discounts.first():
+            discount_price = discount.discount_price * quantity
+            price['discount_price'] = round(discount_price, 2)
+
+        base_price = product.regular_price * quantity
+        price['base_price'] = round(base_price, 2)
+
+        return JsonResponse({'success': True, 'price': price})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,8 +166,10 @@ class ProductDetailView(DetailView):
         context['review_page'] = review_page
         context['popular_products'] = popular_products
         context['form'] = ReviewForm()
-        context['wishlist_item_add_form'] = WishListItemAddForm()
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(self.request)
+        context['wishlist_item_add_form'] = WishListItemAddForm(
+            self.request.user)
+        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
+            self.request)
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review
@@ -220,59 +207,10 @@ class ProductDetailView(DetailView):
             'coupon',
             'available_shipping_types',
             Prefetch(
-                'discounts', queryset=ProductDiscount.objects.get_discounts(product_slug), to_attr='product_discounts')
+                'discounts', queryset=ProductDiscount.objects.get_discounts(product_slug).order_by('discount_unit'), to_attr='product_discounts')
         ).annotate(
             rating=Avg('reviews__product_rating'),
             reviews_count=Count('reviews__product_rating')
         )
 
         return queryset.filter(slug=product_slug)
-
-
-class ReviewRatingView(View):
-
-    @method_decorator(is_ajax)
-    def post(self, request, *args, **kwargs):
-        review = get_object_or_404(
-            Review, id=request.POST.get('review_id'))
-        is_like = request.POST.get('option') == 'like'
-
-        try:
-            instance = ReviewRating.objects.get(
-                review=review, user=request.user)
-
-            if instance.is_like and is_like or \
-                    instance.is_like is False and is_like is False:
-                instance.delete()
-                status = 'Removed'
-
-            elif instance.is_like and is_like is False or \
-                    instance.is_like is False and is_like:
-                instance.is_like = is_like
-                instance.save()
-                status = 'Changed'
-            else:
-                status = 'Error'
-
-        except ObjectDoesNotExist:
-            ReviewRating.objects.create(
-                review=review, user=request.user, is_like=is_like)
-            status = 'Created'
-
-        except IntegrityError:
-            status = 'Something went wrong'
-
-        return JsonResponse({'status': status})
-
-    def get(self, request, *args, **kwargs):
-        return JsonResponse({'status': 'Invalid request'}, status=400)
-
-
-class ProductView(View):
-    def get(self, request, *args, **kwargs):
-        view = ProductDetailView.as_view()
-        return view(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        view = ReviewRatingView.as_view()
-        return view(request, *args, **kwargs)

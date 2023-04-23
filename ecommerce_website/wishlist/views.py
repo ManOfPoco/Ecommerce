@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from django.views.generic import ListView
 from django.views import View
@@ -8,7 +8,7 @@ from .models import WishList, WishListItem
 from products.models import Product
 from cart.models import CartItem
 
-from .forms import WishlistForm
+from .forms import WishlistForm, WishListItemAddForm
 
 from ecommerce_website.decorators import is_ajax
 from django.utils.decorators import method_decorator
@@ -22,16 +22,16 @@ from django.core.paginator import Paginator
 
 
 class WishListListView(LoginRequiredMixin, ListView):
-    login_url = '/account/sign-up/'
     model = WishList
     template_name = 'wishlist/wishlist.html'
     context_object_name = 'wishlists'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         if slug := self.kwargs.get('wishlist_slug'):
-            wishlist = WishList.objects.get(
-                slug=slug, user_id=self.request.user.id)
+            wishlist = get_object_or_404(WishList,
+                                         slug=slug, user_id=self.request.user.id)
         else:
             wishlist = WishList.objects.get(
                 user_id=self.request.user.id, is_default=True)
@@ -65,7 +65,35 @@ class WishListListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class WishlistChangeView(View):
+class WishLishAddView(LoginRequiredMixin, View):
+
+    def handle_no_permission(self):
+        return JsonResponse({}, status=302)
+
+    @method_decorator(is_ajax)
+    def post(self, request, *args, **kwargs):
+
+        form = WishListItemAddForm(request.POST or None)
+        product = Product.objects.get(
+            slug=request.POST.get('product_slug'))
+        try:
+            WishListItem.objects.get(
+                product=product, wishlist=request.POST.get('wishlist'))
+            return JsonResponse({'success': False})
+        except ObjectDoesNotExist:
+            if form.is_valid():
+                form.instance.product = product
+                form.save()
+
+                return JsonResponse({'success': True})
+
+        return JsonResponse({'success': False})
+
+
+class WishlistChangeView(LoginRequiredMixin, View):
+
+    def handle_no_permission(self):
+        return JsonResponse({}, status=302)
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
@@ -114,7 +142,10 @@ class WishListView(View):
         return view(request, *args, **kwargs)
 
 
-class WishListDeleteView(View):
+class WishListDeleteView(LoginRequiredMixin, View):
+
+    def handle_no_permission(self):
+        return JsonResponse({}, status=302)
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
@@ -125,11 +156,15 @@ class WishListDeleteView(View):
         WishList.objects.get(
             user_id=user, slug=slug).delete()
 
-        default_slug = WishList.objects.get(is_default=True, user_id=request.user.id).slug
+        default_slug = WishList.objects.get(
+            is_default=True, user_id=request.user.id).slug
         return JsonResponse({'success': True, 'slug': default_slug})
 
 
-class WishListItemDeleteView(View):
+class WishListItemDeleteView(LoginRequiredMixin, View):
+
+    def handle_no_permission(self):
+        return JsonResponse({}, status=302)
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):

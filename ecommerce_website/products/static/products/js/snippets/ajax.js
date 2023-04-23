@@ -1,11 +1,11 @@
 // ajax add item to the wishlist request
-export function wishlistAjax(href='http://127.0.0.1:8000/category/grocery/chocolate-and-candy/') {
+export function wishlistAjax(href = '/wishlist/wishlist-add/') {
     $('.wishlist-item-add-form').off().on('submit', function (e) {
         let form = $(this);
         $.ajax({
             type: "POST",
             url: href,
-            data: form.serialize() + `&wishlist_item_add=True`,
+            data: form.serialize(),
             success: function (response) {
                 if (response.success) {
                     form.find('.modal-messages').html("<div class='alert alert-success my-3' id='success-message'>Product was successfully added to the wishlist</div>")
@@ -21,14 +21,34 @@ export function wishlistAjax(href='http://127.0.0.1:8000/category/grocery/chocol
     });
 }
 
-export function moveToCartAjax(href='http://127.0.0.1:8000/cart/move-to-cart/') {
+export function moveToCartAjax(href = 'http://127.0.0.1:8000/cart/move-to-cart/') {
     $('.move-to-cart').on('submit', function (e) {
         let form = $(this);
-        let product_id = form.find(('#data-input')).data('product')
+        let product_id = form.find('#data-input').data('product')
+        let quantity = $("#quanitity option:selected").val();
+
+        if ($('#quantity').data('quantity') == 0) {
+            let id = 'toast-' + new Date().getTime();
+            $('.toast-container').append(`
+                <div id="${id}" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Current Item is out of stock!
+                        </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `)
+            $('.toast#' + id).toast('show');
+            return false;
+        } else if (quantity == undefined) {
+            quantity = 1;
+        }
+
         $.ajax({
             type: "POST",
             url: href,
-            data: form.serialize() + `&product_id=${product_id}` ,
+            data: form.serialize() + `&product_id=${product_id}` + `&quantity=${quantity}`,
             success: function (response) {
                 let id = 'toast-' + new Date().getTime();
                 if (response.success && response.status === 'Added successfully') {
@@ -45,12 +65,12 @@ export function moveToCartAjax(href='http://127.0.0.1:8000/cart/move-to-cart/') 
                     $('.toast#' + id).toast('show');
                     let count = parseInt($('#cart-items-count').text());
                     $('#cart-items-count').text(count + 1);
-                } else if (response.success === false && response.status === 'Object already exists'){
+                } else if (response.success === false && response.status === 'Object already exists in your cart') {
                     $('.toast-container').append(`
                         <div id="${id}" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
                             <div class="d-flex">
                                 <div class="toast-body">
-                                    Item already exists in your cart!
+                                    ${response.status}
                                 </div>
                             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                             </div>
@@ -68,7 +88,7 @@ export function moveToCartAjax(href='http://127.0.0.1:8000/cart/move-to-cart/') 
                         </div>
                     </div>
                 `)
-                $('.toast#' + id).toast('show');
+                    $('.toast#' + id).toast('show');
                 }
             },
             error: function (response) {

@@ -4,6 +4,9 @@
 
 <!-- Content -->
 {% block content %}
+
+{% include 'snippets/bootstrap-toast.html' %}
+
 <div class="container">
 
     <div class="row">
@@ -140,7 +143,7 @@
                                     <button type="submit" class="btn fs-6" style="color: #006ab9;">
                                         Save for Later
                                     </button>
-                                    <input type='hidden' id='data-input' data-product='{{item.product.slug}}'>
+                                    <input type='hidden' id='data-input' data-product='{{item.product.id}}'>
                                 </form>
                             </div>
                             <div class="vr px-0 my-1"></div>
@@ -241,18 +244,22 @@
             {% for saved_item in save_for_later_items %}
                 <div class="row mt-4 mx-2">
                     <div class="col-3 p-0 ps-2">
-                        <img src="{{saved_item.product.product_image.0.url.url}}" alt="fritos">
+                        <a href="{% url 'products:product-overview' saved_item.product.slug %}">
+                            <img src="{{saved_item.product.product_image.0.url.url}}" alt="fritos">
+                        </a>
                     </div>
 
                     <div class="col mx-2">
-                        <div class="row fs-6 text-muted">
-                        {% if saved_item.product.brand %}
-                            {{saved_item.product.brand}}
-                        {% endif %}
-                        </div>
-                        <div class="row fs-5">
-                            {{saved_item.product.product_name}}
-                        </div>
+                        <a href="{% url 'products:product-overview' saved_item.product.slug %}" >
+                            <div class="row fs-6 text-muted">
+                            {% if saved_item.product.brand %}
+                                {{saved_item.product.brand}}
+                            {% endif %}
+                            </div>
+                            <div class="row fs-5">
+                                {{saved_item.product.product_name}}
+                            </div>
+                        </a>
                     </div>
                     <div class="col-3">
                         <div class="row fw-bold">

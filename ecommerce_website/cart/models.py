@@ -26,17 +26,16 @@ class CartManager(models.Manager):
                 request.session['cart_id'] = cart.pk
 
                 return cart
-            else:
-                cart = CartItem.objects.filter(cart=cart)
 
-                return cart
+            cart = Cart.objects.get(cart=cart)
+            return cart
 
 
 class CartItemManager(models.Manager):
 
     def get_cart_products(self, cart: 'Cart'):
         queryset = CartItem.objects.filter(cart=cart).select_related('product', 'pickup_shop').only(
-            'product__product_name', 'product__slug', 'product__brand', 'product__quantity', 'product__regular_price', 'pickup_shop__shop_name'
+            'product__id', 'product__product_name', 'product__slug', 'product__brand', 'product__quantity', 'product__regular_price', 'pickup_shop__shop_name'
         ).prefetch_related(Prefetch('product__images', to_attr='product_image',
                                     queryset=ProductImages.objects.filter(is_default=True))).annotate(
             current_price=Coalesce(

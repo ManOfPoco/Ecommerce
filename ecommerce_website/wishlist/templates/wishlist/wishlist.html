@@ -195,7 +195,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {% if item.product.quantity != 0 %}
                             <div class="col-auto px-0">
                                 <form class='move-to-cart'>{% csrf_token %}
                                     <button type="submit" class="btn fs-5 px-4 add-to-cart-button">
@@ -204,11 +203,6 @@
                                     <input type='hidden' id='data-input' data-product='{{item.product.id}}'>
                                 </form>
                             </div>
-                            {% else %}
-                            <div class="col-auto px-0 text-danger">
-                                Current product is out of stock
-                            </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>

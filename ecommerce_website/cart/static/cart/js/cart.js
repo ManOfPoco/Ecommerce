@@ -20,9 +20,7 @@ $('.quanitity-select-form select').on('change', function (e) {
         data: form.serialize() + `&old_quantity=${old_quantity}` + `&new_quantity=${new_quantity}` + `&product_slug=${product}`,
         success: function (response) {
             if (response.success && response.status === 'Quantity changed') {
-                console.log(response.product);
 
-                console.log(response.bill.discount_amount);
                 $('#base-price').html(`$${response.bill.base_price}`)
                 if (response.bill.discount_amount) {
                     if ($('#discount-section').length) {
@@ -67,7 +65,6 @@ $('.quanitity-select-form select').on('change', function (e) {
                                         </div>
                     `)
                 } else {
-                    console.log($(`#${product}`).find('#product-price'));
                     $(`#${product}`).find('#product-discount').remove()
                     $(`#${product}`).find('#product-price').html(`$${response.product.base_price}`)
                 }
@@ -101,11 +98,11 @@ $('.cart-item-remove').on('submit', function (e) {
 
 $('.save-for-later').on('submit', function (e) {
     let form = $(this);
-    let product_slug = form.find(('#data-input')).data('product')
+    let product_id = form.find(('#data-input')).data('product')
     $.ajax({
         type: "POST",
         url: window.location.href + 'save-for-later/',
-        data: form.serialize() + `&product_slug=${product_slug}`,
+        data: form.serialize() + `&product_id=${product_id}`,
         success: function (response) {
             location.reload();
         },

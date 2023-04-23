@@ -148,12 +148,72 @@ if (select && urlParams.has('ordering')) {
         let option = select.options[i];
         if (urlParams.get('ordering') === option.value) {
             option.selected = true;
+            scrollReviews();
         }
     }
 }
 else if (urlParams.has('page')) {
+    console.log(1);
     scrollReviews();
 }
+
+$('.anchor').on('click', function (e) {
+    scrollReviews();
+});
+
+
+function calculate_discount_saving(regular_price, discount_price) {
+    let discount_sum = (regular_price - discount_price).toFixed(2)
+    let discount_percent = Math.round((discount_sum / regular_price) * 100)
+
+    return `$${discount_sum} (${discount_percent}%)`
+}
+
+$('#product-quantity-form select').on('change', function (e) {
+    let form = $(this).closest('form');
+    let quantity = this.value
+
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: form.serialize() + `&quantity=${quantity}`,
+        success: function (response) {
+            console.log(response.price);
+            if (response.success && response.price) {
+                if (response.price.discount_price) {
+                    $('#price-section').html(`
+                        <div class="row align-items-baseline" style="height:26px">
+                            <div class="col-auto pe-0 fw-bold fs-2" style="font-family: 'Futura PT';" id='product-current-price'>
+                                $${response.price.discount_price}
+                            </div>
+                            <div class="col ps-2 text-decoration-line-through align-bottom product-old-price" id='product-old-price'>
+                                $${response.price.base_price}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col product-promotion" id='product-discount'>
+                                Save ${calculate_discount_saving(response.price.base_price, response.price.discount_price)}
+                            </div>
+                        </div>
+                    `)
+                } else if (!response.price.discount_price) {
+                    $('#price-section').html(`
+                        <div class="row align-items-baseline" style="height:26px">
+                            <div class="col-auto pe-0 fw-bold fs-2" style="font-family: 'Futura PT';" id='product-current-price'>
+                                ${response.price.base_price} 
+                            </div>
+                        </div>
+                    `)
+                }
+            }
+        },
+        error: function (response) {
+            console.log(response.success);
+        }
+    });
+    return false;
+})
+
 
 // ajax like/dislike request
 $('.reviewRateForm').on('submit', function (e) {
@@ -162,7 +222,7 @@ $('.reviewRateForm').on('submit', function (e) {
     let oppositeOption = option === 'like' ? 'dislike' : 'like'
     $.ajax({
         type: "POST",
-        url: window.location.href,
+        url: '/review/rate-review/',
         data: $(this).serialize() + "&option=" + option,
         success: function (response) {
 
@@ -184,8 +244,15 @@ $('.reviewRateForm').on('submit', function (e) {
             }
         },
         error: function (response) {
-            form.find($('.form-messages')).html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
-        }
+            if (!response.status) {
+                form.find($('.form-messages')).html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
+            }
+        },
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });
@@ -254,8 +321,15 @@ $('#create-review-form').on('submit', function (e) {
             }
         },
         error: function (response) {
-            $('.review-messages').html('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>')
-        }
+            if (!response.status) {
+                $('.review-messages').html('<div class="invalid-feedback alert alert-danger d-block">Something went wrong</div>')
+            }
+        },
+        statusCode: {
+            302: function () {
+                window.location.href = "/account/sign-in/?next=" + window.location.href;
+            }
+        },
     });
     return false;
 });
@@ -267,6 +341,7 @@ $('.wishlist').on('click', function (e) {
             ajax.wishlistAjax();
         })
 });
+
 
 // evoking ajax function for moving product to the cart via ajax request
 moveToCartAjax();

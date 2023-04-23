@@ -15,6 +15,10 @@ class WishlistForm(forms.ModelForm):
 
 class WishListItemAddForm(forms.ModelForm):
 
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['wishlist'].queryset = WishList.objects.filter(user=user)
+
     class Meta:
         model = WishListItem
         fields = ['wishlist']
