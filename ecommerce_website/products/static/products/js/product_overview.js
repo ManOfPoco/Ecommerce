@@ -200,7 +200,7 @@ $('#product-quantity-form select').on('change', function (e) {
                     $('#price-section').html(`
                         <div class="row align-items-baseline" style="height:26px">
                             <div class="col-auto pe-0 fw-bold fs-2" style="font-family: 'Futura PT';" id='product-current-price'>
-                                ${response.price.base_price} 
+                                $${response.price.base_price} 
                             </div>
                         </div>
                     `)

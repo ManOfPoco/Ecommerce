@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'wishlist.apps.WishlistConfig',
     'orders.apps.OrdersConfig',
     'sells.apps.SellsConfig',
+    'payment_paypal.apps.PaymentPaypalConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'mptt',
     'crispy_forms',
     "crispy_bootstrap5",
+    'paypal.standard.ipn'
 ]
 
 MIDDLEWARE = [
@@ -154,3 +156,7 @@ LOGIN_URL = '/account/sign-up/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+PAYPAL_TEST = True
+PAYPAL_RECEIVER_EMAIL = 'sb-dg8zn25713922@business.example.com'

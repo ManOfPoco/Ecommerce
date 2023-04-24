@@ -109,9 +109,10 @@ def products_list(request, *args, **kwargs):
             'product_page': page,
             'default_filters': product_filters['default_filters'],
             'specific_filters': product_filters['specific_filters'],
-            'wishlist_item_add_form': WishListItemAddForm(request.user),
             'cart_items_count': CartItem.objects.get_cart_items_count(request),
         }
+        if request.user.is_authenticated:
+            context['wishlist_item_add_form'] = WishListItemAddForm(request.user),
 
         return render(request, 'products/products.html', context)
 
@@ -166,8 +167,9 @@ class ProductDetailView(DetailView):
         context['review_page'] = review_page
         context['popular_products'] = popular_products
         context['form'] = ReviewForm()
-        context['wishlist_item_add_form'] = WishListItemAddForm(
-            self.request.user)
+        if self.request.user.is_authenticated:
+            context['wishlist_item_add_form'] = WishListItemAddForm(
+                self.request.user)
         context['cart_items_count'] = CartItem.objects.get_cart_items_count(
             self.request)
         if most_liked_positive_review and most_liked_negative_review:

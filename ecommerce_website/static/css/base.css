@@ -14,7 +14,7 @@ body img {
 }
 
 #nav-bar-dropdown .dropdown-menu a {
-    padding: 0.25rem 1rem 0.25rem 1rem!important;
+    padding: 0.25rem 1rem 0.25rem 1rem !important;
 }
 
 a {
@@ -166,4 +166,32 @@ a {
 .add-to-cart-button:hover {
     background-color: #ff7700;
     color: white;
+}
+
+.paypal-form {
+    background: #ffc439;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+.paypal-image {
+    height: 22px;
+    width: auto;
+}
+
+.paypal-form:hover {
+    background: rgb(236, 184, 62);
+    ;
+}
+.paypal-submit-btn {
+    all:unset;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
 }

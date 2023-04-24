@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
+from payment_paypal.payment import create_payment_form
+
 from django.views.generic import ListView
 from django.views import View
 
@@ -27,6 +29,7 @@ class CartListView(ListView):
         save_for_later = SaveForLater.objects.get_cart_products(cart)
         bill = CartItem.objects.calculate_bill(self.get_queryset())
         pickup_shops = Shop.objects.all()
+        payment_form = create_payment_form(self.request, self.get_queryset().count(), total_price=bill['total_price'])
 
         context['not_available_products'] = getattr(
             self, 'not_available_products')
@@ -36,6 +39,7 @@ class CartListView(ListView):
         context['popular_products'] = Product.objects.get_popular_products()
         context['cart_items_count'] = CartItem.objects.get_cart_items_count(
             self.request)
+        context['payment_form'] = payment_form
 
         return context
 
