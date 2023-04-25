@@ -9,6 +9,5 @@ class WishListItemInline(admin.StackedInline):
 
 @admin.register(WishList)
 class WishListAdmin(admin.ModelAdmin):
-    fields = ['user', ('list_name', 'slug'), 'is_default']
-    prepopulated_fields = {'slug': ('list_name',)}
+    fields = ['user', 'list_name', 'is_default']
     inlines = [WishListItemInline]

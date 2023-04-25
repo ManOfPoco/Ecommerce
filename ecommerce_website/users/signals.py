@@ -16,6 +16,5 @@ def user_dependencies_creation(sender, instance, created, **kwargs):
             WishList.objects.create(
                 user=instance,
                 list_name='default',
-                slug='default',
                 is_default=True)
             Cart.objects.create(user=instance)

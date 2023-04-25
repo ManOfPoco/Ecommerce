@@ -33,8 +33,7 @@ class WishListItemsManager(models.Manager):
 
 class WishList(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name='wishlist')
-    list_name = models.CharField(_('List Name'), max_length=100, unique=True)
-    slug = models.SlugField(blank=True, max_length=100, unique=True)
+    list_name = models.CharField(_('List Name'), max_length=100)
     is_default = models.BooleanField(default=False)
 
     def __str__(self) -> str:

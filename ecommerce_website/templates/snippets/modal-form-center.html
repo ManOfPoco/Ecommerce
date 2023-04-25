@@ -12,7 +12,7 @@
             <div class="modal-body fs-4">
                 {{form|crispy}}
                 {% if instance %}
-                    <input type='hidden' name='wishlist_slug' value={{instance.slug}}>
+                    <input type='hidden' name='wishlist_id' value={{instance.id}}>
                 {% endif %}
                 <div class='modal-messages'></div>
             </div>

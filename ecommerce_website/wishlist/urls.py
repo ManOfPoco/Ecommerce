@@ -16,5 +16,5 @@ urlpatterns = [
          name='wishlist-item-delete'),
     path('wishlist-item-add/', WishLishItemAddView.as_view(), name='wishlist-item-add'),
     path('', WishListView.as_view(), name='wishlist'),
-    path('<slug:wishlist_slug>/', WishListView.as_view(), name='wishlist-items'),
+    path('<int:id>/', WishListView.as_view(), name='wishlist-items'),
 ]

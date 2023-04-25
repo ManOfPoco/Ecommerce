@@ -27,19 +27,22 @@ class CartListView(ListView):
 
         cart = Cart.objects.get_or_create_cart(self.request)
         save_for_later = SaveForLater.objects.get_cart_products(cart)
-        bill = CartItem.objects.calculate_bill(self.get_queryset())
+        if queryset := self.get_queryset():
+            bill = CartItem.objects.calculate_bill(queryset)
+            payment_form = create_payment_form(
+                self.request, self.get_queryset().count(), total_price=bill['total_price'])
         pickup_shops = Shop.objects.all()
-        payment_form = create_payment_form(self.request, self.get_queryset().count(), total_price=bill['total_price'])
 
         context['not_available_products'] = getattr(
             self, 'not_available_products')
         context['pickup_shops'] = pickup_shops
         context['save_for_later_items'] = save_for_later
-        context['bill'] = bill
         context['popular_products'] = Product.objects.get_popular_products()
         context['cart_items_count'] = CartItem.objects.get_cart_items_count(
             self.request)
-        context['payment_form'] = payment_form
+        if queryset:
+            context['bill'] = bill
+            context['payment_form'] = payment_form
 
         return context
 

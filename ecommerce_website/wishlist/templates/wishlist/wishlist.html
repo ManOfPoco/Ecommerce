@@ -39,12 +39,12 @@
             <div class="row" id='wishlists'>
                 <hr class='m-0'>
                 {% for list in wishlists %}
-                    {% if list.slug == wishlist.slug %}
+                    {% if list.id == wishlist.id %}
                     <div class='list ps-3 my-2 border border-primary rounded border-2' id='active-list'>
                         <div class="row active-list my-1">
                             {% else %}
                             <div class='list ps-3 my-2'>
-                                <a href="{% url 'wishlist:wishlist-items' list.slug %}">
+                                <a href="{% url 'wishlist:wishlist-items' list.id %}">
                                     <div class="row my-1">
                                         {% endif %}
                                         {{list.list_name}}
@@ -183,7 +183,7 @@
                                                 </div>
                                                 <div class="modal-body fs-4">
                                                     <input type='hidden' name='product' value='{{item.product.slug}}'>
-                                                    <input type='hidden' name='wishlist' value='{{wishlist.id}}'>
+                                                    <input type='hidden' name='wishlist_id' value='{{wishlist.id}}'>
                                                     <div class='modal-messages'></div>
                                                 </div>
                                                 <div class="modal-footer">

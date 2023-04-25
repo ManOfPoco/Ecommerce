@@ -61,8 +61,7 @@ $('#edit-wish-list').on('submit', function (e) {
         url: window.location.href,
         data: form.serialize(),
         success: function (response) {
-            const newUrl = new URL('/wishlist/' + response.slug, window.location.href);
-            window.location.href = newUrl.href;
+            location.reload();
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')
@@ -114,9 +113,7 @@ $('#wish-list-delete').on('submit', function (e) {
         url: 'http://127.0.0.1:8000/wishlist/wishlist-delete/',
         data: form.serialize(),
         success: function (response) {
-            if (response.success) {
-                location.href = `http://127.0.0.1:8000/wishlist/${response.slug}/`
-            }
+            window.location.href = '/wishlist/'
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')

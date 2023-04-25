@@ -223,81 +223,85 @@
 
             {% endif %}
         </div>
-    </div>
 
-    <div class="col-lg-7 mt-5 mb-5">
-        <div class="row pb-1">
-            <div class="col ps-2">
-                <h3 class="fw-bold" style="font-size: 26px;">Saved For Later</h3>
+        <div class="col-lg-7 mt-5 mb-5">
+            <div class="row pb-1">
+                <div class="col ps-2">
+                    <h3 class="fw-bold" style="font-size: 26px;">Saved For Later</h3>
+                </div>
+                <div class="col-auto fs-5 fw-bold">
+                    {{save_for_later_items.count}} Item{{save_for_later_items.count|pluralize}}
+                </div>
             </div>
-            <div class="col-auto fs-5 fw-bold">
-                {{save_for_later_items.count}} Item{{save_for_later_items.count|pluralize}}
-            </div>
-        </div>
-        
-        <div class='saved-for-later'>
-            {% for saved_item in save_for_later_items %}
-                <div class="row mt-4 mx-2">
-                    <div class="col-3 p-0 ps-2">
-                        <a href="{% url 'products:product-overview' saved_item.product.slug %}">
-                            <img src="{{saved_item.product.product_image.0.url.url}}" alt="fritos">
-                        </a>
-                    </div>
+            
+            <div class='saved-for-later'>
+                {% for saved_item in save_for_later_items %}
+                    <div class="row mt-4 mx-2">
+                        <div class="col-3 p-0 ps-2">
+                            <a href="{% url 'products:product-overview' saved_item.product.slug %}">
+                                <img src="{{saved_item.product.product_image.0.url.url}}" alt="fritos">
+                            </a>
+                        </div>
 
-                    <div class="col mx-2">
-                        <a href="{% url 'products:product-overview' saved_item.product.slug %}" >
-                            <div class="row fs-6 text-muted">
-                            {% if saved_item.product.brand %}
-                                {{saved_item.product.brand}}
-                            {% endif %}
-                            </div>
-                            <div class="row fs-5">
-                                {{saved_item.product.product_name}}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <div class="row fw-bold">
-                            <div class="row fw-bold justify-content-end">
+                        <div class="col mx-2">
+                            <a href="{% url 'products:product-overview' saved_item.product.slug %}" >
+                                <div class="row fs-6 text-muted">
+                                {% if saved_item.product.brand %}
+                                    {{saved_item.product.brand}}
+                                {% endif %}
+                                </div>
+                                <div class="row fs-5">
+                                    {{saved_item.product.product_name}}
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-3">
+                            <div class="row fw-bold">
+                                <div class="row fw-bold justify-content-end">
+                                    {% if saved_item.product.product_discounts.0.discount_price %}
+                                        ${{saved_item.product.product_discounts.0.discount_price}}
+                                    {% else %}
+                                        ${{saved_item.product.regular_price}}
+                                    {% endif %}
+                                </div>
                                 {% if saved_item.product.product_discounts.0.discount_price %}
-                                    ${{saved_item.product.product_discounts.0.discount_price}}
-                                {% else %}
-                                    ${{saved_item.product.regular_price}}
+                                    <div class="row fs-6 justify-content-end text-decoration-line-through">
+                                        ${{saved_item.product.regular_price}}
+                                    </div>
+                                    <div class="row fs-6 fw-bold product-promotion justify-content-end">
+                                        {% calculate_discount_saving saved_item.product.regular_price saved_item.product.product_discounts.0.discount_price as saving %}
+                                        Save {{saving}}
+                                    </div>
                                 {% endif %}
                             </div>
-                            {% if saved_item.product.product_discounts.0.discount_price %}
-                                <div class="row fs-6 justify-content-end text-decoration-line-through">
-                                    ${{saved_item.product.regular_price}}
-                                </div>
-                                <div class="row fs-6 fw-bold product-promotion justify-content-end">
-                                    {% calculate_discount_saving saved_item.product.regular_price saved_item.product.product_discounts.0.discount_price as saving %}
-                                    Save {{saving}}
-                                </div>
-                            {% endif %}
                         </div>
                     </div>
-                </div>
 
-                <div class="row mt-4 justify-content-end ms-3 me-0">
-                    <div class="col ps-0 align-self-end">
-                        <form class='save-for-later-remove'>{% csrf_token %}
-                            <button type="submit" class="btn fs-6 ps-0" style="color: #006ab9;">
-                                Remove
-                            </button>
-                            <input type='hidden' id='data-input' data-product='{{saved_item.product.slug}}'>
-                        </form>
+                    <div class="row mt-4 justify-content-end ms-3 me-0">
+                        <div class="col ps-0 align-self-end">
+                            <form class='save-for-later-remove'>{% csrf_token %}
+                                <button type="submit" class="btn fs-6 ps-0" style="color: #006ab9;">
+                                    Remove
+                                </button>
+                                <input type='hidden' id='data-input' data-product='{{saved_item.product.slug}}'>
+                            </form>
+                        </div>
+                        <div class="col-auto px-0">
+                            <form class='move-to-cart'>{% csrf_token %}
+                                <button type="submit" class="btn fs-5 px-4 add-to-cart-button">
+                                    Move to Cart
+                                </button>
+                                <input type='hidden' id='data-input' data-product='{{saved_item.product.id}}'>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-auto px-0">
-                        <form class='move-to-cart'>{% csrf_token %}
-                            <button type="submit" class="btn fs-5 px-4 add-to-cart-button">
-                                Move to Cart
-                            </button>
-                            <input type='hidden' id='data-input' data-product='{{saved_item.product.id}}'>
-                        </form>
+                    <hr>
+                {% empty %}
+                    <div class='alert alert-warning mx-2 my-2'>
+                        You haven't added any products yet
                     </div>
-                </div>
-                <hr>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 

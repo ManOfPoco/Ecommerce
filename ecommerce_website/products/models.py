@@ -206,7 +206,7 @@ class Category(MPTTModel):
         _('Category Name'), max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
     image = models.ImageField(upload_to='categories', max_length=255)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     parent = TreeForeignKey(

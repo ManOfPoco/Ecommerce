@@ -28,9 +28,9 @@ class WishListListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if slug := self.kwargs.get('wishlist_slug'):
+        if wishlist_id := self.kwargs.get('id'):
             wishlist = get_object_or_404(WishList,
-                                         slug=slug, user_id=self.request.user.id)
+                                         id=wishlist_id, user_id=self.request.user.id)
         else:
             wishlist = WishList.objects.get(
                 user_id=self.request.user.id, is_default=True)
@@ -103,10 +103,9 @@ class WishlistChangeView(LoginRequiredMixin, View):
         form = WishlistForm(request.POST or None)
         try:
             wishlist = WishList.objects.get(
-                slug=request.POST.get('wishlist_slug'))
+                id=request.POST.get('wishlist_id'))
 
             wishlist.list_name = request.POST.get('list_name')
-            wishlist.slug = slugify(request.POST.get('list_name'))
 
             if request.POST.get('is_default'):
                 default_wishlist = WishList.objects.filter(
@@ -117,7 +116,7 @@ class WishlistChangeView(LoginRequiredMixin, View):
                 wishlist.is_default = True
 
             wishlist.save()
-            return JsonResponse({'success': True, 'slug': wishlist.slug})
+            return JsonResponse({'success': True})
 
         except ObjectDoesNotExist:
             if form.is_valid():
@@ -153,14 +152,12 @@ class WishListDeleteView(LoginRequiredMixin, View):
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
         user = request.user.id
-        slug = request.POST.get('wishlist_slug')
+        wishlist_id = request.POST.get('wishlist_id')
 
         WishList.objects.get(
-            user_id=user, slug=slug).delete()
+            user_id=user, id=wishlist_id).delete()
 
-        default_slug = WishList.objects.get(
-            is_default=True, user_id=request.user.id).slug
-        return JsonResponse({'success': True, 'slug': default_slug})
+        return JsonResponse({'success': True})
 
 
 class WishListItemDeleteView(LoginRequiredMixin, View):
@@ -170,7 +167,7 @@ class WishListItemDeleteView(LoginRequiredMixin, View):
 
     @method_decorator(is_ajax)
     def post(self, request, *args, **kwargs):
-        wishlist = WishList.objects.get(id=request.POST.get('wishlist'))
+        wishlist = WishList.objects.get(id=request.POST.get('wishlist_id'))
         product = Product.objects.get(slug=request.POST.get('product'))
 
         WishListItem.objects.get(

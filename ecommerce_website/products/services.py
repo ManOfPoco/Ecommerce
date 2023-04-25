@@ -22,12 +22,12 @@ CATEGORY_PARAMS = {
             'California King': '72" x 84"'
         }
     },
-    'beautypersonalcare': {
+    'beauty-personal-care': {
         'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
-    'bedbath': {
+    'bed-bath': {
         'categories': 'all_categories',
         'products': True,
         'brands': True,
@@ -37,12 +37,12 @@ CATEGORY_PARAMS = {
         'products': True,
         'brands': False,
     },
-    'householdessentials': {
+    'household-essentials': {
         'categories': 'all_categories',
         'products': True,
         'brands': False,
     },
-    'patiogarden': {
+    'patio-garden': {
         'categories': 'all_categories',
         'products': True,
         'brands': False,

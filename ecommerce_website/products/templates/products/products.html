@@ -97,7 +97,13 @@
         <!-- End Product filters -->
 
         <!-- Products -->
-        {% include 'snippets/product-cards.html' with products=product_page %}
+        {% if product_page %}
+            {% include 'snippets/product-cards.html' with products=product_page %}
+        {% else %}
+            <div class="alert alert-primary" role="alert">
+                No products here yet!
+            </div>
+        {% endif %}
         <!-- End Products -->
     </div>
     {% include 'snippets/pagination.html' with page=product_page %}
