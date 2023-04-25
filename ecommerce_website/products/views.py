@@ -112,7 +112,8 @@ def products_list(request, *args, **kwargs):
             'cart_items_count': CartItem.objects.get_cart_items_count(request),
         }
         if request.user.is_authenticated:
-            context['wishlist_item_add_form'] = WishListItemAddForm(request.user),
+            context['wishlist_item_add_form'] = WishListItemAddForm(
+                request.user)
 
         return render(request, 'products/products.html', context)
 
@@ -127,16 +128,18 @@ class ProductDetailView(DetailView):
     def post(self, request, *args, **kwargs):
 
         product = self.get_object()
-        discounts = ProductDiscount.objects.get_discounts(product.slug)
 
         try:
             quantity = int(request.POST.get('quantity'))
         except TypeError:
             return HttpResponseBadRequest('Invalid Request')
 
+        discount = ProductDiscount.objects.get_best_discount_price(
+            product, quantity)
         price = {}
-        if discount := discounts.first():
-            discount_price = discount.discount_price * quantity
+
+        if discount:
+            discount_price = discount[0]['discount_price'] * quantity
             price['discount_price'] = round(discount_price, 2)
 
         base_price = product.regular_price * quantity
@@ -166,7 +169,7 @@ class ProductDetailView(DetailView):
         context['product_reviews_rating'] = product_reviews_rating
         context['review_page'] = review_page
         context['popular_products'] = popular_products
-        context['form'] = ReviewForm()
+        context['review_form'] = ReviewForm()
         if self.request.user.is_authenticated:
             context['wishlist_item_add_form'] = WishListItemAddForm(
                 self.request.user)

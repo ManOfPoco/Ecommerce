@@ -20,7 +20,6 @@ $('.quanitity-select-form select').on('change', function (e) {
         data: form.serialize() + `&old_quantity=${old_quantity}` + `&new_quantity=${new_quantity}` + `&product_slug=${product}`,
         success: function (response) {
             if (response.success && response.status === 'Quantity changed') {
-
                 $('#base-price').html(`$${response.bill.base_price}`)
                 if (response.bill.discount_amount) {
                     if ($('#discount-section').length) {
@@ -54,7 +53,7 @@ $('.quanitity-select-form select').on('change', function (e) {
                 $('#discount-price').html(`$${response.bill.discount_price}`)
                 $('#total-price').html(`$${response.bill.total_price}`)
 
-                if (response.product.base_price !== response.product.discount_price) {
+                if (response.product.base_price > response.product.discount_price) {
                     $(`#${product}`).find('#product-price').html(`$${response.product.discount_price}`)
                     $(`#${product}`).find('#product-discount').html(`
                                         <div class="row fs-6 justify-content-end text-decoration-line-through">
@@ -65,7 +64,7 @@ $('.quanitity-select-form select').on('change', function (e) {
                                         </div>
                     `)
                 } else {
-                    $(`#${product}`).find('#product-discount').remove()
+                    $(`#${product}`).find('#product-discount').empty()
                     $(`#${product}`).find('#product-price').html(`$${response.product.base_price}`)
                 }
             }

@@ -61,9 +61,8 @@ $('#edit-wish-list').on('submit', function (e) {
         url: window.location.href,
         data: form.serialize(),
         success: function (response) {
-            let oldslug = window.location.pathname.split('/').slice(-1)[0];
-            history.replaceState(oldslug, "", response.slug);
-            location.reload();
+            const newUrl = new URL('/wishlist/' + response.slug, window.location.href);
+            window.location.href = newUrl.href;
         },
         error: function (response) {
             form.find('.modal-messages').html('<div class="alert alert-danger" id="usernameError">Something went wrong</div>')

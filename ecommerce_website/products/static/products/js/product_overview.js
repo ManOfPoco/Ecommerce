@@ -153,7 +153,6 @@ if (select && urlParams.has('ordering')) {
     }
 }
 else if (urlParams.has('page')) {
-    console.log(1);
     scrollReviews();
 }
 
@@ -178,7 +177,6 @@ $('#product-quantity-form select').on('change', function (e) {
         url: window.location.href,
         data: form.serialize() + `&quantity=${quantity}`,
         success: function (response) {
-            console.log(response.price);
             if (response.success && response.price) {
                 if (response.price.discount_price) {
                     $('#price-section').html(`

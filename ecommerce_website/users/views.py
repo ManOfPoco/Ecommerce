@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib.messages.views import SuccessMessageMixin
 from .forms import MyUserCreationForm, EditProfileForm, EditUserForm, UserLoginForm
+from wishlist.forms import WishListItemAddForm
 
 from products.models import Product
 from cart.models import CartItem
@@ -24,6 +25,8 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context["popular_products"] = Product.objects.get_popular_products()
         context['cart_items_count'] = CartItem.objects.get_cart_items_count(
             self.request)
+        context['wishlist_item_add_form'] = WishListItemAddForm(
+            self.request.user)
         return context
 
 

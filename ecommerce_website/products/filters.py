@@ -8,12 +8,13 @@ from django.template.defaultfilters import slugify
 from collections import defaultdict
 
 
-def get_default_filters(categories, products):
+def get_default_filters(products, categories=None):
     default_filters = defaultdict(list)
 
-    brands = Product.objects.get_unique_product_brands(
-        categories, include_count=True)
-    default_filters['Brand'].extend([brand for brand in brands])
+    if categories:
+        brands = Product.objects.get_unique_product_brands(
+            categories, include_count=True)
+        default_filters['Brand'].extend([brand for brand in brands])
 
     default_filters['Price'] = products.aggregate(
         max_price=Max('regular_price'))['max_price']
@@ -60,7 +61,7 @@ def get_filters(categories):
         products = Product.objects.filter(category__in=categories
                                           ).prefetch_related('attribute')
         default_filters, specific_filters = get_default_filters(
-            categories, products), get_specific_filters(products)
+            products, categories), get_specific_filters(products)
 
         filters['default_filters'], filters['specific_filters'] = default_filters, specific_filters
         cache.set(

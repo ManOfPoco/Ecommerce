@@ -1,5 +1,5 @@
 // ajax add item to the wishlist request
-export function wishlistAjax(href = '/wishlist/wishlist-add/') {
+export function wishlistAjax(href = 'http://127.0.0.1:8000/wishlist/wishlist-item-add/') {
     $('.wishlist-item-add-form').off().on('submit', function (e) {
         let form = $(this);
         $.ajax({

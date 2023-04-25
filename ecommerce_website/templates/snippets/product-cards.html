@@ -57,16 +57,21 @@
                     <a href="{% url 'products:product-overview' product.slug %}">
                         <img src="{{ product.images.first.url.url }}" class="card-img-top" alt="{{ product.images.first.alternative_text }}">
 
-                        {% with product.discounts as discounts %}
+
                             <div class="card-body px-0 py-1 d-flex flex-column">
-                                {% with discounts.first as unit_discount %}
-                                    <h4 class="mt-4 mb-0 card-price">{% if unit_discount %} ${{unit_discount.discount_price|floatformat:'2'}} {% else %} ${{product.regular_price}} {% endif %}</h4>
+                                {% with product.product_discounts as discount %}
+                                    <h4 class="mt-4 mb-0 card-price">
+                                        {% if discount.0.minimum_order_value == 1 %} 
+                                            ${{discount.0.discount_price|floatformat:'2'}} 
+                                        {% else %}
+                                            ${{product.regular_price}}
+                                        {% endif %}</h4>
                                     <div class="row" style='height:16.5px'>
-                                        {% if discounts.first %}
+                                        {% if discount.0.minimum_order_value == 1 %}
                                             <div class="col-auto text-decoration-line-through text-muted pe-0 card-promotion">
                                                 ${{product.regular_price|floatformat:'2'}}
                                             </div>
-                                            {% calculate_discount_saving product.regular_price unit_discount.discount_price as saving %}
+                                            {% calculate_discount_saving product.regular_price discount.0.discount_price as saving %}
                                             <div class="col-auto ps-1 card-discount">
                                                 Save {{saving}}
                                             </div>
@@ -100,17 +105,22 @@
                                     {% endif %}
                                 </div>
                                 
+                                {% with product.product_discounts as discount %}
                                 <div class="row">
-                                    {% if discounts.last.discount_unit >= 2 %}
+                                    {% if discount.0.discount_unit > 1 %}
                                         <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
-                                            <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discounts.last.discount_description}}
+                                            <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discount.0.discount_description}}
+                                        </div>
+                                    {% elif discount.1.discount_unit > 1 %}
+                                        <div class="col fs-6 fw-bold mt-2" style="color:#773dbd">
+                                            <img src="{% static 'icons/apr-tag.svg' %}" alt=""> {{discount.1.discount_description}}
                                         </div>
                                     {% else %}
                                         <br>
                                     {% endif %}
                                 </div>
+                                {% endwith %}
                             </div>
-                        {% endwith %}
                     </a>
                     
                     <div class="card-bottom pb-3 pt-4 align-items-center mt-auto">

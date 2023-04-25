@@ -33,11 +33,11 @@
         </div>
         <!-- Search -->
         <div class="col">
-            <form role="search">
+            <form role='search' method="GET" action="{% url 'search:search' %}" id='search'>
                 <div class="input-group">
                     <input class="form-control fst-italic" type="search" placeholder="How can we help?"
-                        aria-label="Search">
-                    <button class="btn btn-outline-white" style='border: 1px solid #ced4da' type="submit">
+                        aria-label="Search" name='q' id='search-input'>
+                    <button class="btn btn-outline-white" style='border: 1px solid #ced4da' type="submit" id='search-button'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                             class="bi bi-search" viewBox="0 0 16 16">
                             <path

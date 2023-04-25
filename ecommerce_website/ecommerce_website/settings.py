@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants as messages
+import os
 
 
 MESSAGE_TAGS = {
@@ -28,9 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@t^*3&$-mnq(-n9_35x+!j9d+($8g3nod#dt_1w1b7m6%uf#r0'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'sells.apps.SellsConfig',
     'payment_paypal.apps.PaymentPaypalConfig',
+    'search.apps.SearchConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,7 +63,7 @@ INSTALLED_APPS = [
     'mptt',
     'crispy_forms',
     "crispy_bootstrap5",
-    'paypal.standard.ipn'
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [

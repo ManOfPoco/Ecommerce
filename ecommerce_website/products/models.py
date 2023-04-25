@@ -51,65 +51,55 @@ class ProductManager(models.Manager):
 
         return brands
 
-    def get_products(self, categories, filter_params=None, ordering='features'):
-        queryset = self.filter(
-            category__in=categories, is_active=True)
+    def filter_products_by(self, queryset, filters):
+        min_price, max_price = filters.pop(
+            'min_price', None), filters.pop('max_price', None)
+        if min_price and max_price:
+            try:
+                min_price, max_price = Decimal(
+                    min_price), Decimal(max_price)
+            except InvalidOperation:
+                raise Http404
 
-        if filter_params:
-            min_price, max_price = filter_params.pop(
-                'min_price', None), filter_params.pop('max_price', None)
-            if min_price and max_price:
-                try:
-                    min_price, max_price = Decimal(
-                        min_price), Decimal(max_price)
-                except InvalidOperation:
-                    raise Http404
+            queryset = queryset.filter(
+                regular_price__range=(min_price, max_price))
 
-                queryset = queryset.filter(
-                    regular_price__range=(min_price, max_price))
+        reviews = filters.pop('reviews', None)
+        if reviews and isinstance(reviews, (list, str)):
+            try:
+                rating = min(reviews) if isinstance(
+                    reviews, list) else int(reviews)
+            except ValueError:
+                raise Http404
 
-            reviews = filter_params.pop('reviews', None)
-            if reviews and isinstance(reviews, (list, str)):
-                try:
-                    rating = min(reviews) if isinstance(
-                        reviews, list) else int(reviews)
-                except ValueError:
-                    raise Http404
+            queryset = queryset.filter(
+                rating__gte=rating)
 
-                queryset = queryset.filter(
-                    reviews__product_rating__gte=rating)
+        brand = filters.pop('Brand', None)
+        if brand:
+            lookup = 'brand__brand_name' if isinstance(
+                brand, str) else 'brand__brand_name__in'
+            queryset = queryset.filter(
+                Q(**{lookup: brand})
+            )
 
-            brand = filter_params.pop('Brand', None)
-            if brand:
-                lookup = 'brand__brand_name' if isinstance(
-                    brand, str) else 'brand__brand_name__in'
-                queryset = queryset.filter(
-                    Q(**{lookup: brand})
-                )
+        attribute_filters = []
+        for key, value in filters.items():
+            if isinstance(value, str):
+                attr_filter = Q(attribute__attribute_name=key,
+                                attribute__attribute_value=value)
+            elif isinstance(value, list):
+                attr_filter = Q(attribute__attribute_name=key,
+                                attribute__attribute_value__in=value)
+            else:
+                raise Http404
+            attribute_filters.append(attr_filter)
 
-            attribute_filters = []
-            for key, value in filter_params.items():
-                if isinstance(value, str):
-                    attr_filter = Q(attribute__attribute_name=key,
-                                    attribute__attribute_value=value)
-                elif isinstance(value, list):
-                    attr_filter = Q(attribute__attribute_name=key,
-                                    attribute__attribute_value__in=value)
-                else:
-                    raise Http404
-                attribute_filters.append(attr_filter)
+        queryset = queryset.filter(*attribute_filters)
 
-            queryset = queryset.filter(*attribute_filters)
+        return queryset
 
-        queryset = queryset.annotate(rating=Avg(
-            'reviews__product_rating'), reviews_count=Count('reviews__product_rating')
-        ).select_related('brand').prefetch_related(
-            'available_shipping_types',
-            Prefetch(
-                'images', queryset=ProductImages.objects.filter(is_default=True)),
-            Prefetch(
-                'discounts', queryset=ProductDiscount.objects.get_discounts(), to_attr='product_discounts')
-        )
+    def order_product_by(self, queryset, ordering):
         product_ordering_types = {
             'features': queryset.order_by('quantity'),  # temporarily
             'price_up': queryset.order_by('regular_price'),
@@ -118,7 +108,26 @@ class ProductManager(models.Manager):
             'name_ascending': queryset.order_by('product_name'),
             'name_descending': queryset.order_by('-product_name'),
         }
-        queryset = product_ordering_types.get(ordering)
+        return product_ordering_types.get(ordering)
+
+    def get_products(self, categories, filter_params=None, ordering='features'):
+        queryset = self.filter(
+            category__in=categories, is_active=True)
+        queryset = queryset.annotate(rating=Avg(
+            'reviews__product_rating'), reviews_count=Count('reviews__product_rating')
+        )
+
+        if filter_params:
+            queryset = self.filter_products_by(queryset, filter_params)
+
+        queryset = queryset.select_related('brand').prefetch_related(
+            'available_shipping_types',
+            Prefetch(
+                'images', queryset=ProductImages.objects.filter(is_default=True)),
+            Prefetch(
+                'discounts', queryset=ProductDiscount.objects.get_discounts(), to_attr='product_discounts')
+        )
+        queryset = self.order_product_by(queryset, ordering=ordering)
 
         return queryset
 
@@ -137,15 +146,26 @@ class ProductDiscountManager(models.Manager):
 
         return discounts.order_by("-discount_unit")
 
-    def get_best_discount_price(self):
+    def get_best_discount_price(self, product=None, quantity=None):
         today = make_aware(datetime.now())
-        discount_price = ProductDiscount.objects.filter(
-            Q(product=OuterRef('product')) &
-            Q(start_date__lte=today) &
-            Q(expire_date__gte=today) &
-            Q(minimum_order_value__lte=OuterRef('quantity')) &
-            Q(maximum_order_value__gte=OuterRef('quantity'))
-        ).order_by("-discount_unit").values('discount_price')
+
+        if not product and not quantity:
+            discount_price = ProductDiscount.objects.filter(
+                Q(product=OuterRef('product')) &
+                Q(start_date__lte=today) &
+                Q(expire_date__gte=today) &
+                Q(minimum_order_value__lte=OuterRef('quantity')) &
+                Q(maximum_order_value__gte=OuterRef('quantity'))
+            ).order_by("-discount_unit").values('discount_price')
+
+        else:
+            discount_price = ProductDiscount.objects.filter(
+                Q(product=product) &
+                Q(start_date__lte=today) &
+                Q(expire_date__gte=today) &
+                Q(minimum_order_value__lte=quantity) &
+                Q(maximum_order_value__gte=quantity)
+            ).order_by("-discount_unit").values('discount_price')
 
         return discount_price[:1]
 

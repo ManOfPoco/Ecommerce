@@ -30,6 +30,7 @@ urlpatterns = [
     path('review/', include('reviews.urls')),
     path('order/', include('orders.urls')),
     path('payment/', include('payment_paypal.urls')),
+    path('search/', include('search.urls'))
 ]
 
 handler404 = 'ecommerce_website.views.my_custom_page_not_found_view'
