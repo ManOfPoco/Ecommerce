@@ -166,10 +166,10 @@
             </div>
         </div>
 
-        <div class="col mx-4 fs-5">
-            <!-- Financial Data -->
+        {% if bill.base_price is not None or bill.total_price is not None %}
+            <div class="col mx-4 fs-5">
+                <!-- Financial Data -->
             
-            {% if bill.base_price is not None or bill.total_price is not None %}
                 {% if bill.discount_price < bill.base_price %}
                     <div class="row mt-4" id='items'>
                         <div class="col">Item{{cart_items.count|pluralize}}({{cart_items.count}})</div>
@@ -220,9 +220,8 @@
                 </div>
 
                 {{ payment_form.render }}
-
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
 
         <div class="col-lg-7 mt-5 mb-5">
             <div class="row pb-1">
@@ -319,12 +318,11 @@
 
 <script>
 
-    $('.paypal-image')[0].src = "{% static 'icons/paypal.svg' %}"
+    {% if user.is_authenticated %}
+        $('.paypal-image')[0].src = "{% static 'icons/paypal.svg' %}"
+    {% endif %}
     createSwiper('popularProducts');
 
 </script>
 <script src="{% static 'cart/js/cart.js' %}"></script>
 {% endblock script %}
-</body>
-
-</html>
