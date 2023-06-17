@@ -318,8 +318,8 @@
 
 <script>
 
-    {% if user.is_authenticated %}
-        $('.paypal-image')[0].src = "{% static 'icons/paypal.svg' %}"
+    {% if cart_items %}
+        $('.paypal-image')[0].src = "{% static 'icons/paypal.svg' %}";
     {% endif %}
     createSwiper('popularProducts');
 

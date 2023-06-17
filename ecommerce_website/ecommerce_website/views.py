@@ -1,7 +1,10 @@
+from typing import Any
 from django.shortcuts import render
 
 from products.models import Product, Category
 from cart.models import CartItem
+
+from django.views.generic import TemplateView
 
 
 def home(request):
@@ -15,6 +18,10 @@ def home(request):
     }
 
     return render(request, 'home.html', context)
+
+
+class DealsListView(TemplateView):
+    template_name = 'deals.html'
 
 
 def my_custom_page_not_found_view(request, exception):

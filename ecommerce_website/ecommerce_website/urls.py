@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views
+from .views import home, DealsListView
 
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('category/', include('products.urls')),
     path('account/', include('users.urls')),
@@ -30,7 +30,9 @@ urlpatterns = [
     path('review/', include('reviews.urls')),
     path('order/', include('orders.urls')),
     path('payment/', include('payment_paypal.urls')),
-    path('search/', include('search.urls'))
+    path('search/', include('search.urls')),
+
+    path('bigwaytosavelots/', DealsListView.as_view(), name='all-deals'),
 ]
 
 handler404 = 'ecommerce_website.views.my_custom_page_not_found_view'

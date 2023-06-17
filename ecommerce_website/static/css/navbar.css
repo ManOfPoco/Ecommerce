@@ -60,12 +60,19 @@
 }
 
 .swiper-slide img {
-    max-width: 300px;
-    height: 300px;
+    max-width: 308px;
+    height: 131px;
 }
 
-.dealsWrapper {
-    margin-bottom: 25px;
+.dealsWrapper .swiper-slide .card {
+    border: 0!important;
+}
+
+.dealsWrapper .swiper-slide .card .card-title {
+    margin: 6px 0px 0px 0px;
+    font-size: 14px;
+    color: #ff5a00;
+    text-align:right;
 }
 
 .hidden {

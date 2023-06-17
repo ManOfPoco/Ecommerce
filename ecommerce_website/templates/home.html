@@ -24,24 +24,28 @@
         </div>
         <div class="row">
             <div class="col-6">
-                <a href="#">
+                <a href="category/furniture/all-bedroom/sofas-sectionals/">
                     <img src="{% static 'img/home/EdNavMattresses.webp' %}" alt="Mattresses">
                 </a>
             </div>
             <div class="col-6">
-                <a href="#">
+                <a href="/category/furniture/all-home-office/recliners/">
                     <img src="{% static 'img/home/EdNavSectionals.webp' %}" alt="Sectionals">
                 </a>
             </div>
         </div>
         <div class="row pt-2">
             <div class="col-6">
-                <span class="title-item-primary">Save up to $300</span><br>
-                <span class="title-item-secondary">Save up to $300</span>
+                <a href='/category/furniture/all-bedroom/sofas-sectionals/'>
+                    <span class="title-item-primary">Save up to $300</span><br>
+                    <span class="title-item-secondary">Save up to $300</span>
+                </a>
             </div>
             <div class="col-6">
-                <span class="title-item-primary">Save up to $300</span><br>
-                <span class="title-item-secondary">Save up to $300</span>
+                <a href='/category/furniture/all-home-office/recliners/'>
+                    <span class="title-item-primary">Save up to $300</span><br>
+                    <span class="title-item-secondary">Save up to $300</span>
+                </a>
             </div>
         </div>
         <div class="row mt-4">
@@ -66,7 +70,7 @@
     </div>
 
     {% include './snippets/card-swiper-preview.html' with title='Shop By Category' %}
-    {% include './snippets/card-categories.html' with categories=categories %}
+    {% include './snippets/card-categories.html' with categories=categories deals=True %}
 
 </div>
 <!-- Content -->

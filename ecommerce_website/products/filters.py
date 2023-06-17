@@ -14,7 +14,15 @@ def get_default_filters(products, categories=None):
     if categories:
         brands = Product.objects.get_unique_product_brands(
             categories, include_count=True)
-        default_filters['Brand'].extend([brand for brand in brands])
+        if brands:
+            default_filters['Brand'].extend([brand for brand in brands])
+
+        collections = Product.objects.get_unique_product_collections(
+            categories, include_count=True)
+        if collections:
+            default_filters['Collection'].extend(
+                [collection for collection in collections]
+            )
 
     default_filters['Price'] = products.aggregate(
         max_price=Max('regular_price'))['max_price']

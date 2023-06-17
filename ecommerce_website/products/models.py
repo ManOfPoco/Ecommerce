@@ -51,6 +51,25 @@ class ProductManager(models.Manager):
 
         return brands
 
+    def get_unique_product_collections(self, categories, include_count=False):
+        collections = cache.get(
+            f'CACHED_COLLECTIONS_FOR_{slugify(categories.first().category_name)}'
+        )
+
+        if collections is None:
+            print(Collection.objects.all())
+            collections = Collection.objects.filter(
+                product__category__in=categories).distinct()
+
+            if include_count:
+                collections = collections.annotate(count=Count(
+                    'product', filter=Q(product__category__in=categories)))
+
+            cache.set(
+                f'CACHED_COLLECTIONS_FOR_{slugify(categories.first().category_name)}', collections, 60*60)
+
+        return collections
+
     def filter_products_by(self, queryset, filters):
         min_price, max_price = filters.pop(
             'min_price', None), filters.pop('max_price', None)
@@ -81,6 +100,13 @@ class ProductManager(models.Manager):
                 brand, str) else 'brand__brand_name__in'
             queryset = queryset.filter(
                 Q(**{lookup: brand})
+            )
+
+        collection = filters.pop('Collection', None)
+        if collection:
+            lookup = 'collection'
+            queryset = queryset.filter(
+                Q(**{lookup: collection})
             )
 
         attribute_filters = []
@@ -182,6 +208,13 @@ class Product(models.Model):
         null=True,
         blank=True
     )
+    collection = models.ForeignKey(
+        'Collection',
+        on_delete=models.PROTECT,
+        related_name='product',
+        null=True,
+        blank=True
+    )
     regular_price = models.DecimalField(max_digits=10, decimal_places=2)
     features = models.ManyToManyField('Features', blank=True)
     coupon = models.ManyToManyField('Coupon', blank=True)
@@ -230,10 +263,15 @@ class Category(MPTTModel):
 class Brand(models.Model):
     brand_name = models.CharField(_("Brand Name"), max_length=255, unique=True)
     slug = models.SlugField(blank=True, max_length=255, unique=True)
-    image = models.ImageField(upload_to='brands', null=True, blank=True)
+    image = models.ImageField(upload_to='brands')
 
     def __str__(self) -> str:
         return f"{self.brand_name}"
+
+
+class Collection(models.Model):
+    collection_name = models.CharField(
+        _("Collection Name"), max_length=100, unique=True)
 
 
 class Attribute(models.Model):

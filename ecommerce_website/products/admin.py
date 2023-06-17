@@ -5,6 +5,7 @@ from mptt.admin import MPTTModelAdmin
 from .models import (
     Product,
     Brand,
+    Collection,
     Category,
     Features,
     Coupon,
@@ -40,6 +41,7 @@ class ProductAdmin(admin.ModelAdmin):
         'description',
         'category',
         'brand',
+        'collection',
         'regular_price',
         'coupon',
         'available_shipping_types',
@@ -92,6 +94,12 @@ class BrandAdmin(admin.ModelAdmin):
     fields = [('brand_name', 'slug'), 'image']
 
     prepopulated_fields = {'slug': ('brand_name',)}
+
+
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    fields = ['collection_name', ]
+    pass
 
 
 admin.site.register(Features)

@@ -66,7 +66,7 @@ def edit_profile(request):
 class SignUpView(SuccessMessageMixin, FormView):
     template_name = 'registration/sign-up.html'
     form_class = MyUserCreationForm
-    success_url = 'sign-in'
+    success_url = '/account/sign-in/'
     success_message = "Account was created successfully"
 
     def get_context_data(self, **kwargs):

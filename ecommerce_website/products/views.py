@@ -31,7 +31,7 @@ class CategoryView(TemplateView):
         category_params = services.CATEGORY_PARAMS.get(slug, {})
         category_children = category.get_children()
 
-        if category_params['categories'] == 'subcategories':
+        if category_params.get('categories') == 'subcategories':
             category_children = category_children.prefetch_related(
                 'children__children')
 
