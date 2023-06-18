@@ -22,12 +22,12 @@ def build_url_path(category):
     return path
 
 
-@register.filter
+@register.filter(name='is_string')
 def is_string(value):
     return isinstance(value, SafeString)
 
 
-@register.filter
+@register.filter(name='get_dict_value')
 def get_dict_value(dictionary, key):
     return dictionary.get(key)
 
@@ -35,3 +35,8 @@ def get_dict_value(dictionary, key):
 @register.simple_tag
 def make_int_list(num: str):
     return [i for i in range(1, int(num) + 1)]
+
+
+@register.filter(name='split')
+def split(value, arg):
+    return value.split(arg)

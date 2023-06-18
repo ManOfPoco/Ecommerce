@@ -9,7 +9,7 @@ CATEGORY_PARAMS = {
         'products': True,
         'brands': False,
     },
-    'matteresses': {
+    'mattresses': {
         'categories': 'subcategories',
         'products': False,
         'brands': True,
