@@ -84,23 +84,10 @@ class CartItemManager(models.Manager):
         return {key: round(value, 2) for key, value in bill.items()}
 
     def get_cart_items_count(self, request):
-        try:
-            cart = Cart.objects.get(user_id=request.user.id)
-            cart_items_count = self.model.objects.filter(cart=cart).count()
+        cart = Cart.objects.get_or_create_cart(request=request)
+        cart_items_count = self.model.objects.filter(cart=cart).count()
 
-            return cart_items_count
-        except Cart.DoesNotExist:
-            cart = request.session.get('cart_id', None)
-
-            if cart is None:
-                cart = Cart.objects.create()
-                request.session['cart_id'] = cart.pk
-
-                return 0
-            else:
-                cart_items_count = CartItem.objects.filter(cart=cart).count()
-
-                return cart_items_count
+        return cart_items_count
 
 
 class SaveForLaterManager(models.Manager):

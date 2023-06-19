@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavbar-list.html' with data=breadcrumb %}
+    <!-- End BreadCrumbNavBar -->
+
+    <!-- Preview -->
+    <div class="row mt-3 mb-0">
+        <div class="col-lg-2 col-auto ps-2 pe-0" style="border-bottom: 3px solid #ff5a00;">
+            <h4 class="mb-0 fs-3 fw-bold">ORDER ID: {{order.id}}</h4>
+        </div>
+        <div class="col mb-0 ps-0 text-end border-bottom border-dark-subtle">
+            <img src="{% static 'icons/printer.svg' %}" alt="print">
+            <span class="fs-7 fw-bold link">
+                Print
+            </span>
+        </div>
+    </div>
+    <!-- End Preview -->
+    <div class='order_details mt-2'>
+        <div class='order_items'>
+            {% for order_item in products %}
+                <div class='row'>
+                    <div class='col-2'>
+                        <img src='{{order_item.product.images.first.url.url}}'>
+                    </div>
+                    <div class='col'>
+                        <h4 class='fs-3 pt-3 fw-normal'>{{order_item.product.product_name}}</h4>
+                        <h4 class='fs-3 pt-2 text-muted'>{{order_item.product.brand.brand_name}}</h4>
+                    </div>
+                    <div class='col-2 text-end'>
+                        <h4 class='fs-3 pt-3'>${{order_item.price}}</h4>
+                        <h4 class='fs-3 pt-3 text-muted'>Qty: {{order_item.quantity}}</h4>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+        <div class='row'>
+            <div class='col-6'>
+                <div class='help_info mt-4'>
+                    <h4 class='fs-3'>Need help?<h4>
+                    <div class='row fs-4 pt-2'>
+                        <div class='col'>
+                            <a href='#'>
+                                <div class='row mb-2'>
+                                    <div class='col-auto'>
+                                        <span class='fw-normal'>Order Issues</span>
+                                    </div>
+                                    <div class='col-auto px-0'>
+                                        <img src="{% static 'icons/arrow-up-right.svg' %}" alt="account-link-add">
+                                    </div>
+                                </div>
+                            </a>
+                            <a href='#'>
+                                <div class='row mb-2'>
+                                    <div class='col-auto'>
+                                        <span class='fw-normal'>Delivery Info</span>
+                                    </div>
+                                    <div class='col-auto px-0'>
+                                        <img src="{% static 'icons/arrow-up-right.svg' %}" alt="account-link-add">
+                                    </div>
+                                </div>
+                            </a>
+                            <a href='#'>
+                                <div class='row mb-2'>
+                                    <div class='col-auto'>
+                                        <span class='fw-normal'>Returns</span>
+                                    </div>
+                                    <div class='col-auto px-0'>
+                                        <img src="{% static 'icons/arrow-up-right.svg' %}" alt="account-link-add">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='col-6'>
+                <div class='pricing_info mt-4'>
+                    <h4 class='fs-3'>Order Summary<h4>
+                    <div class='row fs-4 pt-2'>
+                        <div class='col text-muted'>
+                            Total
+                        </div>
+                        <div class='col text-end'>
+                            ${{order.total_price}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

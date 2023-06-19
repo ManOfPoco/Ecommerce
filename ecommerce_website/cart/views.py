@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 
-from payment_paypal.payment import create_payment_form
-
 from django.views.generic import ListView
 from django.views import View
+
+from cart.mixins import CartItemsCountMixin
 
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,7 +17,7 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseBadRequest
 
 
-class CartListView(ListView):
+class CartListView(CartItemsCountMixin, ListView):
     model = CartItem
     context_object_name = 'cart_items'
     template_name = 'cart/cart.html'
@@ -29,8 +29,6 @@ class CartListView(ListView):
         save_for_later = SaveForLater.objects.get_cart_products(cart)
         if queryset := self.get_queryset():
             bill = CartItem.objects.calculate_bill(queryset)
-            payment_form = create_payment_form(
-                self.request, self.get_queryset().count(), total_price=bill['total_price'])
         pickup_shops = Shop.objects.all()
 
         context['not_available_products'] = getattr(
@@ -38,11 +36,9 @@ class CartListView(ListView):
         context['pickup_shops'] = pickup_shops
         context['save_for_later_items'] = save_for_later
         context['popular_products'] = Product.objects.get_popular_products()
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
-            self.request)
+
         if queryset:
-            context['bill'] = bill
-            context['payment_form'] = payment_form
+            context['bill'] = bill or None
 
         return context
 

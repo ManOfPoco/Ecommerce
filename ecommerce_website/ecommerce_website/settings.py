@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     'mptt',
     'crispy_forms',
     "crispy_bootstrap5",
-    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -163,5 +162,9 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
-PAYPAL_TEST = True
-PAYPAL_RECEIVER_EMAIL = 'sb-dg8zn25713922@business.example.com'
+# PAYPAL SETTINGS
+
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET_ID = os.environ.get('PAYPAL_SECRET_ID')
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'

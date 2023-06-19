@@ -177,6 +177,7 @@ a {
     cursor: pointer;
     position: relative;
 }
+
 .paypal-image {
     height: 22px;
     width: auto;
@@ -186,12 +187,18 @@ a {
     background: rgb(236, 184, 62);
     ;
 }
+
 .paypal-submit-btn {
-    all:unset;
+    all: unset;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     cursor: pointer;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+    background-color: #3a3d3b !important;
 }

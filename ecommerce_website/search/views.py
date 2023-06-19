@@ -5,14 +5,14 @@ from products.filters import get_default_filters
 from cart.models import CartItem
 from products.models import Product, ProductImages, ProductDiscount
 
+from cart.mixins import CartItemsCountMixin
+
 from django.views.generic import ListView
 
 from wishlist.forms import WishListItemAddForm
 
-from django.utils.decorators import method_decorator
 
-
-class SearchView(ListView):
+class SearchView(CartItemsCountMixin, ListView):
     template_name = 'search/search.html'
     context_object_name = 'product_page'
     model = Product
@@ -24,8 +24,7 @@ class SearchView(ListView):
         default_filters = get_default_filters(self.get_queryset())
 
         context['default_filters'] = default_filters
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
-            self.request)
+
         if self.request.user.is_authenticated:
             context['wishlist_item_add_form'] = WishListItemAddForm(
                 self.request.user)

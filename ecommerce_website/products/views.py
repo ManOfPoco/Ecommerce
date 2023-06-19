@@ -16,11 +16,13 @@ from .models import Category, Product, ProductDiscount
 from reviews.models import Review
 from cart.models import CartItem
 
+from cart.mixins import CartItemsCountMixin
+
 from reviews.forms import ReviewForm
 from wishlist.forms import WishListItemAddForm
 
 
-class CategoryView(TemplateView):
+class CategoryView(CartItemsCountMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,8 +54,6 @@ class CategoryView(TemplateView):
                 elif key == 'size':
                     context[key] = value
 
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
-            self.request)
         return context
 
     def get_template_names(self):
@@ -118,7 +118,7 @@ def products_list(request, *args, **kwargs):
         return render(request, 'products/products.html', context)
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(CartItemsCountMixin, DetailView):
     model = Product
     context_object_name = 'product'
     template_name = 'products/product_overview.html'
@@ -173,8 +173,7 @@ class ProductDetailView(DetailView):
         if self.request.user.is_authenticated:
             context['wishlist_item_add_form'] = WishListItemAddForm(
                 self.request.user)
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
-            self.request)
+
         if most_liked_positive_review and most_liked_negative_review:
             context['most_liked_positive_review'] = most_liked_positive_review
             context['most_liked_negative_review'] = most_liked_negative_review

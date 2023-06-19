@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <!-- BreadCrumbNavBar -->
+    {% include 'snippets/breadcrumbNavBar.html' with data='Orders' %}
+    <!-- End BreadCrumbNavBar -->
+
+    <!-- Preview -->
+    <div class="row mt-3 mb-0">
+        <div class="col-lg-2 col-auto ps-2 pe-0" style="border-bottom: 3px solid #ff5a00;">
+            <h4 class="mb-0 fs-3 fw-bold">ORDERS</h4>
+        </div>
+        <div class="col mb-0 ps-0 text-end border-bottom border-dark-subtle">
+            <img src="{% static 'icons/printer.svg' %}" alt="print">
+            <span class="fs-7 fw-bold link">
+                Print
+            </span>
+        </div>
+    </div>
+    <!-- End Preview -->
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Order Number</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Products Quantity</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Order Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr role='button' onclick=window.location="{% url 'users:order-detail' order.id %}">
+                    <th scope="row" style='color:#ff5a00'>{{order.id}}</th>
+                    <td>{{order.user.first_name|default:'-'}}</td>
+                    <td>{{order.user.last_name|default:'-'}}</td>
+                    <td>{{order.order_products_total}}</td>
+                    <td>${{order.total_price}}</td>
+                    <td class='text-success'>{{order.order_status.status_name}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock content %}
+

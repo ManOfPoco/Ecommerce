@@ -8,6 +8,8 @@ from .models import WishList, WishListItem
 from products.models import Product
 from cart.models import CartItem
 
+from cart.mixins import CartItemsCountMixin
+
 from .forms import WishlistForm
 
 from ecommerce_website.decorators import is_ajax
@@ -16,12 +18,10 @@ from django.http import JsonResponse, HttpResponseBadRequest
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from django.template.defaultfilters import slugify
-
 from django.core.paginator import Paginator
 
 
-class WishListListView(LoginRequiredMixin, ListView):
+class WishListListView(LoginRequiredMixin, CartItemsCountMixin, ListView):
     model = WishList
     template_name = 'wishlist/wishlist.html'
     context_object_name = 'wishlists'
@@ -54,8 +54,7 @@ class WishListListView(LoginRequiredMixin, ListView):
         context['wishlist_update_form'] = WishlistForm(instance=wishlist)
         context['wishlist_items'] = wishlist_items
         context['popular_products'] = Product.objects.get_popular_products()
-        context['cart_items_count'] = CartItem.objects.get_cart_items_count(
-            self.request)
+
         return context
 
     def get_queryset(self):
