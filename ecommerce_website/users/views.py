@@ -90,7 +90,7 @@ class OrderListView(CartItemsCountMixin, ListView):
         queryset = super().get_queryset()
 
         queryset = queryset.annotate(order_products_total=Count(
-            'order_item')).select_related('order_status', 'user').order_by('created_at')
+            'order_item')).select_related('order_status', 'user').order_by('-created_at')
 
         return queryset
 

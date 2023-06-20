@@ -49,7 +49,8 @@ class CartItemManager(models.Manager):
     def check_availability(self, queryset, cart_item_instance):
         not_available_products = []
         for item in queryset:
-            if item.quantity > item.product.quantity:
+            if item.quantity > item.product.quantity or \
+                    item.product.is_active == False:
                 queryset = queryset.exclude(product=item.product)
                 not_available_products.append((item.product, item.cart))
                 item.delete()

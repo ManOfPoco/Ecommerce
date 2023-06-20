@@ -46,7 +46,8 @@ def create_payment_order(request):
             order_data.append({
                 'product_id': str(item.product.id),
                 'price': str(item.current_price),
-                'quantity': str(item.quantity)
+                'quantity': str(item.quantity),
+                'pickup_shop': str(item.pickup_shop)
             })
             items.append(
                 {

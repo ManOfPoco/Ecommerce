@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.db.models import Q, Avg, Count, Prefetch
 
 from products.filters import get_default_filters
-from cart.models import CartItem
 from products.models import Product, ProductImages, ProductDiscount
 
 from cart.mixins import CartItemsCountMixin
@@ -19,7 +18,7 @@ class SearchView(CartItemsCountMixin, ListView):
     paginate_by = 24
 
     def get_context_data(self, **kwargs):
-        print(self.request.GET)
+
         context = super().get_context_data(**kwargs)
         default_filters = get_default_filters(self.get_queryset())
 
@@ -32,7 +31,7 @@ class SearchView(CartItemsCountMixin, ListView):
         return context
 
     def get_queryset(self):
-        print(self.request.GET)
+
         queryset = super().get_queryset()
 
         query_dict = self.request.GET
